@@ -15,6 +15,7 @@ var dbconfig = require('./config/database');
 const cors = require('cors');
 //var connection = passport.connection;
 const connection = mysql.createConnection(dbconfig.connection);
+
 connection.connect(function(err) {
   if (err) throw err;
   console.log("Connected!");
@@ -95,7 +96,6 @@ app.post('/dashboard/admin'  , (req,res)=> {
 app.get('/dashboard' , (req,res) => {
  
   let adminUser = connection.query("select * from user_role ",function(err,rows){	
-    //console.log(rows);
     if(err)
       return err;
     else
@@ -106,7 +106,6 @@ app.get('/dashboard' , (req,res) => {
       })
     }
     });
-   
     
 });
 
@@ -148,61 +147,41 @@ app.get('/createRDD', (req, res) => {
 });
 //getRDDCreation
 
+app.get('/rddList', (req, res) => {
+  let p= [];
+  let rddArr = RDDList();
+  let selectQuery = "select * from rdd_type";
+  connection.query(selectQuery , (err,rows) => {
+    res.render('RDD.ejs', {
+      type :  rows,
+      list : p
+     });
+  })
+});
+
+app.get('/about', (req, res) => {
+ 
+    res.render('about.ejs', {
+      
+     });
+  
+});
+function RDDList()
+{
+  let selectQuery = "select rdd_wallet.walletName, registered_list.registered_address * from rdd_wallet inner join registered_list where rdd_wallet.id = registered_list.rdd_id ";
+  // connection.query(selectQuery , (err,rows) => {
+  //   console.log(rows);
+  //   if(err)
+  //     return err;
+  //   return rows;
+  // })
+}
 
 function isLoggedIn(req, res, next) {
   if (req.isAuthenticated()) 
     return next();
   res.redirect("/");
 };
-
-
-
-
-app.post('/PostAPIResponse',  (req, res) => { 
-
-  console.log(req.query);
-  console.log(req.url);
-  if(common.isEmpty(req.query)){
-    req.query = req.body;
-      let URL = req.query.URL;
-        axios({ method: 'post', url: xelsAPI + URL, data: req.query })
-        .then(response => {
-          let successObj = {
-              "statusCode" : response.status,
-              "statusText" : response.statusText,
-              "InnerMsg" : response.data
-          }
-            res.status(response.status).json(successObj);
-        }).catch(error => {
-          let errObj ={ 
-              "statusCode" : error.response.status,
-              "statusText" : error.response.statusText,
-              "InnerMsg" : error.response.data.errors ? error.response.data.errors : ""
-            }
-            res.status(error.response.status).json(errObj);
-          });
-  }
-  else{
-    let URL = req.query.URL;
-    axios({ method: 'post', url: xelsAPI + URL, data: req.query })
-    .then(response => {
-      let successObj = {
-        "statusCode" : response.status,
-          "statusText" : response.statusText,
-          "InnerMsg" : response.data
-      }
-        res.status(response.status).json(successObj);
-    }).catch(error => {
-      let errObj ={ 
-        "statusCode" : error.response.status,
-          "statusText" : error.response.statusText,
-          "InnerMsg" : error.response.data.errors ? error.response.data.errors : ""
-        }
-        res.status(error.response.status).json(errObj);
-    });   
-  }
-   
-});
 
 // app.get('/success', (req, res) => res.send("Welcome "+req.query.username+"!!"));
 // app.get('/error', (req, res) => res.send("error logging in"));

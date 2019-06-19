@@ -17,7 +17,7 @@ flash = require("connect-flash");
 axios= require('axios');
 Cryptr = require('cryptr');
 cryptr = new Cryptr('myTotalySecretKey');
-
+dbconfig = require('../config/database');
 
 //app.use(flash());
 

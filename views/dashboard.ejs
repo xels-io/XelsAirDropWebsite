@@ -5,7 +5,7 @@
 <h1>Dashboard</h1>
 <p>Welcome <strong><%= user %></strong> </p>
 <div class="row">
-  <div class="col-md-6">
+  <!-- <div class="col-md-6">
       <div class="html5-dialog">
           <dialog id="window">
             
@@ -26,7 +26,7 @@
           </dialog>
           <button id="show" class="btn btn-primary btn-block" >Add New Admin</button>
       </div>
-  </div>
+  </div> -->
 </div>
 <div class="table-responsive-sm">
     <% if(admin.length){ %>   
@@ -63,19 +63,5 @@
 
 
 <!-- JavaScript to provide the "Show/Close" functionality -->
-<script type="text/JavaScript">
-  (function() {  
-      var dialog1 = document.getElementById('window');  
-      var addButton = document.getElementById('show');  
-      var exitButton = document.getElementById('exit');  
-      addButton.onclick = function() {  
-          dialog1.show();  
-        //  addButton.dis
-      };  
-      exitButton.onclick = function() {  
-          dialog1.close();  
-          //addButton.show();
-      };  
-  })(); 
-  </script>  
+
 <!-- <%- include('./layout/footer'); -%> -->

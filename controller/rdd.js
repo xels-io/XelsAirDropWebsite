@@ -2,6 +2,9 @@
 let encryp = require('../system/encryption');
 require('../system/require');
 const apiEnv = require ('../config/environment');
+const appMethod = require('../app');
+const connection = mysql.createConnection(dbconfig.connection);
+
 
 module.exports = {
     getRDDCreation: (req, res) => {
@@ -19,7 +22,7 @@ module.exports = {
                     'password': passwordEnc
                 }
                 apiWallet(walletParam).then(success => {
-                   console.log(success);
+                    insertWallet(walletParam);
                 }).catch(err => {
                     console.log(err);
                 });
@@ -63,12 +66,29 @@ function getMnemonicsApi()
     })
     
 }
-
-function insertWallet()
+function insertWallet(walletParam)
 {
-   // let insertAdmin = "INSERT INTO rdd_wallet (walletName , password , mnemonics, passphrase , rdd_type ) values ('" + name +"','"+ password+"','"+ mnemonic+"', ,'"+ passphrase+"', ,'"+ type+"' )";
+    console.log(walletParam);
+  //let insertAdmin = 'select * from rdd_wallet';
+    let insertRdd = "INSERT INTO rdd_wallet (walletName , password , mnemonics, passphrase  ) values ('" + walletParam.name +"','"+ walletParam.password+"','"+ walletParam.mnemonic+"', "+ walletParam.passphrase+" )";
+    console.log(insertRdd);
+
+    connection.query(insertRdd , (err,rows) => {
+            console.log(rows);
+            if(err)
+                return err;
+            else
+            {
+                return rows;
+            }
+            
+        });
 }
+
 
 module.exports.getMnemonicsApi = getMnemonicsApi;
 
 module.exports.apiWallet = apiWallet;
+
+
+module.exports.insertWallet = insertWallet;
