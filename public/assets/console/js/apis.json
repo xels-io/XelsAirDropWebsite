@@ -1,0 +1,33 @@
+{
+    "groups": [
+        {
+          "name": "Crypto",
+          "contents": [
+            "create_wallet",
+            "get_balance",
+            "send_token"
+          ]
+        }
+   ],
+  "create_wallet": {
+    "title": "Create wallet",
+    "action": "/v1/create_wallet",
+    "query": "",
+    "method": "POST",
+    "json": "{\"network\":\"testnet\",\"currency\":\"BTC\"}"
+  },
+    "send_token": {
+      "title": "Send Token",
+      "action": "/v1/send-token",
+      "query": "",
+      "method": "POST",
+      "json": "{\"toAddress\":\"\",\"amount\":0.00}"
+    },
+  "get_balance": {
+        "title": "Get Balance",
+        "action": "/v1/address/balance",
+        "query": "",
+        "method": "GET",
+        "json": ""
+    }
+}

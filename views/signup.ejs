@@ -1,0 +1,104 @@
+
+<%- include('./layout/header'); -%>
+
+<!-- <div id="flashmsg">
+  <h2 class="text-center"><strong>Register</strong></h2>
+ 
+  </div> -->
+<div class="Signup-form">
+    <form class="log-in-form ng-pristine ng-valid" action="/register" method="POST">
+      <h2 class="form-signin-heading">Please sign in</h2>
+      <% if (message.length > 0) { %>
+        <div class="msg_alert" style="color:#fff;text-align:center;font-size:18px;margin-left: 50%;"><%= message %></div>
+           <% } %>
+      <!-- <label for="inputEmail" class="sr-only">Email address</label> -->
+      <div class="form-group">
+          <input type="email" id="inputEmail" name="email" class="form-control" placeholder="Email address" required autofocus>
+      </div>
+      <div class="form-group">
+          <input type="password"   id="inputPassword" 
+          name="password" class="form-control" placeholder="Password" required 
+          title="Password must contain: Minimum 8 characters atleast 1 Alphabet and 1 Number" pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$"
+          >
+      </div>
+     
+      <!-- <label for="inputPassword" class="sr-only">Password</label> -->
+      
+  
+      
+      <div class="form-group">
+        <input type="password" title="Please enter the same Password as above" id="cinputPassword" name="cpassword" class="form-control" 
+        placeholder="Confirm Password"
+        required />
+      </div>
+       
+      <button class="btn btn-lg btn-default btn-block" type="submit" >Sign in</button>
+    </form>
+
+    <p>
+      <a href="/">Already have an account?</a>
+    </p>
+</div>
+<script src="../public/assets//js/common.js"></script>
+<%- include('./layout/footer'); -%>
+
+<script>
+  // $(document).ready(function (){
+  //     validate();
+  //     $('input').on('keyup', validate);
+  // });
+
+  // function validate(){
+
+  //     $("input[type=text]").each(function(){
+  //         if($(this).val().length > 0)
+  //         {
+  //             $("input[type=submit]").prop("disabled", false);
+  //         }
+  //         else
+  //         {
+  //             $("input[type=submit]").prop("disabled", true);
+  //         }
+  //     });
+  // } 
+
+  // var password = document.getElementById("password")
+  // , confirm_password = document.getElementById("confirm_password");
+
+  // function validatePassword(){
+  //   if(password.value != confirm_password.value) {
+  //     confirm_password.setCustomValidity("Passwords Don't Match");
+  //   } else {
+  //     confirm_password.setCustomValidity('');
+  //   }
+  // }
+
+  // password.onchange = validatePassword;
+  // confirm_password.onkeyup = validatePassword;
+
+  window.onload = function () {
+        var txtPassword = document.getElementById("inputPassword");
+        var txtConfirmPassword = document.getElementById("cinputPassword");
+        txtPassword.onchange = ConfirmPassword;
+        txtConfirmPassword.onkeyup = ConfirmPassword;
+        function ConfirmPassword() {
+            txtConfirmPassword.setCustomValidity("");
+            if (txtPassword.value != txtConfirmPassword.value) {
+                txtConfirmPassword.setCustomValidity("Passwords do not match.");
+            }
+        }
+    }
+  </script>
+
+
+  <!-- <script type="text/javascript">
+
+    function checkPassword(str)
+    {
+      // at least one number, one lowercase and one uppercase letter
+      // at least six characters
+      var re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+      return re.test(str);
+    }
+  
+  </script> -->

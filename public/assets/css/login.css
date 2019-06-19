@@ -1,0 +1,26 @@
+.login-form {
+    width: 60%;
+    margin-bottom: 1% !important;
+    margin: 0 auto;
+    font-family: Tahoma, Geneva, sans-serif;
+    border: 1px solid #04b707;
+  }
+  .login-form h1 {
+    text-align: center;
+    color: #4d4d4d;
+    font-size: 24px;
+    padding: 20px 0 20px 0;
+  }
+  .form-group
+    {
+      margin-left: 2%;
+      margin-right: 2%;
+    }
+  .login-form input[type="password"],
+  .login-form input[type="text"] {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid #dddddd;
+    margin-bottom: 15px;
+    box-sizing:border-box;
+  }

@@ -1,0 +1,114 @@
+@import "./css/search_panel.css";
+@import "./css/distribution-index.css";
+@import "./css/_import_form.css";
+@import "./css/_import_success.css";
+.table-borderless td, .borderless th {
+    border: none;
+}
+.container
+{
+    background: black;
+}
+.navbar{
+    background: dodgerblue;
+}
+.navbar a {
+    color:white;
+}
+.page-title {
+    text-align: center;
+    margin: 20px auto;
+}
+
+.fieldset{
+    padding: 20px;
+    background: whitesmoke;
+    margin: 10px auto;
+    border: 1px solid gray;
+}
+
+.fieldset legend{
+    background: #d2cece;
+    width: 160px;
+    border-radius: 16px;
+    display: block;
+}
+.fieldset legend p{
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    font-size: 16px;
+}
+.center{
+    display: block !important;
+    text-align: center;
+    margin:0 auto;
+}
+.tx-center{
+    text-align: center;
+}
+.bg-blue{
+    background-color: #2196F3;
+}
+.success, .Confirmed{
+    color:#28a745;
+}
+.danger, .Unconfirmed{
+    color:red;
+}
+.fail, .Failed{
+    color:#6610f2;
+}
+.Postponed,postponed{
+    color:#0062cc;
+}
+.warning,.Waiting{
+    color:#fd7e14;
+}
+.el-right{
+    text-align: right;
+}
+a{
+    text-decoration: none !important;
+}
+.table td, .table th {
+    vertical-align: middle;
+}
+.total-wrapper{
+    text-align: center;
+}
+.total-wrapper .total-item:hover {
+    box-shadow: 0px 0px 3px 1px #dcd8d8;
+}
+.total-wrapper .total-item {
+    display: inline-block;
+    padding: 20px;
+    text-align: center;
+    background: whitesmoke;
+    margin: 8px 6px;
+    transition: all 0.1s;
+}
+.total-wrapper .total-item .body{
+    font-size: 24px;
+    font-weight: bold;
+}
+.list-pg .summery{
+    display: inline-block;
+    margin-top: 7px;
+}
+.btn-list {
+    width: 100%;
+    background: #f7f7f7;
+    outline: none;
+    border-radius: 0;
+    color: black;
+}
+.btn-list:hover{
+    -webkit-box-shadow: inset 0px 0px 13px 0px rgba(0,0,0,0.15);
+    -moz-box-shadow: inset 0px 0px 13px 0px rgba(0,0,0,0.15);
+    box-shadow: inset 0px 0px 13px 0px rgba(0,0,0,0.15);
+}
+.led-pos{
+    position: absolute;
+    margin-top: 13px;
+}

@@ -1,0 +1,24 @@
+@charset "UTF-8";
+
+#api-container {
+  margin-top: 30px; 
+}
+
+#api-list .accordion-inner {
+  padding: 0;
+}
+
+#api-list .icon-chevron-right {
+  float: right;
+  margin-right: -6px;
+  opacity: .25;
+}
+
+.accordion-heading a {
+  color: #666666;
+  text-decoration: none;
+}
+
+.base-string {
+  margin-left: 5px;
+}
