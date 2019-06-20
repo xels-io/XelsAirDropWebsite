@@ -152,7 +152,7 @@ app.get('/rddList', (req, res) => {
   let rddArr = RDDList();
   let selectQuery = "select * from rdd_type";
   connection.query(selectQuery , (err,rows) => {
-    res.render('RDD.ejs', {
+    res.render('rddList.ejs', {
       type :  rows,
       list : p
      });

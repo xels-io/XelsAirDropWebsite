@@ -1,24 +1,38 @@
-span.input-group-text {
+/*span.input-group-text {
     font-weight: bold;
+}*/
+.form-theme .form-control {
+    background: transparent;
+    border: 1px solid #C8C8C8;
+    border-radius: 10px;
+    font-size: 24px;
+    height: 55px;
+    padding: 15px 25px;
+    margin-bottom: 25px;
 }
-.form-control{
-    background: #F1F1F1;
-    border:1px solid transparent;
+
+.form-theme .form-control::placeholder,
+.form-theme .form-control:-ms-input-placeholder,
+.form-theme .form-control::-ms-input-placeholder {
+    color: red !important;
 }
-.input-group-append>.input-group-text{
-    border:1px solid transparent;
+
+.input-group-append > .input-group-text {
+    border: 1px solid transparent;
 }
+
 .form-control:active,
 .form-control:focus,
-.form-control:focus ~ .input-group-append>.input-group-text{
+.form-control:focus ~ .input-group-append>.input-group-text {
     outline: 0;
     box-shadow: none;
-    border:1px solid #6DD162;
+    border:1px solid #53B848;
 }
+
 .input-group-text{
     border: none;
 }
-.form-control,.btn{
+/*.form-control,.btn{
     -webkit-border-radius: 9px;
     -moz-border-radius: 9px;
     border-radius: 9px;
@@ -80,7 +94,7 @@ button.navbar-toggler.navbar-toggler-right {
 }
 .html5-dialog button#show {
 	position: relative;
-	/* bottom: 80px; */
+	 bottom: 80px; 
 	background-color: #16a085;
 	border-radius: 3px;
 	color: #fff;
@@ -103,4 +117,4 @@ button.navbar-toggler.navbar-toggler-right {
 }
 .html5-dialog button#exit:hover {
 	background-color: #e74c3c;
-}
+}*/
