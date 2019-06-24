@@ -32,6 +32,15 @@
 .input-group-text{
     border: none;
 }
+
+@media only screen and (max-width: 767px)  {
+    .form-theme .form-control {
+        height: 40px;
+        font-size: 20px;
+        margin-bottom: 10px;
+        padding: 10px 20px;
+    }
+}
 /*.form-control,.btn{
     -webkit-border-radius: 9px;
     -moz-border-radius: 9px;
@@ -84,37 +93,37 @@ button.navbar-toggler.navbar-toggler-right {
 }
 
 .html5-dialog {
-	width: 300px;
-	margin: 0 auto;
-	border-radius: 3px;
-	margin-bottom: 20px;
+        width: 300px;
+        margin: 0 auto;
+        border-radius: 3px;
+        margin-bottom: 20px;
 }
 .html5-dialog dialog {
-	width: 500px;
+        width: 500px;
 }
 .html5-dialog button#show {
-	position: relative;
-	 bottom: 80px; 
-	background-color: #16a085;
-	border-radius: 3px;
-	color: #fff;
-	border-width: 0;
-	width: 300px;
-	height: 55px;
-	line-height: 50px;
+        position: relative;
+         bottom: 80px; 
+        background-color: #16a085;
+        border-radius: 3px;
+        color: #fff;
+        border-width: 0;
+        width: 300px;
+        height: 55px;
+        line-height: 50px;
 }
 .html5-dialog button#exit {
-	background-color: #c0392b;
-	border-radius: 3px;
-	color: #fff;
-	border-width: 0;
-	width: 80px;
-	height: 30px;
-	line-height: 28px;
+        background-color: #c0392b;
+        border-radius: 3px;
+        color: #fff;
+        border-width: 0;
+        width: 80px;
+        height: 30px;
+        line-height: 28px;
 }
 .html5-dialog button#show:hover {
-	background-color: #1abc9c;
+        background-color: #1abc9c;
 }
 .html5-dialog button#exit:hover {
-	background-color: #e74c3c;
+        background-color: #e74c3c;
 }*/

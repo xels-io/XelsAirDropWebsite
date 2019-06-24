@@ -1,6 +1,6 @@
 
 <%- include('./layout/header'); -%>
-<div class="register-section">
+<div class="register-section text-md-left text-center">
     <div class="container">
         <div class="row">
             <div class="col">
@@ -10,12 +10,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-4 offset-md-3 my-auto order-md-1 text-center">
-                <div class="section-title color-white">Att<span>ent</span>ion!</div>
-                <div class="text-contents color-white mb-2 mb-md-5">Already have an account?</div>
-                <a class="btn-theme color-white" href="/">Sign In</a>
-            </div>
-            <div class="col-md-5 my-auto order-md-0">
+            <div class="col-md-5 my-auto">
                 <div class="signup-form">
                     <form class="log-in-form ng-pristine ng-valid form-theme" action="/register" method="POST">
                         <div class="section-title">We<span>lco</span>me!</div>
@@ -50,7 +45,7 @@
                             <button class="btn btn-theme" type="submit" >Sign Up</button>
                         </div>
                     </form>
-                    <div class="footer-menu">
+                    <div class="footer-menu d-md-block d-none">
                         <div class="row">
                             <div class="col text-md-right mb-2">
                                 <a href="#">Privacy Policy</a>
@@ -69,11 +64,36 @@
                     </div> 
                 </div>
             </div>
+            <div class="col-md-4 offset-md-3 my-auto text-center d-md-block d-none">
+                <div class="section-title color-white">Att<span>ent</span>ion!</div>
+                <div class="text-contents color-white mb-2 mb-md-5">Already have an account?</div>
+                <a class="btn-theme color-white" href="/">Sign In</a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="register-section register-info-device d-md-none d-block">
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-md-4 offset-md-3 my-auto text-center">
+                <div class="section-title color-white">Att<span>ent</span>ion!</div>
+                <div class="text-contents color-white mb-4 mb-md-5">Already have an account?</div>
+                <a class="btn-theme color-white" href="/">Sign In</a>
+            </div>
+        </div>
+        <div class="footer-menu text-center">
+            <div class="row">
+                <div class="col text-md-right mb-2">
+                    <a href="#" class="color-white">Privacy Policy</a>
+                </div>
+                <div class="col mb-2">
+                    <a href="#" class="color-white">Terms & Conditions</a>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 <script src="js/common.js"></script>
-<!--<%- include('./layout/footer'); -%>-->
 
 <script>
     // $(document).ready(function (){
