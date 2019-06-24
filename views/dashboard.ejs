@@ -1,67 +1,87 @@
 <%- include('./layout/header'); -%>
 
-<%- include('./layout/partials/navbar'); -%>
+    <%- include('./layout/partials/navbar'); -%>
 
-<h1>Dashboard</h1>
-<p>Welcome <strong><%= user %></strong> </p>
-<div class="row">
-  <!-- <div class="col-md-6">
-      <div class="html5-dialog">
-          <dialog id="window">
-            
-            <form class="" action="/dashboard/admin" method="POST">
-              <h2 class="form-signin-heading">Add Admin</h2>
-              <div class="form-group">
-                  <input type="text" id="name" name="adminName" class="form-control" placeholder="Enter a new admin name" required autofocus>
-              </div>
-              <div class="form-group">
-                  <input type="text"   id="description" 
-                  name="description" class="form-control" placeholder="description"  >
-              </div>
-              <button id="exit" class="btn btn-outline-dark" >Exit</button>
-              <button class="btn btn-lg btn-default btn-block" type="submit" >Add</button>
-            </form>
-            
-            
-          </dialog>
-          <button id="show" class="btn btn-primary btn-block" >Add New Admin</button>
-      </div>
-  </div> -->
-</div>
-<div class="table-responsive-sm">
-    <% if(admin.length){ %>   
-  <table id="dtBasicExample" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
-    <thead>
-      <tr>
-        <th class="th-sm">Name
-  
-        </th>
-        <th class="th-sm">Description
-  
-        </th>
-       
-      </tr>
-      <% } %>
-    </thead>
-    <tbody>
-        <% for (var i = 0; i < admin.length; i++) { %>
-      <tr>
-          <td>
-              <%= admin[i].name %>
-          </td>
-          <td>
-              <%= admin[i].description %>
-          </td>
-      </tr>
-      
-      <% } %>
-    </tbody>
-      
-    </table>
-  </div>
+        <h1>Dashboard</h1>
+        <p>Welcome <strong><%= userName %></strong> </p>
+        <div class="row">
 
+        </div>
 
+        <div class="row">
+            <div class="col-md-6" id="admin_div">
+                <div class="table-responsive-sm">
+                    <% if(admin.length){ %>
+                        <table id="dtBasicExample" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th class="th-sm">Name
 
-<!-- JavaScript to provide the "Show/Close" functionality -->
+                                    </th>
+                                    <th class="th-sm">Address
 
-<!-- <%- include('./layout/footer'); -%> -->
+                                    </th>
+
+                                </tr>
+                                <% } %>
+
+                            </thead>
+                            <tbody>
+                                <% for (var i = 0; i < admin.length; i++) { %>
+
+                                    <tr>
+                                        <td>
+                                            <%= admin[i].email %>
+                                        </td>
+                                        <td>
+                                            <%= admin[i].walletName %>
+                                        </td>
+                                    </tr>
+                                    <% } %>
+                            </tbody>
+                        </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6" id="admin_div">
+                <div class="table-responsive-sm">
+                    <% if(walletList.length){ %>
+                        <h2> RDD Wallet List</h2>
+                        <table id="dtBasicExample" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th class="th-sm">walletName
+                                    </th>
+                                    <th class="th-sm">Address
+                                    </th>
+                                    <th class="th-sm">action
+                                    </th>
+
+                                </tr>
+                                <% } %>
+
+                            </thead>
+                            <tbody>
+                                <% for (var i = 0; i < walletList.length; i++) { %>
+
+                                    <tr>
+                                        <td>
+                                            <%= walletList[i].walletName %>
+                                        </td>
+                                        <td>
+                                            <%= walletList[i].address %>
+                                        </td>
+                                        <td>
+                                            <input type="hidden" name="rddWalletId" value="<%=walletList[i].id%>" />
+                                            <button class="btn btn-primary" type="button">Update</button>
+                                        </td>
+                                    </tr>
+                                    <% } %>
+                            </tbody>
+                        </table>
+                </div>
+            </div>
+        </div>
+        <script type="text/JavaScript" src="/js/dialog.js">

@@ -1,53 +1,50 @@
 <%- include('./layout/header'); -%>
 
-<%- include('./layout/partials/navbar'); -%>
+    <%- include('./layout/partials/navbar'); -%>
 
-<section id="GUI" class="container-fluid">
-    <!-- <app-header></app-header> -->
-    <div class="container">
-        <div class="row">
-            <!-- /col -->
-            <div class="col-12 right-login d-flex align-content-center flex-wrap createWallet">
-                <div class="col-12">
-                    <app-header></app-header>
-                  </div>
-                  
-              <form class="col-6 mx-auto d-flex align-content-center flex-wrap" method="POST" action="/getmnemonics" id="rddWallet">
-                <div class="col-12 text-center">
-                  <h3 class="display-4 mb-4">Create a wallet</h3>
-                </div>
+        <section id="GUI" class="container-fluid">
+            <!-- <app-header></app-header> -->
+            <div class="container">
+                <div class="row">
+                    <!-- /col -->
+                    <div class="col-12 right-login d-flex align-content-center flex-wrap createWallet">
+                        <div class="col-12">
+                            <app-header></app-header>
+                        </div>
 
-                
-                <div class="form-group col-12">
-                  <label for="walletName">Name</label>
-                  <input type="text" class="form-control" id="walletName"  name="walletName"  placeholder="Enter a wallet name." required>
-                 
-                </div>
-          
-                <div class="modal-footer col-12">
-                  <button type="button" class="btn btn-outline-dark" >Cancel</button>
-                  <button type="submit" class="btn btn-primary btn-block" value="Submit" >Create a new wallet</button>
-                </div>
-              </form>
+                        <form class="col-6 mx-auto d-flex align-content-center flex-wrap" method="POST" action="/getmnemonics" id="rddWallet">
+                            <div class="col-12 text-center">
+                                <h3 class="display-4 mb-4">Create a wallet</h3>
 
-              <!-- <button type="button" class="btn btn-primary btn-block">Add New Admin</button> -->
-              <div class="table-responsive-sm">
-                <table class="table">
-                  
-                </table>
-              </div>
-              <!-- /form -->
+                            </div>
+
+
+                            <div class="form-group col-12">
+                                <label for="walletName">Name</label>
+                                <input type="text" class="form-control" id="walletName" name="walletName" placeholder="Enter a wallet name." required>
+
+                            </div>
+
+                            <div class="modal-footer col-12">
+                                <button type="button" class="btn btn-outline-dark">Cancel</button>
+                                <button type="submit" class="btn btn-primary btn-block" value="Submit">Create a new wallet</button>
+                            </div>
+                        </form>
+
+                        <!-- <button type="button" class="btn btn-primary btn-block">Add New Admin</button> -->
+                        <div class="table-responsive-sm">
+                            <table class="table">
+
+                            </table>
+                        </div>
+                        <!-- /form -->
+                    </div>
+                    <!-- /col-8 -->
+                </div>
             </div>
-            <!-- /col-8 -->
-          </div>
-    </div>
-  
-  <!-- /row -->
-</section>
 
-<%- include('./layout/footer'); -%>
-<!-- /GUI-->
+            <!-- /row -->
+        </section>
 
-<script>
-
-</script>
+        <%- include('./layout/footer'); -%>
+            <!-- /GUI-->
