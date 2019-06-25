@@ -20,6 +20,7 @@ cryptr = new Cryptr('myTotalySecretKey');
 dbconfig = require('../config/database');
 
 admin = require('firebase-admin');
+firebase = require('firebase');
 
 //app.use(flash());
 

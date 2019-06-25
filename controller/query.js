@@ -8,14 +8,15 @@ function generateHash(password) {
     return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
 };
 
-function validPw(dbpassword, pw) {
+function validPassword(dbpassword, pw) {
     //  console.log("hi");
     return bcrypt.compareSync(pw, dbpassword); //input password, database password
 };
 
-function RDDList() {
+function RDDWalletWithRegisteredList() {
     return new Promise((resolve, reject) => {
-        let selectQuery = "select rdd_wallet.walletName, rdd_wallet.id, registered_list.registered_address from rdd_wallet inner join registered_list where rdd_wallet.id = registered_list.rdd_id ";
+        let selectQuery = "select rdd_wallet.walletName, rdd_wallet.id, registered_list.registered_address from rdd_wallet left outer join registered_list on rdd_wallet.id = registered_list.rdd_id ";
+        // console.log(selectQuery);
         connection.query(selectQuery, (err, rows) => {
             if (err)
                 reject(err);
@@ -27,7 +28,7 @@ function RDDList() {
 
 function rddWalletDetails() {
     return new Promise((resolve, reject) => {
-        let selectQuery = "select * from rdd_wallet";
+        let selectQuery = "select * from rdd_wallet where address IS NOT NULL";
         connection.query(selectQuery, (err, rows) => {
             if (err)
                 reject(err);
@@ -52,6 +53,19 @@ function typeOfWallet(temp_wallet_id) {
 
 }
 
+function registeredAddressList(temp_wallet_id) {
+    return new Promise((resolve, reject) => {
+        let selectRegisteredQuery = "select registered_list.* , rdd_wallet.walletName, rdd_wallet.id as walletId from registered_list inner join rdd_wallet where registered_list.rdd_id = rdd_wallet.id and registered_list.rdd_id = " + temp_wallet_id;
+
+        connection.query(selectRegisteredQuery, (err, rows) => {
+            console.log(rows);
+            if (err)
+                reject(err);
+            resolve(rows);
+
+        });
+    });
+}
 
 function userPwMatch(userId, pw) {
     return new Promise((resolve, reject) => {
@@ -60,7 +74,7 @@ function userPwMatch(userId, pw) {
             if (err)
                 reject(err);
             // if no user is found, return the message
-            if (!validPw(rows[0].password, pw)) {
+            if (!validPassword(rows[0].password, pw)) {
                 // req.flash('changePw', 'Oops! Wrong password.');
                 reject('Oops! Wrong password.');
             }
@@ -72,7 +86,9 @@ function userPwMatch(userId, pw) {
 
 
 module.exports.generateHash = generateHash;
-module.exports.RDDList = RDDList;
-module.exports.validPw = validPw;
+module.exports.RDDWalletWithRegisteredList = RDDWalletWithRegisteredList;
+module.exports.validPassword = validPassword;
 module.exports.userPwMatch = userPwMatch;
 module.exports.typeOfWallet = typeOfWallet;
+module.exports.registeredAddressList = registeredAddressList;
+module.exports.rddWalletDetails = rddWalletDetails;

@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1063007170867",
+    "firebase_url": "https://xelsfirebaseservice.firebaseio.com",
+    "project_id": "xelsfirebaseservice",
+    "storage_bucket": "xelsfirebaseservice.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1063007170867:android:da83172dc6ca32c4",
+        "android_client_info": {
+          "package_name": "io.xels.xelsandroidapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1063007170867-3fg862ohs7nhemjfanrn2qii0u910de4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAnYIFIo7khC6YW8fks291HyQOMDJgTCb4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1063007170867-3fg862ohs7nhemjfanrn2qii0u910de4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

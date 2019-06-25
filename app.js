@@ -9,11 +9,14 @@ let encryption = require('./system/encryption');
 
 const dbDetails = require('./config/database');
 const apiEnv = require('./config/environment');
-var passport = require("./config/passport");
-var dbconfig = require('./config/database');
-var queryMethod = require('./controller/query');
-var distirbute = require('./controller/distribute');
+const passport = require("./config/passport");
+const dbconfig = require('./config/database');
+const queryMethod = require('./controller/query');
+const distirbute = require('./controller/distribute');
 const cors = require('cors');
+
+const firebaseApp = require('./config/firebaseConfig');
+const fireDb = require('./config/push-notification');
 //var connection = passport.connection;
 const connection = mysql.createConnection(dbconfig.connection);
 
@@ -25,16 +28,14 @@ connection.connect(function(err) {
 
 app = express();
 
-const firebase = require('./config/firebaseConfig');
-// const messaging = firebase.messaging();
-// messaging.requestPermission().then(res => {
-//         console.log("hello have permission");
-//     }).catch(err => { console.log(err) })
+
 //var connection = require("./config/passport");
 //var models = require('./model');
 // configure the app for post request data convert to json
 // app.use(express.json());
 // app.use(express.urlencoded({ extended: false }));
+
+
 
 app.use(cors());
 
@@ -82,6 +83,18 @@ const server = http.createServer(app);
 
 server.listen(httpPort, () => {
     console.log(`Listening on port: ${httpPort}`);
+});
+
+app.get('/firebase', function(req, res) {
+
+    console.log("HTTP Get Request");
+    res.send("HTTP GET Request");
+    fireDb.initializeFirebase(); // = initializeFirebase
+
+    //fireDb.database();
+    //Insert key,value pair
+    // firebaseApp.database().ref('/TestMessages').set({ TestMessage: 'GET Request' });
+
 });
 //   req.flash()
 app.get('/', getHomePage);
@@ -137,19 +150,23 @@ app.get('/error', (req, res) => {
 
 //     })
 // }
+
+
 app.get('/rddDetails', isLoggedIn, (req, res) => {
     let temp_wallet_id = req.query.id;
 
     let typeWallet = "select rdd_wallet.walletName, rdd_wallet.rdd_type, rdd_type.* from rdd_wallet inner join rdd_type where rdd_wallet.rdd_type=rdd_type.id and rdd_wallet.id= " + temp_wallet_id;
     connection.query(typeWallet, (err, typeWallet) => {
-        let selectRegisteredQuery = "select registered_list.* , rdd_wallet.walletName, rdd_wallet.id as walletId from registered_list inner join rdd_wallet where registered_list.rdd_id = rdd_wallet.id and registered_list.rdd_id = " + temp_wallet_id;
-        connection.query(selectRegisteredQuery, (err, registeredList) => {
+        queryMethod.registeredAddressList(temp_wallet_id).then(registeredList => {
             res.render('rddDetails.ejs', {
                 walletId: temp_wallet_id,
                 list: registeredList
                     // typeW: responserows.length? responserows:emp;
             })
+        }).catch(err => {
+            console.log(err);
         })
+
     })
 
 });
@@ -194,7 +211,7 @@ app.post('/registeredList/delete/:id', (req, res) => {
 });
 app.get('/rddList', isLoggedIn, (req, res) => {
 
-    queryMethod.RDDList().then(response => {
+    queryMethod.rddWalletDetails().then(response => {
         let rddArr = response;
         res.render('rddList.ejs', {
             list: rddArr,
@@ -283,7 +300,7 @@ app.post('/dashboard/updatePw', (req, res) => {
     });
 
 });
-app.get('/about', (req, res) => {
+app.get('/about', isLoggedIn, (req, res) => {
 
     res.render('about.ejs', {
 

@@ -1,34 +1,53 @@
 const env = require('../config/environment');
+const query = require('./query');
 
 const connection = mysql.createConnection(dbconfig.connection);
 
 function distributeXels(rddWalletDetails) {
     console.log(rddWalletDetails);
+    console.log(JSON.stringify(rddWalletDetails.addressList));
     return new Promise((resolve, reject) => {
-        estimateFee(xels_address).then(fee => {
-            let estimatedfee = fee.InnerMsg / 100000000;
-            BuildTransaction(xels_address, amount, estimatedfee).then(hexData => {
-                let hexString = hexData.InnerMsg.hex;
-                SendTransaction(hexString).then(success => {
-                    let txid = success.InnerMsg.transactionId;
-                    updateStatus(order.id, txid);
+        query.RDDWalletWithRegisteredList(rddWalletDetails.walletId).then(walletDetails => {
+            console.log(walletDetails);
+            var finalList = walletDetails.map(function(obj) {
+                return obj.registered_address;
+            });
+            if (finalList.length > 0) {
+                estimateFee(finalList).then(fee => {
+                    let estimatedfee = fee.InnerMsg / 100000000;
+                    BuildTransaction(finalList, walletDetails[0].balance, estimatedfee).then(hexData => {
+                        let hexString = hexData.InnerMsg.hex;
+                        SendTransaction(hexString).then(success => {
+                            let txid = success.InnerMsg.transactionId;
+                            //equallyDitrib(order.id, txid);
+                        }).catch(err => {
+                            console.log(err);
+                        });
+                    }).catch(err => {
+                        console.log(err);
+                    });
+
                 }).catch(err => {
                     console.log(err);
                 });
-            }).catch(err => {
-                console.log(err);
-            });
+            }
 
-        }).catch(err => {
-            console.log(err);
-        });
-
+        })
     });
+    // return new Promise((resolve, reject) => {
+
+
+    // });
 }
 
-function rddWallet() {
+function rddWallet(walletId) {
     return new Promise((resolve, reject) => {
-
+        let walletDetails = "select * from rdd_wallet where id =" + walletId;
+        connection.query(walletDetails, (err, rows) => {
+            if (err)
+                reject(err);
+            resolve(rows);
+        })
     });
 }
 
