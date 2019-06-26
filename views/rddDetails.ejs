@@ -1,168 +1,171 @@
 <%- include('./layout/header'); -%>
 
-    <%- include('./layout/partials/navbar'); -%>
+<%- include('./layout/partials/navbar'); -%>
 
-        <section class="section-theme">
-            <div class="container">
-                <div class="section-title">Registered List</div>
-                <p class="color-theme">Welcome <strong>Name</strong> </p>
-                <!-- <form class="" action="/typeWallet" method="POST" id="radioBtn">
-                    <div class="btn-group" data-toggle="buttons">
-                        <label class="btn btn-primary active">
-                                <input type="radio" name="type1" id="option1" value=1 > Public
-                                </label>
-                        <label class="btn btn-danger">
-                                <input type="radio" name="type1"  id="option2" value=2 > Private<br>
-                            </label>
-                        <input type="hidden" name="wallet_id" value="<%=walletId%>" />
-                    </div>
-                </form> -->
+<section class="section-theme">
+    <div class="container">
+        <div class="section-title">Registered List</div>
+        <p class="color-theme">Welcome <strong>Name</strong> </p>
+        <!-- <form class="" action="/typeWallet" method="POST" id="radioBtn">
+            <div class="btn-group" data-toggle="buttons">
+                <label class="btn btn-primary active">
+                        <input type="radio" name="type1" id="option1" value=1 > Public
+                        </label>
+                <label class="btn btn-danger">
+                        <input type="radio" name="type1"  id="option2" value=2 > Private<br>
+                    </label>
+                <input type="hidden" name="wallet_id" value="<%=walletId%>" />
+            </div>
+        </form> -->
 
-                <form class="" action="/typeWallet" method="POST" id="radioBtn">
-                    <nav class="nav-tabs-theme">
-                        <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                            <a class="nav-item nav-link btn-theme btn-success active" id="nav-public-tab" data-toggle="tab" href="#nav-public" role="tab" aria-controls="nav-public" aria-selected="true">
-                                <input type="radio" name="type1" id="option1" value=1> Public
-                            </a>
+        <form class="" action="/typeWallet" method="POST" id="radioBtn">
+            <nav class="nav-tabs-theme">
+                <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                    <a class="nav-item nav-link btn-theme btn-success active" id="nav-public-tab" data-toggle="tab" href="#nav-public" role="tab" aria-controls="nav-public" aria-selected="true">
+                        <input type="radio" name="type1" id="option1" value=1> Public
+                    </a>
 
-                            <a class="nav-item nav-link btn-theme btn-success" id="nav-private-tab" data-toggle="tab" href="#nav-private" role="tab" aria-controls="nav-private" aria-selected="false">
-                                <input type="radio" name="type1" id="option2" value=2> Private
-                            </a>
-                        </div>
-                    </nav>
-                    <input type="hidden" name="wallet_id" value="<%=walletId%>" />
-                </form>
-
-
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="html5-dialog">
-                            <dialog id="registerWindow">
-                                <form class="" action="/registerAddress" method="POST">
-                                    <h2 class="form-signin-heading">RegisTer New Addrees</h2>
-                                    <div class="form-group">
-                                        <input type="text" id="address" minlength="26" name="address" class="form-control" placeholder="Register an Address" required autofocus>
-                                    </div>
-                                    <input type="hidden" name="wallet_id" value="<%=walletId%>" />
-                                    <button id="showExit" class="btn btn-outline-dark">Exit</button>
-                                    <button class="btn btn-lg btn-default btn-block" type="submit">Add</button>
-                                </form>
-                            </dialog>
-                            <button id="Registershow" class="btn btn-theme btn-success btn-block mb-2"><i class="fa fa-plus pr-3"></i> Add Registered List</button>
-                        </div>
-                    </div>
+                    <a class="nav-item nav-link btn-theme btn-success" id="nav-private-tab" data-toggle="tab" href="#nav-private" role="tab" aria-controls="nav-private" aria-selected="false">
+                        <input type="radio" name="type1" id="option2" value=2> Private
+                    </a>
                 </div>
+            </nav>
+            <input type="hidden" name="wallet_id" value="<%=walletId%>" />
+        </form>
 
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="html5-dialog">
-                            <form class="" action="/distributeXels" method="POST">
-                                <input type="hidden" name="wallet_id" value="<%=walletId%>" />
-                                <input type="hidden" name="addressList" value="<%=list%>" />
-                                <button class="btn btn-lg btn-default btn-block" type="submit">Distribute</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <h2 style="text-align: center;margin: auto;">
-                        <p>Registered Address</p>
-                    </h2>
-                </div>
 
-                <div class="tab-content tab-content-theme box-theme p-3" id="nav-tabContent">
-                    <div class="tab-pane fade show active" id="nav-public" role="tabpanel" aria-labelledby="nav-public-tab">
-                        <div class="row">
-                            <div class="col" id="register_div">
-                                <div class="table-responsive-sm">
-                                    <% if(list.length){ %>
-                                        <table id="dtBasicExample" class="table-theme table table-sm" cellspacing="0" width="100%">
-                                            <thead>
-                                                <tr>
-
-                                                    <th class="th-sm">Name
-
-                                                    </th>
-                                                    <th class="th-sm">Address
-
-                                                    </th>
-                                                    <th class="th-sm"> Action
-                                                    </th>
-
-                                                </tr>
-                                                <% } %>
-                                            </thead>
-                                            <tbody>
-                                                <% for (var i = 0; i < list.length; i++) { %>
-                                                    <tr>
-                                                        <td>
-
-                                                            <%= list[i].walletName %>
-
-                                                        </td>
-                                                        <td>
-                                                            <%= list[i].registered_address %>
-                                                        </td>
-                                                        <td>
-                                                            <form method="post" action="/registeredList/delete/<%= list[i].id %>" style="float:right">
-
-                                                                <input type="submit" name="delete" value='Delete' onClick="return confirm('Are you sure you want to delete?')" />
-                                                                <input type="hidden" name="_method" value="DELETE" />
-                                                                <input type="hidden" name="walletId" value="<%=list[i].walletId%>" />
-                                                                <input type="hidden" name="registeredId" value="<%=list[i].id%>" />
-                                                            </form>
-                                                            <!-- <button class="btn btn-danger" type="button" (click)="openDialogAddress(row)">
-                                                                        Delete
-                                                                    </button> -->
-                                                        </td>
-                                                    </tr>
-
-                                                    <% } %>
-                                            </tbody>
-
-                                        </table>
-                                </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="html5-dialog">
+                    <dialog id="registerWindow" class="dialog-theme">
+                        <form class="form-theme" action="/registerAddress" method="POST">
+                            <h2 class="form-signin-heading heading-dialog-theme">RegisTer New Addrees</h2>
+                            <div class="form-group">
+                                <fieldset>
+                                    <input type="text" id="address" minlength="26" name="address" class="form-control" placeholder="Register an Address" required autofocus>
+                                    <legend>Register an Address</legend>
+                                </fieldset>
                             </div>
-
-                        </div>
-                    </div>
+                            <input type="hidden" name="wallet_id" value="<%=walletId%>" />
+                            <button class="btn btn-theme btn-success" type="submit">Add</button>
+                            <button id="showExit" class="btn btn-theme btn-warning">Exit</button>
+                        </form>
+                    </dialog>
+                    <button id="Registershow" class="btn btn-theme btn-success btn-block mb-2"><i class="fa fa-plus pr-3"></i> Add Registered List</button>
                 </div>
             </div>
-        </section>
+        </div>
+
+        <div class="row mb-md-4 mb-2">
+            <div class="col-md-6">
+                <div class="html5-dialog">
+                    <form class="" action="/distributeXels" method="POST">
+                        <input type="hidden" name="wallet_id" value="<%=walletId%>" />
+                        <input type="hidden" name="addressList" value="<%=list%>" />
+                        <button class="btn btn-theme btn-block mb-2" type="submit">Distribute</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <h2 class="color-theme mb-md-4 mb-2" style="text-align: center;margin: auto;">Registered Address</h2>
+            </div>
+        </div>
+
+        <div class="tab-content tab-content-theme box-theme p-3" id="nav-tabContent">
+            <div class="tab-pane fade show active" id="nav-public" role="tabpanel" aria-labelledby="nav-public-tab">
+                <div class="row">
+                    <div class="col" id="register_div">
+                        <div class="table-responsive-sm">
+                            <% if(list.length){ %>
+                            <table id="dtBasicExample" class="table-theme table table-sm" cellspacing="0" width="100%">
+                                <thead>
+                                    <tr>
+
+                                        <th class="th-sm">Name
+
+                                        </th>
+                                        <th class="th-sm">Address
+
+                                        </th>
+                                        <th class="th-sm"> Action
+                                        </th>
+
+                                    </tr>
+                                    <% } %>
+                                </thead>
+                                <tbody>
+                                    <% for (var i = 0; i < list.length; i++) { %>
+                                    <tr>
+                                        <td>
+
+                                            <%= list[i].walletName %>
+
+                                        </td>
+                                        <td>
+                                            <%= list[i].registered_address %>
+                                        </td>
+                                        <td>
+                                            <form method="post" action="/registeredList/delete/<%= list[i].id %>" style="float:right">
+
+                                                <input type="submit" name="delete" value='Delete' onClick="return confirm('Are you sure you want to delete?')" />
+                                                <input type="hidden" name="_method" value="DELETE" />
+                                                <input type="hidden" name="walletId" value="<%=list[i].walletId%>" />
+                                                <input type="hidden" name="registeredId" value="<%=list[i].id%>" />
+                                            </form>
+                                            <!-- <button class="btn btn-danger" type="button" (click)="openDialogAddress(row)">
+                                                        Delete
+                                                    </button> -->
+                                        </td>
+                                    </tr>
+
+                                    <% } %>
+                                </tbody>
+
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
 
 
-        <!-- <script type="text/JavaScript" src="/js/dialog.js"></script> -->
-        <script>
-            (function() {
+<!-- <script type="text/JavaScript" src="/js/dialog.js"></script> -->
+<script>
+    (function () {
 
-                var registerDialog = document.getElementById('registerWindow');
-                var addRegister = document.getElementById('Registershow');
-                var exitButton = document.getElementById('showExit');
+        var registerDialog = document.getElementById('registerWindow');
+        var addRegister = document.getElementById('Registershow');
+        var exitButton = document.getElementById('showExit');
 
-                addRegister.onclick = function() {
-                    registerDialog.show();
-                    addRegister.style.display = "none";
-                };
-                exitButton.onclick = function() {
-                    registerDialog.close();
-                    addRegister.style.display = "block";
-                };
-            })();
+        addRegister.onclick = function () {
+            registerDialog.show();
+            addRegister.style.display = "none";
+        };
+        exitButton.onclick = function () {
+            registerDialog.close();
+            addRegister.style.display = "block";
+        };
+    })();
 
-            function dosumit() {
+    function dosumit() {
 
-            }
-        </script>
-        <script>
-            $(document).ready(function() {
-                // make following action fire when radio button changes
-                $('input[type=radio]').change(function() {
-                    console.log("hello");
-                    // find the submit button and click it on the previous action
-                    $('#radioBtn').submit();
-                });
-            });
-        </script>
+    }
+</script>
+<script>
+    $(document).ready(function () {
+        // make following action fire when radio button changes
+        $('input[type=radio]').change(function () {
+            console.log("hello");
+            // find the submit button and click it on the previous action
+            $('#radioBtn').submit();
+        });
+    });
+</script>
 
-        <script type="text/JavaScript" src="/js/dialog.js">
+<script type="text/JavaScript" src="/js/dialog.js">
