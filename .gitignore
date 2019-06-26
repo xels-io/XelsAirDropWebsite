@@ -1,2 +1,8 @@
 node_modules/
 package-lock.json
+/nbproject/private/
+
+/config/*
+!/config/index.html
+nbproject/project.properties
+nbproject/

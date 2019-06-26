@@ -15,8 +15,8 @@ const queryMethod = require('./controller/query');
 const distirbute = require('./controller/distribute');
 const cors = require('cors');
 
-const firebaseApp = require('./config/firebaseConfig');
-const fireDb = require('./config/push-notification');
+//const firebaseApp = require('./config/firebaseConfig');
+//const fireDb = require('./config/push-notification');
 //var connection = passport.connection;
 const connection = mysql.createConnection(dbconfig.connection);
 
@@ -85,17 +85,17 @@ server.listen(httpPort, () => {
     console.log(`Listening on port: ${httpPort}`);
 });
 
-app.get('/firebase', function(req, res) {
-
-    console.log("HTTP Get Request");
-    res.send("HTTP GET Request");
-    fireDb.initializeFirebase(); // = initializeFirebase
-
-    //fireDb.database();
-    //Insert key,value pair
-    // firebaseApp.database().ref('/TestMessages').set({ TestMessage: 'GET Request' });
-
-});
+//app.get('/firebase', function(req, res) {
+//
+//    console.log("HTTP Get Request");
+//    res.send("HTTP GET Request");
+//    fireDb.initializeFirebase(); // = initializeFirebase
+//
+//    //fireDb.database();
+//    //Insert key,value pair
+//    // firebaseApp.database().ref('/TestMessages').set({ TestMessage: 'GET Request' });
+//
+//});
 //   req.flash()
 app.get('/', getHomePage);
 
