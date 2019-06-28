@@ -1,25 +1,35 @@
 const env = require('../config/environment');
 const query = require('./query');
-
+const qs = require('qs');
+let encryp = require('../system/encryption');
 const connection = mysql.createConnection(dbconfig.connection);
 
 function distributeXels(rddWalletDetails) {
-    console.log(rddWalletDetails);
-    console.log(JSON.stringify(rddWalletDetails.addressList));
+
     return new Promise((resolve, reject) => {
         query.RDDWalletWithRegisteredList(rddWalletDetails.walletId).then(walletDetails => {
-            console.log(walletDetails);
+            let balance = walletDetails[0].balance - 1;
             var finalList = walletDetails.map(function(obj) {
-                return obj.registered_address;
+                return {
+                    destinationAddress: obj.registered_address,
+                    amount: balance
+                }
+
             });
+
             if (finalList.length > 0) {
-                estimateFee(finalList).then(fee => {
+                estimateFee(walletDetails, finalList).then(fee => {
                     let estimatedfee = fee.InnerMsg / 100000000;
-                    BuildTransaction(finalList, walletDetails[0].balance, estimatedfee).then(hexData => {
-                        let hexString = hexData.InnerMsg.hex;
-                        SendTransaction(hexString).then(success => {
-                            let txid = success.InnerMsg.transactionId;
-                            //equallyDitrib(order.id, txid);
+                    amountCal(estimatedfee, walletDetails[0].balance, finalList).then(addressAmount => {
+                        // console.log(addressAmount);
+                        BuildTransaction(addressAmount, walletDetails, estimatedfee).then(hexData => {
+                            let hexString = hexData.InnerMsg.hex;
+                            SendTransaction(hexString).then(success => {
+                                let txid = success.InnerMsg.transactionId;
+                                //equallyDitrib(order.id, txid);
+                            }).catch(err => {
+                                console.log(err);
+                            });
                         }).catch(err => {
                             console.log(err);
                         });
@@ -31,71 +41,126 @@ function distributeXels(rddWalletDetails) {
                     console.log(err);
                 });
             }
-
         })
     });
-    // return new Promise((resolve, reject) => {
-
-
-    // });
 }
 
-function rddWallet(walletId) {
+
+function getBalance(walletID) {
     return new Promise((resolve, reject) => {
-        let walletDetails = "select * from rdd_wallet where id =" + walletId;
-        connection.query(walletDetails, (err, rows) => {
-            if (err)
-                reject(err);
-            resolve(rows);
-        })
+        query.RDDWalletRow(walletID).then(wallet => {
+            const prm = {
+                    'URL': '/api/wallet/balance',
+                    'walletName': wallet[0].walletName,
+                    'accountName': env.accountName
+                }
+                // let url = env.baseXels + env.GetApiURL;
+            axios.get(env.baseXels + env.GetApiURL, { params: prm }).then(response => {
+                resolve(response.data.InnerMsg.balances);
+            }).catch(error => {
+                console.log('ERROR FROM getBalance()');
+                console.log("getBalance" + error);
+                reject(error);
+            });
+        }).catch(err => {
+            console.log(err);
+        });
     });
 }
 
+function amountCal(estimatedfee, balance, mappedAddress) {
+    return new Promise((resolve, reject) => {
+        let lengthOfArray = mappedAddress.length;
+        let TotalBalance = balance - 1;
+        let amountReceive = TotalBalance / lengthOfArray;
+        const newAddress = mappedAddress.map(address => {
+            return {
+                destinationAddress: address.destinationAddress,
+                amount: amountReceive
+            };
+        })
 
-function estimateFee(xels_address) {
+        // console.log(newAddress);
+        resolve(newAddress);
+    })
+}
 
+function estimateFee(walletDetails, xels_address) {
+    //console.log(xels_address);
     return new Promise((resolve, reject) => {
         const prm = {
-            'URL': '/api/wallet/estimate-txfee',
-            'walletName': env.walletName,
-            'accountName': env.account,
-            'allowUnconfirmed': true,
-            'feeType': feeType,
-            'allowUnconfirmed': true,
-            'recipients[0][destinationAddress]': xels_address,
-            'recipients[0][amount]': 200
-        }
-        axios.get(env.baseXels + env.GetApiURL, { params: prm }).then(response => {
+                'URL': '/api/wallet/estimate-txfee',
+                'walletName': walletDetails[0].walletName,
+                'accountName': env.accountName,
+                'allowUnconfirmed': true,
+                'feeType': 'medium',
+                'allowUnconfirmed': true,
+                'recipients': xels_address
+            }
+            // const prm = {
+            //     'URL': '/api/wallet/estimate-txfee',
+            //     'walletName': 'ServerR1',
+            //     'accountName': env.accountName,
+            //     'allowUnconfirmed': true,
+            //     'feeType': 'medium',
+            //     'allowUnconfirmed': true,
+            //     'recipients': xels_address
+            // }
+            // console.log(prm);
+            //console.log(env.localPort + env.GetApiURL);
+
+        axios.get(env.baseXels + env.GetApiURL, {
+            params: prm,
+            paramsSerializer: function(params) {
+                return qs.stringify(params, { encode: true });
+            }
+        }).then(response => {
+            console.log(response.data);
             resolve(response.data);
         }).catch(error => {
             console.log('ERROR FROM estimateFee()');
-            console.log("estimateFee" + error);
+
             reject(error);
         });
     });
 }
 
-function BuildTransaction(xels_address, amount, estimatedfee) {
+function BuildTransaction(xels_address, walletDetails, estimatedfee) {
+    console.log(xels_address);
+
     return new Promise((resolve, reject) => {
-        const pram = {
+        let pw = encryp.decryptPassword(walletDetails[0].password);
+        console.log(encryp.decryptPassword(walletDetails[0].password));
+        const param = {
             URL: '/api/wallet/build-transaction',
-            accountName: env.account,
+            accountName: env.accountName,
             allowUnconfirmed: true,
-            recipients: [{
-                amount: amount,
-                destinationAddress: xels_address
-            }],
-            walletName: env.walletName,
+            recipients: xels_address,
+            walletName: walletDetails[0].walletName,
             feeAmount: estimatedfee,
-            password: env.walletPw,
+            password: pw,
             shuffleOutputs: false
         };
-        axios({ method: 'post', url: env.baseXels + env.PostAPIURl, data: pram })
+
+        // const param = {
+        //     URL: '/api/wallet/build-transaction',
+        //     accountName: env.accountName,
+        //     allowUnconfirmed: true,
+        //     recipients: xels_address,
+        //     walletName: 'ServerR1',
+        //     feeAmount: estimatedfee,
+        //     password: '123',
+        //     shuffleOutputs: false
+        // };
+        console.log(param);
+        axios({ method: 'post', url: env.baseXels + env.PostAPIURl, data: param })
             .then(response => {
+                console.log(response.data);
                 resolve(response.data);
             }).catch(error => {
                 console.log('ERROR FROM BuildTransaction()');
-                reject(error);
+                console.log(error.response.data);
+                //  reject(error);
             });
     })
 }
@@ -109,13 +174,16 @@ function SendTransaction(hex) {
 
         axios({ method: 'post', url: env.baseXels + env.PostAPIURl, data: prm })
             .then(response => {
-                //console.log(response.data);
+                console.log(response.data);
                 resolve(response.data);
             }).catch(error => {
                 console.log('ERROR FROM SendTransaction()');
+                console.log(error.response.data.InnerMsg);
                 reject(error);
             });
     });
 
 }
 module.exports.distributeXels = distributeXels;
+
+module.exports.getBalance = getBalance;
