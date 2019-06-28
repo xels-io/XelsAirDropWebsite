@@ -2,36 +2,48 @@
 
     <%- include('./layout/partials/navbar'); -%>
 
-        <section id="GUI" class="section-theme">
+        <section id="GUI" class="container-fluid">
+            <!-- <app-header></app-header> -->
             <div class="container">
                 <div class="row">
-                    <div class="col-md-10 mx-auto">
-                        <div class="box-theme p-md-5 p-3">
-                            <form class="form-theme" method="POST" action="/createRDD" id="rddWallet">
-                                <div class="section-title">Create a new wallet</div>
-
-                                <% if (typeof rddMessage != 'undefined' && rddMessage) { %>
-                                    <p class="alert alert-success">
-                                        <%= rddMessage %>
-                                    </p>
-                                    <% } else if(typeof rddErrMessage != 'undefined' && rddErrMessage) { %>
-                                        <p class="alert alert-danger">
-                                            <%- rddErrMessage %>
-                                        </p>
-                                        <% } %>
-                                            <div class="form-group">
-                                                <label for="walletName">Name</label>
-                                                <input type="text" class="form-control" id="walletName" name="walletName" placeholder="Enter a RDD wallet name." required>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="submit" class="btn btn-theme btn-success mb-2" value="Submit">Create a new wallet</button>
-                                                <button type="reset" class="btn btn-theme btn-warning">Cancel</button>
-                                            </div>
-                            </form>
+                    <!-- /col -->
+                    <div class="col-12 right-login d-flex align-content-center flex-wrap createWallet">
+                        <div class="col-12">
+                            <app-header></app-header>
                         </div>
+
+                        <form class="col-6 mx-auto d-flex align-content-center flex-wrap" method="POST" action="/getmnemonics" id="rddWallet">
+                            <div class="col-12 text-center">
+                                <h3 class="display-4 mb-4">Create a wallet</h3>
+
+                            </div>
+
+
+                            <div class="form-group col-12">
+                                <label for="walletName">Name</label>
+                                <input type="text" class="form-control" id="walletName" name="walletName" placeholder="Enter a wallet name." required>
+
+                            </div>
+
+                            <div class="modal-footer col-12">
+                                <button type="button" class="btn btn-outline-dark">Cancel</button>
+                                <button type="submit" class="btn btn-primary btn-block" value="Submit">Create a new wallet</button>
+                            </div>
+                        </form>
+
+                        <!-- <button type="button" class="btn btn-primary btn-block">Add New Admin</button> -->
+                        <div class="table-responsive-sm">
+                            <table class="table">
+
+                            </table>
+                        </div>
+                        <!-- /form -->
                     </div>
+                    <!-- /col-8 -->
                 </div>
             </div>
+
+            <!-- /row -->
         </section>
 
         <%- include('./layout/footer'); -%>

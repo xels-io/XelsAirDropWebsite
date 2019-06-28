@@ -9,20 +9,8 @@ module.exports = {
     getRDDCreation: (req, res) => {
         res.render('RDD.ejs');
     },
-    getBalance: (req, res) => {
-        let walletParam = {
-            'URL': '/api/wallet/unusedaddress',
-            'walletName': req.body.walletName,
-            'accountName': 'account 0'
-        }
-        getAddress(walletParam)
-            .then(address => {})
-            .catch(err => {
-                console.log(err);
-            });
-    },
     walletCreate: (req, res) => {
-        let getPassword = encryp.passwordGenerator();
+        let passwordEnc = encryp.passwordGenerator();
         getMnemonicsApi().then(mnemonic => {
             let walletParam = {
                 'URL': '/api/wallet/create',
@@ -30,65 +18,43 @@ module.exports = {
                 'mnemonic': mnemonic,
                 'name': req.body.walletName,
                 'passphrase': 1234,
-                'password': getPassword
+                'password': passwordEnc
             }
             apiWallet(walletParam).then(success => {
 
-                walletAddress(req.body.walletName)
-                    .then(address => {
-                        const walletDetails = {
-                            ...walletParam,
-                            'address': address
-                        };
-                        insertWallet(walletDetails).then(rowsInserted => {
-                            let waletUser = {
-                                userId: req.user.id,
-                                name: req.user.email,
-                                wid: rowsInserted.insertId,
-                                wname: req.body.walletName
-                            }
-                            insertWalletUserMapping(waletUser);
-                            if (rowsInserted.insertId) {
-                                req.flash('rddMessage', "Wallet Created Successfully");
-                                // res.redirect('/rddList');
-                                res.render('RDD.ejs', { rddMessage: req.flash('rddMessage') });
-                            }
-                            //res.redirect('/rddList?wid=' + rowsInserted.insertId);
-
-                        }).catch(err => {
-                            console.log(err);
-                        });
+                walletAddress(req.body.walletName).then(address => {
+                    const walletDetails = {
+                        ...walletParam,
+                        'address': address
+                    };
+                    insertWallet(walletDetails).then(rowsInserted => {
+                        let waletUser = {
+                            userId: req.user.id,
+                            name: req.user.email,
+                            wid: rowsInserted.insertId,
+                            wname: req.body.walletName
+                        }
+                        insertWalletUserMapping(waletUser);
+                        if (rowsInserted.insertId)
+                            res.redirect('/rddList');
+                        //res.redirect('/rddList?wid=' + rowsInserted.insertId);
 
                     }).catch(err => {
                         console.log(err);
                     });
 
+                }).catch(err => {
+                    console.log(err);
+                });
+
             }).catch(err => {
                 console.log("wallet");
-                req.flash('rddErrMessage', err.InnerMsg);
-                res.render('RDD.ejs', { rddErrMessage: req.flash('rddErrMessage') });
+                req.flash('rddMessage', err.InnerMsg);
+                res.render('error.ejs', { message: req.flash('rddMessage') });
 
             });
         });
     },
-}
-
-function getAddress(walletParam) {
-    return new Promise((resolve, reject) => {
-        const addressParam = {
-            'URL': '/api/wallet/addresses',
-            'walletName': walletName,
-            'accountName': 'account 0'
-        }
-        let url = apiEnv.baseXels + apiEnv.GetApiURL;
-        axios.get(url, { params: addressParam }).then(response => {
-            let resAddress = response.data.InnerMsg.addresses[0].address;
-            //console.log(response.data.InnerMsg.addresses[0].address);
-            resolve(resAddress);
-        }).catch(err => {
-            reject(error);
-        });
-    })
 }
 
 function walletAddress(walletName) {
@@ -146,10 +112,9 @@ function getMnemonicsApi() {
 }
 
 function insertWallet(walletParam) {
-
     return new Promise((resolve, reject) => {
 
-        let insertRdd = "INSERT INTO rdd_wallet (walletName , password , address, mnemonics, passphrase  ) values ('" + walletParam.name + "','" + encryp.enCryptPassword(walletParam.password) + "','" + walletParam.address + "', '" + walletParam.mnemonic + "', " + walletParam.passphrase + " )";
+        let insertRdd = "INSERT INTO rdd_wallet (walletName , password , address, mnemonics, passphrase  ) values ('" + walletParam.name + "','" + walletParam.password + "','" + walletParam.address + "', '" + walletParam.mnemonic + "', " + walletParam.passphrase + " )";
         connection.query(insertRdd, (err, rows) => {
             if (err)
                 reject(err);
