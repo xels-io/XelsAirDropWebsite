@@ -21,6 +21,9 @@ dbconfig = require('../config/database');
 
 admin = require('firebase-admin');
 firebase = require('firebase');
+bcrypt = require('bcrypt');
+ passport = require("passport");
+LocalStrategy = require("passport-local").Strategy;
 
 //app.use(flash());
 

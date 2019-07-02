@@ -2,7 +2,6 @@ const env = require('../config/environment');
 const query = require('./query');
 const qs = require('qs');
 let encryp = require('../system/encryption');
-const connection = mysql.createConnection(dbconfig.connection);
 
 function distributeXels(rddWalletDetails) {
 
@@ -21,24 +20,23 @@ function distributeXels(rddWalletDetails) {
                 estimateFee(walletDetails, finalList).then(fee => {
                     let estimatedfee = fee.InnerMsg / 100000000;
                     amountCal(estimatedfee, walletDetails[0].balance, finalList).then(addressAmount => {
-                        // console.log(addressAmount);
                         BuildTransaction(addressAmount, walletDetails, estimatedfee).then(hexData => {
                             let hexString = hexData.InnerMsg.hex;
                             SendTransaction(hexString).then(success => {
                                 let txid = success.InnerMsg.transactionId;
-                                //equallyDitrib(order.id, txid);
+                                resolve(success);
                             }).catch(err => {
-                                console.log(err);
+                                reject(err);
                             });
                         }).catch(err => {
-                            console.log(err);
+                            reject(err);
                         });
                     }).catch(err => {
-                        console.log(err);
+                        reject(err);
                     });
 
                 }).catch(err => {
-                    console.log(err);
+                    reject(err);
                 });
             }
         })
@@ -54,13 +52,10 @@ function getBalance(walletID) {
                     'walletName': wallet[0].walletName,
                     'accountName': env.accountName
                 }
-                // let url = env.baseXels + env.GetApiURL;
             axios.get(env.baseXels + env.GetApiURL, { params: prm }).then(response => {
                 resolve(response.data.InnerMsg.balances);
             }).catch(error => {
-                console.log('ERROR FROM getBalance()');
-                console.log("getBalance" + error);
-                reject(error);
+                reject(error.response.data);
             });
         }).catch(err => {
             console.log(err);
@@ -79,14 +74,11 @@ function amountCal(estimatedfee, balance, mappedAddress) {
                 amount: amountReceive
             };
         })
-
-        // console.log(newAddress);
         resolve(newAddress);
     })
 }
 
 function estimateFee(walletDetails, xels_address) {
-    //console.log(xels_address);
     return new Promise((resolve, reject) => {
         const prm = {
                 'URL': '/api/wallet/estimate-txfee',
@@ -97,40 +89,25 @@ function estimateFee(walletDetails, xels_address) {
                 'allowUnconfirmed': true,
                 'recipients': xels_address
             }
-            // const prm = {
-            //     'URL': '/api/wallet/estimate-txfee',
-            //     'walletName': 'ServerR1',
-            //     'accountName': env.accountName,
-            //     'allowUnconfirmed': true,
-            //     'feeType': 'medium',
-            //     'allowUnconfirmed': true,
-            //     'recipients': xels_address
-            // }
-            // console.log(prm);
-            //console.log(env.localPort + env.GetApiURL);
-
         axios.get(env.baseXels + env.GetApiURL, {
             params: prm,
             paramsSerializer: function(params) {
                 return qs.stringify(params, { encode: true });
             }
         }).then(response => {
-            console.log(response.data);
+            // console.log(response.data);
             resolve(response.data);
         }).catch(error => {
             console.log('ERROR FROM estimateFee()');
-
-            reject(error);
+            reject(error.response.data.InnerMsg[0].message);
         });
     });
 }
 
 function BuildTransaction(xels_address, walletDetails, estimatedfee) {
-    console.log(xels_address);
-
     return new Promise((resolve, reject) => {
         let pw = encryp.decryptPassword(walletDetails[0].password);
-        console.log(encryp.decryptPassword(walletDetails[0].password));
+        // console.log(encryp.decryptPassword(walletDetails[0].password));
         const param = {
             URL: '/api/wallet/build-transaction',
             accountName: env.accountName,
@@ -141,26 +118,11 @@ function BuildTransaction(xels_address, walletDetails, estimatedfee) {
             password: pw,
             shuffleOutputs: false
         };
-
-        // const param = {
-        //     URL: '/api/wallet/build-transaction',
-        //     accountName: env.accountName,
-        //     allowUnconfirmed: true,
-        //     recipients: xels_address,
-        //     walletName: 'ServerR1',
-        //     feeAmount: estimatedfee,
-        //     password: '123',
-        //     shuffleOutputs: false
-        // };
-        console.log(param);
         axios({ method: 'post', url: env.baseXels + env.PostAPIURl, data: param })
             .then(response => {
-                console.log(response.data);
                 resolve(response.data);
             }).catch(error => {
-                console.log('ERROR FROM BuildTransaction()');
-                console.log(error.response.data);
-                //  reject(error);
+                reject(error.response.data.InnerMsg[0].message);
             });
     })
 }
@@ -174,12 +136,9 @@ function SendTransaction(hex) {
 
         axios({ method: 'post', url: env.baseXels + env.PostAPIURl, data: prm })
             .then(response => {
-                console.log(response.data);
                 resolve(response.data);
             }).catch(error => {
-                console.log('ERROR FROM SendTransaction()');
-                console.log(error.response.data.InnerMsg);
-                reject(error);
+                reject(error.response.data.InnerMsg[0].message);
             });
     });
 

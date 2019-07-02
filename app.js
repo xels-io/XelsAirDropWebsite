@@ -2,21 +2,16 @@ require('./system/require');
 require('./system/loader');
 
 const { getHomePage } = require('./controller/index');
-const { getRDDCreation, walletCreate } = require('./controller/rdd');
+const { walletCreate } = require('./controller/rdd');
 const { getSignUpPage } = require('./controller/signup');
 let encryption = require('./system/encryption');
 
-
-const dbDetails = require('./config/database');
-const apiEnv = require('./config/environment');
 const passport = require("./config/passport");
 const dbconfig = require('./config/database');
 const queryMethod = require('./controller/query');
-const distirbute = require('./controller/distribute');
+const distribute = require('./controller/distribute');
 const cors = require('cors');
 
-//const firebaseApp = require('./config/firebaseConfig');
-//const fireDb = require('./config/push-notification');
 //var connection = passport.connection;
 const connection = mysql.createConnection(dbconfig.connection);
 
@@ -64,16 +59,6 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
-//Sync Database
-// models.sequelize.sync().then(function() {
-
-//     console.log('Nice! Database looks fine')
-
-// }).catch(function(err) {
-
-//     console.log(err, "Something went wrong with the Database Update!")
-
-// });
 
 // set the app to listen on the port
 const server = http.createServer(app);
@@ -85,41 +70,19 @@ server.listen(httpPort, () => {
     console.log(`Listening on port: ${httpPort}`);
 });
 
-//app.get('/firebase', function(req, res) {
-//
-//    console.log("HTTP Get Request");
-//    res.send("HTTP GET Request");
-//    fireDb.initializeFirebase(); // = initializeFirebase
-//
-//    //fireDb.database();
-//    //Insert key,value pair
-//    // firebaseApp.database().ref('/TestMessages').set({ TestMessage: 'GET Request' });
-//
-//});
-//   req.flash()
 app.get('/', getHomePage);
 
 app.get('/register', getSignUpPage);
 app.get('/dashboard', isLoggedIn, (req, res) => {
-    let rddWallet = "select * from rdd_wallet"
-    connection.query(rddWallet, function(err, walletRows) {
-        let adminU = "select user_wallet_mapping.* , rdd_wallet.walletName ,user.email from user_wallet_mapping inner join rdd_wallet inner join user where user_wallet_mapping.wallet_id = rdd_wallet.id and user_wallet_mapping.user_id = user.id";
-        connection.query(adminU, function(err, rows) {
-            if (err)
-                return err;
-            else {
-                res.render('dashboard.ejs', {
-                    userId: req.user.id,
-                    userName: req.user.email,
-                    admin: rows,
-                    walletList: walletRows
-                })
-            }
-        });
+    queryMethod.userWalletMapping().then(rows => {
+        res.render('dashboard.ejs', {
+            userId: req.user.id,
+            userName: req.user.email,
+            admin: rows
+        })
+    }).catch(err => {
+        console.log(err);
     });
-
-
-
 });
 app.get('/logout', (req, res) => {
     req.logout();
@@ -132,91 +95,115 @@ app.get('/error', (req, res) => {
     })
 });
 
-// function typeWallet()
-// {
-//     return new Promise((resolve, reject) => {
-//         let selectQuery = "select rdd_type.* , rdd_wallet.walletName from rdd_type inner join rdd_wallet where rdd_type.id = " +rdd_wallet.rdd_type;connection.query(selectQuery, (err, rows) => {
-//             if (err)
-//                 reject(err);
-//             resolve(rows);
-//         })
-//     })
-//     let selectQuery = "select rdd_type.* , rdd_wallet.walletName from rdd_type inner join rdd_wallet where rdd_type.id = " +rdd_wallet.rdd_type;
-//     connection.query(selectQuery, (err, rows) => {
-//         if(rows.lenght > 0 )
-//         {
-
-//         }
-
-//     })
-// }
-
-
 app.get('/rddDetails', isLoggedIn, (req, res) => {
     let temp_wallet_id = req.query.id;
-
-    let typeWallet = "select rdd_wallet.walletName, rdd_wallet.rdd_type, rdd_type.* from rdd_wallet inner join rdd_type where rdd_wallet.rdd_type=rdd_type.id and rdd_wallet.id= " + temp_wallet_id;
-    connection.query(typeWallet, (err, typeWallet) => {
+    queryMethod.typeOfWallet(temp_wallet_id).then(response => {
         queryMethod.registeredAddressList(temp_wallet_id).then(registeredList => {
+          //  console.log(registeredList)
             res.render('rddDetails.ejs', {
                 walletId: temp_wallet_id,
-                list: registeredList
-                    // typeW: responserows.length? responserows:emp;
+                list: registeredList,
+                walletName: registeredList.length > 0 ? registeredList[0].walletName : '',
+                bAmount: registeredList.length > 0 ? registeredList[0].balance : 0
             })
         }).catch(err => {
             console.log(err);
-        })
-
-    })
-
+        });
+    }).catch(err => {
+        console.log(err);
+    });
 });
 
 app.post('/distributeXels', isLoggedIn, (req, res) => {
-    // console.log(req.body.wallet_id)
     let param = {
-        walletId: req.body.wallet_id,
-        addressList: req.body.addressList
+        walletId: req.body.wallet_id
     }
-    distirbute.distributeXels(param);
+    queryMethod.registeredAddressList(req.body.wallet_id).then(registeredList => {
+        distribute.distributeXels(param).then(response => {
+            console.log(response);
+            if(response.InnerMsg.transactionId)
+            {
+                req.flash('message', "Distributed successfully");
+                res.render('rddDetails.ejs', {
+                    walletId: req.body.wallet_id,
+                    message: req.flash('message'), 
+                    list: registeredList,
+                    walletName: registeredList.length > 0 ? registeredList[0].walletName : '',
+                    bAmount: registeredList.length > 0 ? registeredList[0].balance : 0
+                });
+            }
+            
+            //res.redirect('/rddDetails?id=' + req.body.wallet_id);
+        }).catch(err => {
+            req.flash('distributeErrMessage', err);
+            res.render('rddDetails.ejs', {
+                walletId: req.body.wallet_id,
+                list: registeredList,
+                errMessage: req.flash('distributeErrMessage'), 
+                walletName: registeredList.length > 0 ? registeredList[0].walletName : '',
+                bAmount: registeredList.length > 0 ? registeredList[0].balance : 0
+            });
+        });
+    }).catch(err => {
+        console.log(err);
+    });
+  
+});
+app.post('/getbalance', isLoggedIn, (req, res) => {
+
+    let walletId = req.body.wallet_id;
+    distribute.getBalance(walletId).then(balance => {
+        //console.log(balance);
+        let amount = balance[0].amountConfirmed / 100000000;
+        queryMethod.registeredAddressList(walletId).then(registeredList => {
+            queryMethod.updateBalance(amount, walletId)
+            .then(response => {
+                req.flash('balanceUpdate', 'Rdd wallet balance is '+ amount);
+                res.render('rddDetails.ejs', {
+                    walletId: walletId,
+                    list: registeredList,
+                    walletName: registeredList.length > 0 ? registeredList[0].walletName : '',
+                    message: req.flash('balanceUpdate'), 
+                    bAmount: amount
+                        // typeW: responserows.length? responserows:emp;
+                })
+               // res.redirect('/rddDetails?id=' + req.body.wallet_id);
+            }).catch(err => {
+                return err;
+            });
+        }).catch(err => {
+            console.log(err);
+        });
+    }).catch(err => {
+        console.log(err);
+    });
+
 });
 app.get('/createRDD', isLoggedIn, (req, res) => {
-    let selectQuery = "select * from rdd_type";
-
-    connection.query(selectQuery, (err, rows) => {
-        res.render('RDD.ejs', {
-            type: rows,
-            userId: req.user.id,
-            message: req.flash('rddMessage')
-        });
-    })
-
+    res.render('RDD.ejs', {
+        userId: req.user.id,
+        message: req.flash('rddMessage')
+    });
 });
-// app.post('/rddWallet/delete/:id', (req, res) => {
+app.post('/createRDD', walletCreate);
 
-//     const { id_rddList } = req.body;
-//     const deleteQuery = "DELETE FROM registered_list WHERE id = " + req.body.rddListId;
-//     console.log(deleteQuery);
-//     connection.query(deleteQuery, (err, result) => {
-//         res.redirect('/rddList');
-//     });
-// });
 
 app.post('/registeredList/delete/:id', (req, res) => {
     const registeredId = req.body.registeredId;
-    const deleteQuery = "DELETE FROM registered_list WHERE id = " + registeredId;
-    //console.log(deleteQuery);
-    connection.query(deleteQuery, (err, result) => {
+    queryMethod.deleteRegisteredList(registeredId).then(response => {
         res.redirect('/rddDetails?id=' + req.body.walletId);
+    }).catch(err => {
+        return err;
     });
 });
 app.get('/rddList', isLoggedIn, (req, res) => {
-
+    //console.log(req.user);
     queryMethod.rddWalletDetails().then(response => {
         let rddArr = response;
         res.render('rddList.ejs', {
             list: rddArr,
-            userId: req.user.email,
-            message: req.flash('adminMessage'),
+            userId: req.user.email
+            //message: req.flash('adminMessage'),
         });
     }).catch(err => {
         return err;
@@ -229,8 +216,10 @@ app.post('/register', passport.authenticate('local-signup', {
     failureRedirect: '/register'
 }));
 
-app.post('/getmnemonics', walletCreate);
 
+app.get('/login', (req, res) => {
+    res.render('index.ejs', { message: req.flash('loginMessage') });
+})
 
 // process the signup form
 app.post('/login', passport.authenticate('local-login', {
@@ -240,71 +229,96 @@ app.post('/login', passport.authenticate('local-login', {
 }));
 
 
-app.post('/dashboard/admin', (req, res) => {
-    //console.log(req.body);
-    connection.query("select * from user where email = '" + req.body.email + "'", (err, dbUser) => {
-        if (err)
-            return err;
-        if (dbUser.length) {
-            req.flash('adminMessage', 'That email is already taken.');
-            res.render('error.ejs', { message: req.flash('adminMessage') });
-        } else {
-            let insertAdmin = "INSERT INTO user (email , organization_name, password ) values ('" + req.body.email + "','" + req.body.organization_name + "','" + queryMethod.generateHash(req.body.password) + "' )";
-            //console.log(insertAdmin);
-            connection.query(insertAdmin, (err, rows) => {
-                res.redirect('/rddList');
-            })
-        }
+app.post('/rddList/admin', (req, res) => {
+    queryMethod.selectUser(req.body.email).then(dbUser => {
+        queryMethod.rddWalletDetails().then(response => {
+            let rddArr = response;
+            if (dbUser.length) {
+                req.flash('adminMessage', 'That email is already taken.');
+                res.render('rddList.ejs', {
+                    list: rddArr, 
+                    errMessage: req.flash('adminMessage'), 
+                    userId: req.body.email 
+                });
+            } else {
+                queryMethod.insertionNewAdmin(req.body.email, req.body.organization_name, req.body.password).then(insertRow => {
+                        req.flash('adminMessage', "New admin added successfully");
+                        res.render('rddList.ejs', {
+                            list: rddArr,
+                            userId: req.body.email,
+                            message: req.flash('adminMessage')
+                        });
+                }).catch(err => {
+                    console.log(err);
+                });
+            }
+        }).catch(err => {
+            console.log(err);
+            });
 
-    });
+        }).catch(err => {
+            return err;
+        });
 });
 
 app.post('/registerAddress', (req, res) => {
-
-    let insertAdmin = "INSERT INTO registered_list (registered_address , rdd_id ) values ('" + req.body.address + "', " + req.body.wallet_id + " )";
-    connection.query(insertAdmin, (err, rows) => {
-        if (err)
-            res.send(err);
+    queryMethod.insertionRegisterList(req.body.address, req.body.wallet_id).then(response => {
+        req.flash('rddMessage', "Address registered successfully");
         res.redirect('rddDetails?id=' + req.body.wallet_id);
-    })
+    }).catch(err => {
+        console.log(err);
+    });
 });
 app.post('/typeWallet', (req, res) => {
-    console.log(req.body);
-    let updateWallet = "UPDATE rdd_wallet SET rdd_type=" + req.body.type1 + " WHERE id='" + req.body.wallet_id + "'";
-    //console.log(updateWallet);
-    connection.query(updateWallet, (err, rows) => {
-        if (err)
-            res.send(err);
+    queryMethod.updateTypeofWallet(req.body.type, req.body.wallet_id).then(response => {
         res.redirect('rddDetails?id=' + req.body.wallet_id);
-    })
+    }).catch(err => {
+        console.log(err);
+    });
 });
-app.post('/dashboard/updatePw', (req, res) => {
-
+app.post('/rddList/updatePw', (req, res) => {
+    
     let newPw = queryMethod.generateHash(req.body.newpPasswordchange);
-    queryMethod.userPwMatch(req.body.userId, req.body.oldpPassword).then(response => {
+    queryMethod.rddWalletDetails().then(walletRows => {
+        let rddArr = walletRows;
+        queryMethod.userPwMatch(req.body.userId, req.body.oldpPassword).then(response => {
+            //console.log(response)
+            if (response.length) {
+                let updateAdmin = "UPDATE user SET password='" + newPw + "' WHERE email='" + req.body.userId + "'";
+                connection.query(updateAdmin, (err, rows) => {
+                    if (err)
+                        res.send(err);
+                    else
+                        {
+                            req.flash('pwMessage', "Password Changed successfully");
+                            res.render('rddList.ejs', {
+                                list: rddArr,
+                                userId: req.body.userId,
+                                message: req.flash('pwMessage')
+                            });
+                        }
+                });
+            } else {
+                res.render('error.ejs', { message: response });
+            }
 
-        if (response.length) {
-            let updateAdmin = "UPDATE user SET password='" + newPw + "' WHERE email='" + req.body.userId + "'";
-
-            connection.query(updateAdmin, (err, rows) => {
-                if (err)
-                    res.send(err);
-                res.redirect('/rddList');
-            })
-        } else {
-            res.render('error.ejs', { message: response });
-        }
-
+        }).catch(err => {
+            console.log(err);
+            console.log("err");
+        req.flash('pwMessage', err);
+        res.render('rddList.ejs', {
+            list: rddArr, 
+            errMessage: req.flash('pwMessage'), 
+            userId: req.body.userId 
+        });
+        });
     }).catch(err => {
         console.log(err);
     });
 
 });
 app.get('/about', isLoggedIn, (req, res) => {
-
-    res.render('about.ejs', {
-
-    });
+    res.render('about.ejs', {});
 });
 
 

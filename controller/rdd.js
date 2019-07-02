@@ -6,9 +6,9 @@ const connection = mysql.createConnection(dbconfig.connection);
 
 
 module.exports = {
-    getRDDCreation: (req, res) => {
-        res.render('RDD.ejs');
-    },
+    // getRDDCreation: (req, res) => {
+    //     res.render('RDD.ejs');
+    // },
     getBalance: (req, res) => {
         let walletParam = {
             'URL': '/api/wallet/unusedaddress',
@@ -50,11 +50,8 @@ module.exports = {
                             insertWalletUserMapping(waletUser);
                             if (rowsInserted.insertId) {
                                 req.flash('rddMessage', "Wallet Created Successfully");
-                                // res.redirect('/rddList');
                                 res.render('RDD.ejs', { rddMessage: req.flash('rddMessage') });
                             }
-                            //res.redirect('/rddList?wid=' + rowsInserted.insertId);
-
                         }).catch(err => {
                             console.log(err);
                         });
@@ -83,7 +80,6 @@ function getAddress(walletParam) {
         let url = apiEnv.baseXels + apiEnv.GetApiURL;
         axios.get(url, { params: addressParam }).then(response => {
             let resAddress = response.data.InnerMsg.addresses[0].address;
-            //console.log(response.data.InnerMsg.addresses[0].address);
             resolve(resAddress);
         }).catch(err => {
             reject(error);
@@ -101,7 +97,6 @@ function walletAddress(walletName) {
         let url = apiEnv.baseXels + apiEnv.GetApiURL;
         axios.get(url, { params: addressParam }).then(response => {
             let resAddress = response.data.InnerMsg.addresses[0].address;
-            //console.log(response.data.InnerMsg.addresses[0].address);
             resolve(resAddress);
         }).catch(err => {
             reject(error);
@@ -162,8 +157,6 @@ function insertWallet(walletParam) {
 }
 
 function insertWalletUserMapping(param) {
-    //return new Promise((resolve, reject) => {
-
     let insertUserRdd = "INSERT INTO user_wallet_mapping (user_id  , wallet_id) values (" + param.userId + ", " + param.wid + " )";
     connection.query(insertUserRdd, (err, rows) => {
         if (err)

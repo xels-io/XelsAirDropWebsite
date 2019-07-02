@@ -1,157 +1,193 @@
 <%- include('./layout/header'); -%>
 
-<%- include('./layout/partials/navbar'); -%>
-<section class="section-theme">
-    <div class="container">
-        <div class="section-title">Dashboard</div>
-        <p class="color-theme">Welcome <strong>Name</strong> </p>
-        <div class="row mb-md-4 mb-3">
-            <div class="col-lg-4 col-md-6 col-sm-8">
-                <div class="html5-dialog">
-                    <dialog id="adminWindow" class="dialog-theme">
-                        <form class="form-theme" action="/dashboard/admin" method="POST">
-                            <h2 class="form-signin-heading heading-dialog-theme">Add Admin</h2>
-                            <% if (message.length > 0) { %>
-                            <div class="msg_alert" style="color:red;text-align:center;font-size:18px;margin-left: 50%;">
-                                <%= message %>
-                            </div>
-                            <% } %>
+    <%- include('./layout/partials/navbar'); -%>
+        <section class="section-theme">
+            <div class="container">
+                <!-- <div class="section-title">RDD List</div> -->
+                <!-- <p class="color-theme">Welcome <strong>Name</strong> </p> -->
+                <div class="row mb-md-4 mb-3">
+                   
+                    <div class="col-lg-4 col-md-6 col-sm-8">
+                        <div class="html5-dialog">
+                            <dialog id="adminWindow" class="dialog-theme">
+                                <form class="form-theme" action="/rddList/admin" method="POST">
+                                    <h2 class="form-signin-heading heading-dialog-theme">Add Admin</h2>
 
-                            <div class="form-group">
-                                <fieldset>
-                                    <input type="email" id="inputEmail" name="email" class="form-control" placeholder="Email address" required autofocus>
-                                    <legend>Email address</legend>
-                                </fieldset>
-                            </div>
-                            <div class="form-group">
-                                <fieldset>
-                                    <input type="password" id="newinputPassword" name="password" class="form-control" placeholder="Password" required title="Password must contain: Minimum 8 characters atleast 1 Alphabet and 1 Number" pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$">
-                                    <legend>Password</legend>
-                                </fieldset>
-                            </div>
-                            <div class="form-group">
-                                <fieldset>
-                                    <input type="password" title="Please enter the same Password as above" id="cinputPassword" name="cpassword" class="form-control" placeholder="Confirm Password" required />
-                                    <legend>Confirm Password</legend>
-                                </fieldset>
-                            </div>
-                            <button class="btn btn-theme btn-success" type="submit" id="addmin_add">Add</button>
-                            <button id="exitAdmin" class="btn btn-theme btn-warning">Exit</button>
-                        </form>
-                    </dialog>
-                    <button id="adminShow" class="btn btn-theme btn-success btn-block mb-2"><i class="fa fa-plus pr-3"></i> Add New Admin</button>
+
+                                                <div class="form-group">
+                                                    <fieldset>
+                                                        <input type="text" id="orgName" name="organization_name" class="form-control" placeholder="Organization Name" required autofocus>
+                                                        <legend>Organization</legend>
+                                                    </fieldset>
+                                                </div>
+                                                <div class="form-group">
+                                                    <fieldset>
+                                                        <input type="email" id="inputEmail" name="email" class="form-control" placeholder="Email address" required>
+                                                        <legend>Email address</legend>
+                                                    </fieldset>
+                                                </div>
+                                                <div class="form-group">
+                                                    <fieldset>
+                                                        <input type="password" id="newinputPassword" name="password" class="form-control" placeholder="Password" required title="Password must contain: Minimum 8 characters atleast 1 Alphabet and 1 Number" pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$">
+                                                        <legend>Password</legend>
+                                                    </fieldset>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <fieldset>
+                                                        <input type="password" title="Please enter the same Password as above" id="cinputPassword" name="cpassword" class="form-control" placeholder="Confirm Password" required />
+                                                        <legend>Confirm Password</legend>
+                                                    </fieldset>
+                                                </div>
+                                                <button class="btn btn-theme btn-success" type="submit" id="addmin_add">Add</button>
+                                                <button id="exitAdmin" class="btn btn-theme btn-warning">Exit</button>
+                                </form>
+                            </dialog>
+                            <button id="adminShow" class="btn btn-theme btn-success btn-block mb-2"><i class="fa fa-user pr-3"></i> Add New Admin</button>
+                        </div>
+                        <div class="html5-dialog">
+                            <dialog id="updateWindow" class="dialog-theme">
+                                <form class="form-theme" action="/rddList/updatePw" method="POST">
+                                    <h2 class="form-signin-heading  heading-dialog-theme">Change password</h2>
+
+                                    <div class="form-group ">
+                                        <fieldset>
+                                            <input type="password" id="oldpPassword" name="oldpPassword" class="form-control" placeholder="Old password" required autofocus>
+                                            <legend>Old password</legend>
+                                        </fieldset>
+                                    </div>
+                                    <div class="form-group ">
+                                        <fieldset>
+                                            <input type="password" id="newpPasswordchange" name="newpPasswordchange" class="form-control" placeholder="New password" pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$" title="Password must contain:
+                                        Minimum 8 characters atleast 1 Alphabet and 1 Number" required>
+                                            <legend>New password</legend>
+                                        </fieldset>
+                                    </div>
+                                    <!-- <input type="hidden " name="userId " value="<%=userId%>" /> -->
+
+                                    <input type="hidden" name="userId" value="<%=userId%>" />
+                                    <div class="form-group">
+                                        <fieldset>
+                                            <input type="password" title="Please enter the same Password as above" id="cPasswordchange" name="cinputPasswordchange" class="form-control" placeholder="Confirm Password" required />
+                                            <legend>Confirm Password</legend>
+                                        </fieldset>
+                                    </div>
+                                    <button class="btn btn-theme btn-success" type="submit" id="change_pw">Update</button>
+                                    <button id="idExit" class="btn btn-theme btn-warning">Exit</button>
+                                </form>
+                            </dialog>
+                            <button id="id_pw" class="btn btn-theme btn-success btn-block mb-2"><i class="fa fa-key pr-3"></i>Change Password</button>
+                        </div>
+                       
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-sm-8">
+                            <% if (typeof message != 'undefined' && message) { %>
+                                <p class="alert alert-success">
+                                    <%= message %>
+                                </p>
+                                <% } else if(typeof errMessage != 'undefined' && errMessage) { %>
+                                    <p class="alert alert-danger">
+                                        <%= errMessage %>
+                                    </p>
+                                    <% } %>
+                    </div>
                 </div>
-                <div class="html5-dialog">
-                    <dialog id="updateWindow" class="dialog-theme">
-                        <form class="form-theme" action="/dashboard/updatePw" method="POST">
-                            <h2 class="form-signin-heading heading-dialog-theme">Change password</h2>
-                            <div class="form-group">
-                                <fieldset>
-                                    <input type="password" id="oldpPassword" name="oldpPassword" class="form-control" placeholder="Old password" required autofocus>
-                                    <legend>Old password</legend>
-                                </fieldset>
+
+
+                <div class="tab-content tab-content-theme box-theme p-3" id="nav-tabContent">
+                    <div class="row">
+                        <div class="col">
+                            <h2 class="color-theme mb-md-4 mb-2" style="text-align: center;margin: auto;">RDD Wallet Address</h2>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade show active" id="nav-public" role="tabpanel" aria-labelledby="nav-public-tab">
+                        <div class="row">
+                            <div class="col" id="register_div">
+
+                                <div class="table-responsive-sm">
+                                    <% if(list.length){ %>
+                                        <table id="RDDTable" class="table-theme table table-sm" cellspacing="0" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th class="th-sm">Name
+
+                                                    </th>
+                                                    <th class="th-sm">Address
+                                                    </th>
+
+                                                </tr>
+                                                <% } %>
+                                            </thead>
+                                            <tbody>
+                                                <% for (var i = 0; i < list.length; i++) { %>
+                                                    <tr>
+                                                        <td>
+                                                            <a href="/rddDetails?id=<%= list[i].id %>">
+                                                                <%= list[i].walletName %>
+                                                            </a>
+                                                        </td>
+                                                        <td>
+                                                            <%= list[i].address %>
+                                                        </td>
+
+                                                    </tr>
+
+                                                    <% } %>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <th>Name
+                                                    </th>
+                                                    <th>Address
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <fieldset>
-                                    <input type="password" id="newpPasswordchange" name="newpPasswordchange" class="form-control" placeholder="New password" pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$" title="Password must contain: Minimum 8 characters atleast 1 Alphabet and 1 Number" required>
-                                    <legend>New password</legend>
-                                </fieldset>
-                            </div>
-                            <input type="hidden" name="userId" value="<%=userId%>" />
-                            <div class="form-group">
-                                <fieldset>
-                                    <input type="password" title="Please enter the same Password as above" id="cPasswordchange" name="cinputPasswordchange" class="form-control" placeholder="Confirm Password" required />
-                                    <legend>Confirm Password</legend>
-                                </fieldset>
-                            </div>
-                            <button class="btn btn-theme btn-success" type="submit" id="change_pw">Update</button>
-                            <button id="idExit" class="btn btn-theme btn-warning">Exit</button>
-                        </form>
-                    </dialog>
-                    <button id="id_pw" class="btn btn-theme btn-success btn-block mb-2"><i class="fa fa-plus pr-3"></i>Change Password</button>
+
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="row data-table-theme">
-            <div class="col" id="register_div">
-                <div class="table-responsive-sm">
-                    <% if(list.length){ %>
-                    <table id="dtBasicExample" class="table-theme table table-sm" cellspacing="0" width="100%">
-                        <thead>
-                            <tr>
-                                <th class="th-sm">Name
-                                </th>
-                                <th class="th-sm">Address
-                                </th>
-                            </tr>
-                            <% } %>
-                        </thead>
-                        <tbody>
-                            <% for (var i = 0; i < list.length; i++) { %>
-                            <tr>
-                                <td>
-                                    <a href="/rddDetails?id=<%= list[i].id %>">
-                                        <%= list[i].walletName %>
-                                    </a>
-                                </td>
-                                <td>
-                                    <%= list[i].address %>
-                                </td>
-
-                            </tr>
-
-                            <% } %>
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <th>Name
-                                </th>
-                                <th>Address
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
             </div>
-        </div>
-    </div>
-</section>
+        </section>
 
-<script type="text/JavaScript" src="/js/dialog.js">
-</script>
-<script>
-$(document).ready(function () {
-    $('#dtBasicExample').DataTable();
-    $('.dataTables_length').addClass('bs-select');
+        <script type="text/JavaScript" src="/js/dialog.js">
+        </script>
+        <script>
+            $(document).ready(function() {
+                $('#RDDTable').DataTable();
+                $('.dataTables_length').addClass('bs-select');
 
-    $("#addmin_add").click(function () {
-        $(".error").hide();
-        var hasError = false;
-        var passwordVal = $("#newinputPassword").val();
-        var checkVal = $("#cinputPassword").val();
-        if (passwordVal != checkVal) {
-            $("#cinputPassword").after('<span class="error">Passwords do not match.</span>');
-            hasError = true;
-        }
-        if (hasError == true) {
-            return false;
-        }
-    });
-    $("#change_pw").click(function () {
-        $(".error").hide();
-        var hasError = false;
-        var passwordVal = $("#newpPasswordchange").val();
-        var checkVal = $("#cPasswordchange").val();
+                $("#addmin_add").click(function() {
+                    $(".error").hide();
+                    var hasError = false;
+                    var passwordVal = $("#newinputPassword").val();
+                    var checkVal = $("#cinputPassword").val();
+                    if (passwordVal != checkVal) {
+                        $("#cinputPassword").after('<span class="error">Passwords do not match.</span>');
+                        hasError = true;
+                    }
+                    if (hasError == true) {
+                        return false;
+                    }
+                });
+                $("#change_pw").click(function() {
+                    $(".error").hide();
+                    var hasError = false;
+                    var passwordVal = $("#newpPasswordchange").val();
+                    var checkVal = $("#cPasswordchange").val();
 
-        console.log(passwordVal);
-        console.log(checkVal);
-        if (passwordVal != checkVal) {
-            $("#cPasswordchange").after('<span class="error">Passwords do not match.</span>');
-            hasError = true;
-        }
-        if (hasError == true) {
-            return false;
-        }
-    });
-});
-</script>
+                   // console.log(passwordVal);
+                   // console.log(checkVal);
+                    if (passwordVal != checkVal) {
+                        $("#cPasswordchange").after('<span class="error">Passwords do not match.</span>');
+                        hasError = true;
+                    }
+                    if (hasError == true) {
+                        return false;
+                    }
+                });
+            });
+        </script>
