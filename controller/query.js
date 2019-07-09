@@ -21,6 +21,7 @@ function userWalletMapping(walletId) {
     })
 }
 
+
 function RDDWalletWithRegisteredList(walletId) {
     return new Promise((resolve, reject) => {
         let selectQuery = "select rdd_wallet.*, registered_list.registered_address from rdd_wallet inner join registered_list on rdd_wallet.id = registered_list.rdd_id and registered_list.rdd_id = " + walletId;
@@ -44,10 +45,21 @@ function RDDWalletRow(walletId) {
 
 }
 
-function rddWalletDetails() {
+// function rddWalletDetails() {
+//     return new Promise((resolve, reject) => {
+//         let selectQuery = "select * from rdd_wallet where address IS NOT NULL";
+//         connection.query(selectQuery, (err, rows) => {
+//             if (err)
+//                 reject(err);
+//             resolve(rows);
+//         })
+//     })
+// }
+
+function userWalletMappingAddress(userId) {
     return new Promise((resolve, reject) => {
-        let selectQuery = "select * from rdd_wallet where address IS NOT NULL";
-        connection.query(selectQuery, (err, rows) => {
+        let selectAdminWallet = "select  rdd_wallet.* , user_wallet_mapping.* from rdd_wallet inner join user_wallet_mapping on user_wallet_mapping.user_id =" + userId + " and user_wallet_mapping.wallet_id = rdd_wallet.id";
+        connection.query(selectAdminWallet, (err, rows) => {
             if (err)
                 reject(err);
             resolve(rows);
@@ -145,18 +157,18 @@ function insertionRegisterList(address, wallet_id) {
     });
 }
 
-function insertionNewAdmin(email, organization_name, password) {
+function insertionNewAdmin(email, organizationId, password) {
 
     return new Promise((resolve, reject) => {
-        let insertOrg = "INSERT INTO organization_details (name  ) values ('" + organization_name + "') ";
-        connection.query(insertOrg, function(err, org_rows) {
-            let insertAdmin = "INSERT INTO user (email , organization_id, password ) values ('" + email + "','" + org_rows.insertId + "','" + generateHash(password) + "' )";
-            connection.query(insertAdmin, (err, result) => {
-                if (err)
-                    reject(err);
-                resolve(result);
-            });
+        //  let insertOrg = "INSERT INTO organization_details (name  ) values ('" + organization_name + "') ";
+        // connection.query(insertOrg, function(err, org_rows) {
+        let insertAdmin = "INSERT INTO user (email , organization_id, password ) values ('" + email + "','" + organizationId + "','" + generateHash(password) + "' )";
+        connection.query(insertAdmin, (err, result) => {
+            if (err)
+                reject(err);
+            resolve(result);
         });
+        //  });
 
     });
 }
@@ -172,17 +184,54 @@ function selectUser(email) {
     });
 }
 
+function userOrganizationList(uId, OrgId) {
+    return new Promise((resolve, reject) => {
+        let selectUser = "select user.*, organization_details.name from user inner join organization_details on user.organization_id = organization_details.id and organization_details.id = " + OrgId + " and user.id != " + uId;
+        // console.log(selectUser);
+        connection.query(selectUser, (err, result) => {
+            if (err)
+                reject(err);
+            resolve(result);
+        });
+    });
+
+}
+
+function deleteUserList(userId) {
+    return new Promise((resolve, reject) => {
+        const deleteUserList = "DELETE FROM user WHERE id = " + userId;
+        //const deleteuserWalletMap = "DELETE user_wallet_mapping , user FROM user_wallet_mapping INNER JOIN user ON  user_wallet_mapping.user_id =  user.id and user.id = " + userId;
+        connection.query(deleteUserList, (err, result) => {
+            if (err)
+                reject(err);
+            resolve(result);
+        });
+    });
+}
+
+function updateRegisteredAddress(registeredId, address) {
+    return new Promise((resolve, reject) => {
+        let updateRegisterdAddress = "UPDATE registered_list SET registered_address=" + address + " WHERE id='" + registeredId + "'";
+        connection.query(updateRegisterdAddress, (err, result) => {
+            if (err)
+                reject(err);
+            resolve(result);
+        });
+    });
+}
 module.exports.generateHash = generateHash;
 module.exports.RDDWalletWithRegisteredList = RDDWalletWithRegisteredList;
 module.exports.validPassword = validPassword;
 module.exports.userPwMatch = userPwMatch;
 module.exports.typeOfWallet = typeOfWallet;
 module.exports.registeredAddressList = registeredAddressList;
-module.exports.rddWalletDetails = rddWalletDetails;
+//module.exports.rddWalletDetails = rddWalletDetails;
 
 module.exports.RDDWalletRow = RDDWalletRow;
 
 module.exports.deleteRegisteredList = deleteRegisteredList;
+module.exports.deleteUserList = deleteUserList;
+
 module.exports.insertionRegisterList = insertionRegisterList;
 module.exports.insertionNewAdmin = insertionNewAdmin;
 
@@ -190,3 +239,9 @@ module.exports.updateTypeofWallet = updateTypeofWallet;
 module.exports.updateBalance = updateBalance;
 module.exports.selectUser = selectUser;
 module.exports.userWalletMapping = userWalletMapping;
+module.exports.userWalletMappingAddress = userWalletMappingAddress;
+
+
+module.exports.userOrganizationList = userOrganizationList;
+
+module.exports.updateRegisteredAddress = updateRegisteredAddress

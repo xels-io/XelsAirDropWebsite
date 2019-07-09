@@ -6,7 +6,7 @@
                 <!-- <div class="section-title">RDD List</div> -->
                 <!-- <p class="color-theme">Welcome <strong>Name</strong> </p> -->
                 <div class="row mb-md-4 mb-3">
-                   
+
                     <div class="col-lg-4 col-md-6 col-sm-8">
                         <div class="html5-dialog">
                             <dialog id="adminWindow" class="dialog-theme">
@@ -14,33 +14,36 @@
                                     <h2 class="form-signin-heading heading-dialog-theme">Add Admin</h2>
 
 
-                                                <div class="form-group">
-                                                    <fieldset>
-                                                        <input type="text" id="orgName" name="organization_name" class="form-control" placeholder="Organization Name" required autofocus>
-                                                        <legend>Organization</legend>
-                                                    </fieldset>
-                                                </div>
-                                                <div class="form-group">
-                                                    <fieldset>
-                                                        <input type="email" id="inputEmail" name="email" class="form-control" placeholder="Email address" required>
-                                                        <legend>Email address</legend>
-                                                    </fieldset>
-                                                </div>
-                                                <div class="form-group">
-                                                    <fieldset>
-                                                        <input type="password" id="newinputPassword" name="password" class="form-control" placeholder="Password" required title="Password must contain: Minimum 8 characters atleast 1 Alphabet and 1 Number" pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$">
-                                                        <legend>Password</legend>
-                                                    </fieldset>
-                                                </div>
+                                    <!-- <div class="form-group">
+                                        <fieldset>
+                                            <input type="text" id="orgName" name="organization_name" class="form-control" placeholder="Organization Name" required autofocus>
+                                            <legend>Organization</legend>
+                                        </fieldset>
+                                    </div> -->
 
-                                                <div class="form-group">
-                                                    <fieldset>
-                                                        <input type="password" title="Please enter the same Password as above" id="cinputPassword" name="cpassword" class="form-control" placeholder="Confirm Password" required />
-                                                        <legend>Confirm Password</legend>
-                                                    </fieldset>
-                                                </div>
-                                                <button class="btn btn-theme btn-success" type="submit" id="addmin_add">Add</button>
-                                                <button id="exitAdmin" class="btn btn-theme btn-warning">Exit</button>
+                                    <input type="hidden" name="organizationId" value="<%=organizationId%>" />
+
+                                    <div class="form-group">
+                                        <fieldset>
+                                            <input type="email" id="inputEmail" name="email" class="form-control" placeholder="Email address" required>
+                                            <legend>Email address</legend>
+                                        </fieldset>
+                                    </div>
+                                    <div class="form-group">
+                                        <fieldset>
+                                            <input type="password" id="newinputPassword" name="password" class="form-control" placeholder="Password" required title="Password must contain: Minimum 8 characters atleast 1 Alphabet and 1 Number" pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$">
+                                            <legend>Password</legend>
+                                        </fieldset>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <fieldset>
+                                            <input type="password" title="Please enter the same Password as above" id="cinputPassword" name="cpassword" class="form-control" placeholder="Confirm Password" required />
+                                            <legend>Confirm Password</legend>
+                                        </fieldset>
+                                    </div>
+                                    <button class="btn btn-theme btn-success" type="submit" id="addmin_add">Add</button>
+                                    <button id="exitAdmin" class="btn btn-theme btn-warning">Exit</button>
                                 </form>
                             </dialog>
                             <button id="adminShow" class="btn btn-theme btn-success btn-block mb-2"><i class="fa fa-user pr-3"></i> Add New Admin</button>
@@ -78,18 +81,18 @@
                             </dialog>
                             <button id="id_pw" class="btn btn-theme btn-success btn-block mb-2"><i class="fa fa-key pr-3"></i>Change Password</button>
                         </div>
-                       
+
                     </div>
                     <div class="col-lg-4 col-md-6 col-sm-8">
-                            <% if (typeof message != 'undefined' && message) { %>
-                                <p class="alert alert-success">
-                                    <%= message %>
+                        <% if (typeof message != 'undefined' && message) { %>
+                            <p class="alert alert-success">
+                                <%= message %>
+                            </p>
+                            <% } else if(typeof errMessage != 'undefined' && errMessage) { %>
+                                <p class="alert alert-danger">
+                                    <%= errMessage %>
                                 </p>
-                                <% } else if(typeof errMessage != 'undefined' && errMessage) { %>
-                                    <p class="alert alert-danger">
-                                        <%= errMessage %>
-                                    </p>
-                                    <% } %>
+                                <% } %>
                     </div>
                 </div>
 
@@ -97,24 +100,26 @@
                 <div class="tab-content tab-content-theme box-theme p-3" id="nav-tabContent">
                     <div class="row">
                         <div class="col">
-                            <h2 class="color-theme mb-md-4 mb-2" style="text-align: center;margin: auto;">RDD Wallet Address</h2>
+                            <h2 class="color-theme mb-md-4 mb-2" style="text-align: center;margin: auto;">RDD Wallets</h2>
                         </div>
                     </div>
                     <div class="tab-pane fade show active" id="nav-public" role="tabpanel" aria-labelledby="nav-public-tab">
                         <div class="row">
                             <div class="col" id="register_div">
-
                                 <div class="table-responsive-sm">
-                                    <% if(list.length){ %>
-                                        <table id="RDDTable" class="table-theme table table-sm" cellspacing="0" width="100%">
+                                    <% if(list.length > 0 ){ %>
+                                        <table id="RDDTable" class="table-hover table table-sm" cellspacing="0" width="100%">
                                             <thead>
-                                                <tr>
+                                                <tr class="table-success">
                                                     <th class="th-sm">Name
-
                                                     </th>
                                                     <th class="th-sm">Address
                                                     </th>
-
+                                                    <th></th>
+                                                    <th class="th-sm">QR
+                                                    </th>
+                                                    <th class="th-sm">Action
+                                                    </th>
                                                 </tr>
                                                 <% } %>
                                             </thead>
@@ -122,25 +127,117 @@
                                                 <% for (var i = 0; i < list.length; i++) { %>
                                                     <tr>
                                                         <td>
-                                                            <a href="/rddDetails?id=<%= list[i].id %>">
+                                                            <a class="tableLink" href="/rddDetails?id=<%= list[i].id %>">
                                                                 <%= list[i].walletName %>
                                                             </a>
                                                         </td>
                                                         <td>
-                                                            <%= list[i].address %>
+                                                            <b id="copy_xels_<%=i%>">
+                                                                <%= list[i].address %>
+                                                            </b>
                                                         </td>
-
+                                                        <td>
+                                                            <button type="button" class="btn btn-default btn-copy js-tooltip js-copy" data-toggle="tooltip" data-copy="#copy_xels_<%=i%>" title="Copy to clipboard" data-placement="top">
+                                                                <svg class="icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="24" height="24" viewBox="0 0 24 24"><path d="M17,9H7V7H17M17,13H7V11H17M14,17H7V15H14M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3M19,3H14.82C14.4,1.84 13.3,1 12,1C10.7,1 9.6,1.84 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3Z" />
+                                                                </svg>
+                                                            </button>
+                                                        </td>
+                                                        <td>
+                                                            <button type="button" class="address-scan btn btn-default" data-toggle="modal" data-id="<%- list[i].address %>" data-target="#barcodeModal" data-myvalue="<%- list[i].address %>">
+                                                                <i class="fa fa-qrcode" aria-hidden="true"> Scan </i> 
+                                                            </button>
+                                                        </td>
+                                                        <td>
+                                                            <button type="button" id="edit_btn"> <i class="fa fa-pencil"></i></button>
+                                                        </td>
                                                     </tr>
-
                                                     <% } %>
                                             </tbody>
                                             <tfoot>
                                                 <tr>
                                                     <th>Name
                                                     </th>
-                                                    <th>Address
+                                                    <th>Address</th>
+                                                    <th>
+                                                    </th>
+                                                    <th>
+                                                    </th>
+                                                    <th class="th-sm">
+                                                    </th>
                                                 </tr>
                                             </tfoot>
+                                        </table>
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="barcodeModal" tabindex="-1" role="dialog" aria-labelledby="barcodeModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="barcodeModalLabel">Address</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Modal -->
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-top:5%">
+
+                </div>
+                <div class="tab-content tab-content-theme box-theme p-3" id="nav-tabContent">
+                    <div class="row">
+                        <div class="col">
+                            <h2 class="color-theme mb-md-4 mb-2" style="text-align: center;margin: auto;">Admins</h2>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade show active" id="nav-public" role="tabpanel" aria-labelledby="nav-public-tab">
+                        <div class="row">
+                            <div class="col" id="admin_div">
+                                <div class="table-responsive-sm">
+                                    <% if(adminList.length > 0 ){ %>
+                                        <table id="adminTable" class="table-hover table table-sm" cellspacing="0" width="100%">
+                                            <thead>
+                                                <tr class="table-success">
+                                                    <th class="th-sm">Email
+                                                    </th>
+                                                    <th class="th-sm">Organization Name
+                                                    </th>
+                                                    <!-- <th></th> -->
+
+                                                </tr>
+                                                <% } %>
+                                            </thead>
+                                            <tbody>
+                                                <% for (var i = 0; i < adminList.length; i++) { %>
+                                                    <tr>
+                                                        <td>
+                                                            <%= adminList[i].email %>
+                                                        </td>
+                                                        <td>
+                                                            <%= adminList[i].name %>
+                                                        </td>
+                                                        <!-- <td>
+                                                            <form method="post" action="/admin/delete/<%= adminList[i].id %>" style="float:right">
+                                                                <button type="submit" class="delete_btn" onClick="return confirm('Are you sure you want to delete?')"> <i class="fa fa-trash"></i></button>
+                                                                <input type="hidden" name="adminId" id="adminId" value="<%-adminList[i].id%>" />
+                                                            </form>
+                                                        </td> -->
+                                                    </tr>
+                                                    <% } %>
+                                            </tbody>
+
                                         </table>
                                 </div>
                             </div>
@@ -153,41 +250,38 @@
             </div>
         </section>
 
+        <script type="text/JavaScript" src="/js/custom.js"></script>
         <script type="text/JavaScript" src="/js/dialog.js">
         </script>
         <script>
-            $(document).ready(function() {
-                $('#RDDTable').DataTable();
-                $('.dataTables_length').addClass('bs-select');
+            // Standard confirm
+            // $('.delete_btn').on('click', function() {
+            //     $.alertable.confirm('You sure?').then(function() {
+            //         console.log('Confirmation submitted');
+            //         var t = $("#adminId").val();
+            //         console.log(t);
+            //     }, function() {
+            //         console.log('Confirmation canceled');
+            //     });
+            // });
 
-                $("#addmin_add").click(function() {
-                    $(".error").hide();
-                    var hasError = false;
-                    var passwordVal = $("#newinputPassword").val();
-                    var checkVal = $("#cinputPassword").val();
-                    if (passwordVal != checkVal) {
-                        $("#cinputPassword").after('<span class="error">Passwords do not match.</span>');
-                        hasError = true;
-                    }
-                    if (hasError == true) {
-                        return false;
-                    }
-                });
-                $("#change_pw").click(function() {
-                    $(".error").hide();
-                    var hasError = false;
-                    var passwordVal = $("#newpPasswordchange").val();
-                    var checkVal = $("#cPasswordchange").val();
-
-                   // console.log(passwordVal);
-                   // console.log(checkVal);
-                    if (passwordVal != checkVal) {
-                        $("#cPasswordchange").after('<span class="error">Passwords do not match.</span>');
-                        hasError = true;
-                    }
-                    if (hasError == true) {
-                        return false;
-                    }
-                });
-            });
+            // $('#delete_btn').click(function(e) {
+            //     var t = $(this).closest("tr") // Finds the closest row <tr> 
+            //         .find(".tableLink") // Gets a descendent with class="nr"
+            //         .text();
+            //     console.log(t);
+            // var target = $('.tableLink').text();
+            // console.log(target) ;// activated tab
+            // if (target == 'nav-private-tab') {
+            //     $('#radio_type').val(2);
+            // } else {
+            //     $('#radio_type').val(1);
+            // }
+            // var sendData = $('#radioBtn').serialize();
+            // //console.log(sendData);
+            // $.post('./typeWallet', sendData, function(res) {
+            //         // console.log(res);
+            //     })
+            //  document.getElementById("radioBtn").submit(target);
+            // });
         </script>

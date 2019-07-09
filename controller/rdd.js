@@ -6,21 +6,7 @@ const connection = mysql.createConnection(dbconfig.connection);
 
 
 module.exports = {
-    // getRDDCreation: (req, res) => {
-    //     res.render('RDD.ejs');
-    // },
-    getBalance: (req, res) => {
-        let walletParam = {
-            'URL': '/api/wallet/unusedaddress',
-            'walletName': req.body.walletName,
-            'accountName': 'account 0'
-        }
-        getAddress(walletParam)
-            .then(address => {})
-            .catch(err => {
-                console.log(err);
-            });
-    },
+
     walletCreate: (req, res) => {
         let getPassword = encryp.passwordGenerator();
         getMnemonicsApi().then(mnemonic => {

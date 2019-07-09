@@ -20,8 +20,9 @@ cryptr = new Cryptr('myTotalySecretKey');
 dbconfig = require('../config/database');
 
 bcrypt = require('bcrypt');
- passport = require("passport");
+passport = require("passport");
 LocalStrategy = require("passport-local").Strategy;
+
 
 //app.use(flash());
 

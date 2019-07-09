@@ -48,10 +48,10 @@ function getBalance(walletID) {
     return new Promise((resolve, reject) => {
         query.RDDWalletRow(walletID).then(wallet => {
             const prm = {
-                    'URL': '/api/wallet/balance',
-                    'walletName': wallet[0].walletName,
-                    'accountName': env.accountName
-                }
+                'URL': '/api/wallet/balance',
+                'walletName': wallet[0].walletName,
+                'accountName': env.accountName
+            }
             axios.get(env.baseXels + env.GetApiURL, { params: prm }).then(response => {
                 resolve(response.data.InnerMsg.balances);
             }).catch(error => {
@@ -81,14 +81,14 @@ function amountCal(estimatedfee, balance, mappedAddress) {
 function estimateFee(walletDetails, xels_address) {
     return new Promise((resolve, reject) => {
         const prm = {
-                'URL': '/api/wallet/estimate-txfee',
-                'walletName': walletDetails[0].walletName,
-                'accountName': env.accountName,
-                'allowUnconfirmed': true,
-                'feeType': 'medium',
-                'allowUnconfirmed': true,
-                'recipients': xels_address
-            }
+            'URL': '/api/wallet/estimate-txfee',
+            'walletName': walletDetails[0].walletName,
+            'accountName': env.accountName,
+            'allowUnconfirmed': true,
+            'feeType': 'medium',
+            'allowUnconfirmed': true,
+            'recipients': xels_address
+        }
         axios.get(env.baseXels + env.GetApiURL, {
             params: prm,
             paramsSerializer: function(params) {
