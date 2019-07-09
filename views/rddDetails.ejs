@@ -161,10 +161,11 @@
                                                                 <h2 class="form-signin-heading heading-dialog-theme">Update Addrees</h2>
                                                                 <div class="form-group">
                                                                     <fieldset>
-                                                                        <input type="text" id="updateAddress" minlength="26" name="updateAddress" class="form-control" placeholder="Register an Address" required autofocus>
+                                                                        <input type="text" id="updateAddress" minlength="26" name="updateAddress" class="form-control" placeholder="Register an Address" required>
                                                                         <legend>Register an Address</legend>
                                                                     </fieldset>
                                                                 </div>
+                                                                <input type="hidden" name="reg_id" value="" id="regId" />
                                                                 <input type="hidden" name="wallet_id" value="<%=walletId%>" />
                                                                 <button class="btn btn-theme btn-success" type="submit">Update</button>
                                                                 <button type="button" class="btn btn-warning" data-dismiss="modal">Close</button>
@@ -186,7 +187,7 @@
                 </div>
         </section>
 
-        <script type="text/JavaScript" src="/js/dialog.js"></script>
+        <!-- <script type="text/JavaScript" src="/js/dialog.js"></script> -->
         <script>
             (function() {
 
@@ -231,10 +232,8 @@
 
                     var myregisteredId = $(this).data('id');
                     console.log(myregisteredId);
-                    // $("div .modal-body").qrcode({
-                    //     text: myBookId
-                    // });
-                    // $('#addBookDialog').modal('show');
+                    $("#regId").val(myregisteredId);
+
                 });
 
 

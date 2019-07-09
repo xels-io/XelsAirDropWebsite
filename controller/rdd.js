@@ -26,7 +26,7 @@ module.exports = {
                             ...walletParam,
                             'address': address
                         };
-                        insertWallet(walletDetails).then(rowsInserted => {
+                        insertWallet(walletDetails, req.user.organization_id).then(rowsInserted => {
                             let waletUser = {
                                 userId: req.user.id,
                                 name: req.user.email,
@@ -126,11 +126,11 @@ function getMnemonicsApi() {
 
 }
 
-function insertWallet(walletParam) {
+function insertWallet(walletParam, orgId) {
 
     return new Promise((resolve, reject) => {
 
-        let insertRdd = "INSERT INTO rdd_wallet (walletName , password , address, mnemonics, passphrase  ) values ('" + walletParam.name + "','" + encryp.enCryptPassword(walletParam.password) + "','" + walletParam.address + "', '" + walletParam.mnemonic + "', " + walletParam.passphrase + " )";
+        let insertRdd = "INSERT INTO rdd_wallet (walletName , password , address, mnemonics, passphrase, organization_id  ) values ('" + walletParam.name + "','" + encryp.enCryptPassword(walletParam.password) + "','" + walletParam.address + "', '" + walletParam.mnemonic + "', " + walletParam.passphrase + " , " + orgId + ")";
         connection.query(insertRdd, (err, rows) => {
             if (err)
                 reject(err);
@@ -139,7 +139,6 @@ function insertWallet(walletParam) {
             }
         });
     });
-
 }
 
 function insertWalletUserMapping(param) {

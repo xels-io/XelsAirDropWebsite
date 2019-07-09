@@ -197,13 +197,14 @@ app.post('/getbalance', isLoggedIn, (req, res) => {
 app.get('/createRDD', isLoggedIn, (req, res) => {
     res.render('RDD.ejs', {
         userId: req.user.id,
+        organizationId: req.user.organization_id,
         message: req.flash('rddMessage')
     });
 });
-app.post('/createRDD', walletCreate);
+app.post('/createRDD', isLoggedIn, walletCreate);
 
 
-app.post('/registeredList/delete/:id', (req, res) => {
+app.post('/registeredList/delete/:id', isLoggedIn, (req, res) => {
     const registeredId = req.body.registeredId;
     queryMethod.deleteRegisteredList(registeredId).then(response => {
         res.redirect('/rddDetails?id=' + req.body.walletId);
@@ -211,16 +212,17 @@ app.post('/registeredList/delete/:id', (req, res) => {
         return err;
     });
 });
-app.post('/updateRegisteredAddress/:id', (req, res) => {
-    const registeredId = req.body.registeredId;
+app.post('/updateRegisteredAddress', isLoggedIn, (req, res) => {
+
+    const registeredId = req.body.reg_id;
     let address = req.body.updateAddress;
     queryMethod.updateRegisteredAddress(registeredId, address).then(response => {
-        res.redirect('/rddDetails?id=' + req.body.walletId);
+        res.redirect('/rddDetails?id=' + req.body.wallet_id);
     }).catch(err => {
         return err;
     });
 });
-app.post('/admin/delete/:id', (req, res) => {
+app.post('/admin/delete/:id', isLoggedIn, (req, res) => {
     const adminId = req.body.adminId;
     //console.log(adminId);
     queryMethod.deleteUserList(adminId).then(response => {
@@ -233,7 +235,7 @@ app.post('/admin/delete/:id', (req, res) => {
 app.get('/rddList', isLoggedIn, (req, res) => {
     queryMethod.userOrganizationList(req.user.id, req.user.organization_id).then(userList => {
         app.locals.userList = userList;
-        queryMethod.userWalletMappingAddress(req.user.id).then(response => {
+        queryMethod.userWalletMappingAddress(req.user.id, req.user.organization_id).then(response => {
             let rddArr = response;
             res.render('rddList.ejs', {
                 list: rddArr,
@@ -324,7 +326,7 @@ app.post('/typeWallet', (req, res) => {
 app.post('/rddList/admin', (req, res) => {
 
     queryMethod.selectUser(req.body.email).then(dbUser => {
-        queryMethod.userWalletMappingAddress(req.user.id).then(response => {
+        queryMethod.userWalletMappingAddress(req.user.id, req.user.organization_id).then(response => {
             let rddArr = response;
             if (dbUser.length) {
                 req.flash('adminMessage', 'That email is already taken.');
@@ -367,7 +369,7 @@ app.post('/rddList/admin', (req, res) => {
 });
 app.post('/rddList/updatePw', (req, res) => {
     let newPw = queryMethod.generateHash(req.body.newpPasswordchange);
-    queryMethod.userWalletMappingAddress(req.user.id).then(walletRows => {
+    queryMethod.userWalletMappingAddress(req.user.id, req.user.organization_id).then(walletRows => {
         let rddArr = walletRows;
         queryMethod.userPwMatch(req.body.userId, req.body.oldpPassword).then(response => {
             if (response.length) {
@@ -418,7 +420,6 @@ function isLoggedIn(req, res, next) {
         return next();
     else {
         req['header']['Referrer'] = req.url;
-        console.log(req['header']['Referrer']);
         res.redirect("/");
     }
 };
