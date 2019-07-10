@@ -435,7 +435,8 @@ table.table-theme.dataTable tfoot th, table.table-theme.dataTable tfoot td {
 .nav-tabs-theme .nav-tabs .nav-item {
     border: 1px solid #53B848;
     border-radius: 22px;
-    padding: 10px 90px;
+    text-align: center;
+    width: calc(50% + 17.5px);
     z-index: 1;
 }
 
@@ -482,6 +483,17 @@ table.table-theme.dataTable tfoot th, table.table-theme.dataTable tfoot td {
     height: 44px;
     padding: 10px 15px;
     margin-bottom: 5px;
+}
+/* ===================
+   Card theme style
+=====================*/
+.card-theme {
+    border: 0;
+    box-shadow: 0px 0px 4px rgba(83, 184, 72, 0.4);
+}
+.card-theme .card-header {
+    background: rgba(83, 184, 72, 1);
+    color: #FFFFFF;
 }
 /* ==============
    Media Query 
