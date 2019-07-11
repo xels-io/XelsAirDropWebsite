@@ -19,8 +19,13 @@ Cryptr = require('cryptr');
 cryptr = new Cryptr('myTotalySecretKey');
 dbconfig = require('../config/database');
 
-bcrypt = require('bcrypt');
+bcrypt = require('bcryptjs');
 passport = require("passport");
+sgMail = require('@sendgrid/mail');
+async = require("async");
+crypto = require('crypto');
+moment = require('moment');
+nodemailer = require("nodemailer");
 LocalStrategy = require("passport-local").Strategy;
 
 

@@ -7,7 +7,7 @@
                 <div class="section-title">Welcome <strong><%= walletName%></div>
                 <!-- <p class="color-theme">Welcome <strong><%= walletName%></strong> </p> -->
                     <div class="row mb-3">
-
+                        <div class="col-lg-4 col-md-5">
                         <form class="" action="/typeWallet" method="POST" id="radioBtn">
                             <nav class="nav-tabs-theme">
                                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
@@ -23,10 +23,11 @@
                             <input type="hidden" name="wallet_id" value="<%=walletId%>" />
                             <input type="hidden" value="1" name="type" id="radio_type" />
                         </form>
-
+                    </div>
                     </div>
                     <div class="row mb-3">
-                        <div class="col-md-4 order-md-1 my-auto">
+                            <div class="col-lg-3 offset-lg-5 col-md-5 offset-md-2 order-md-1 my-auto">
+        
                             <% if (typeof message != 'undefined' && message) { %>
                                 <p class="alert alert-success">
                                     <%= message %>
@@ -37,9 +38,10 @@
                                     </p>
                                     <% } %>
 
-                                        <div class="card">
+                                        <div class="card  card-theme">
                                             <div class="card-header">Balance</div>
-                                            <div class="card-body">
+                                            <div class="card-body px-2">
+                                                    <div class="mb-3">
                                                 Wallet Balance is
                                                 <%= bAmount%>
                                                     <!-- <% if ( typeof bAmount != 'undefined' && bAmount) { %>
@@ -56,7 +58,9 @@
                                             </div>
                                         </div>
                         </div>
-                        <div class="col-md-4 order-md-0 my-auto">
+                    </div>
+                    <div class="col-lg-4 col-md-5 order-md-0 my-auto">
+            
                             <div class="html5-dialog">
                                 <dialog id="registerWindow" class="dialog-theme">
                                     <form class="form-theme" action="/registerAddress" method="POST">

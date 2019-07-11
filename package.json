@@ -1,38 +1,42 @@
 {
-  "name": "airdrop_app",
-  "version": "1.0.0",
-  "description": "nodejs, mysql ",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [
-    "airdrop",
-    "xels"
-  ],
-  "author": "silicon orchard ltd",
-  "license": "ISC",
-  "dependencies": {
-    "axios": "^0.18.0",
-    "bcrypt": "^3.0.6",
-    "body-parser": "^1.19.0",
-    "connect-flash": "^0.1.1",
-    "cors": "^2.8.5",
-    "cryptr": "^4.0.2",
-    "ejs": "^2.6.1",
-    "express": "^4.17.1",
-    "express-flash": "0.0.2",
-    "express-session": "^1.15.6",
-    "http": "0.0.0",
-    "https": "^1.0.0",
-    "mysql": "^2.17.1",
-    "mysql2": "^1.6.5",
-    "node-querybuilder": "^1.2.2",
-    "passport": "^0.4.0",
-    "passport-local": "^1.0.0",
-    "qs": "^6.7.0",
-    "req-flash": "0.0.3",
-    "sequelize": "^5.8.9",
-    "strict-password-generator": "^1.1.2"
-  }
+    "name": "airdrop_app",
+    "version": "1.0.0",
+    "description": "nodejs, mysql ",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [
+        "airdrop",
+        "xels"
+    ],
+    "author": "silicon orchard ltd",
+    "license": "ISC",
+    "dependencies": {
+        "@sendgrid/mail": "^6.4.0",
+        "async": "^3.1.0",
+        "axios": "^0.18.0",
+        "bcryptjs": "^2.4.3",
+        "body-parser": "^1.19.0",
+        "connect-flash": "^0.1.1",
+        "cors": "^2.8.5",
+        "cryptr": "^4.0.2",
+        "ejs": "^2.6.1",
+        "express": "^4.17.1",
+        "express-flash": "0.0.2",
+        "express-session": "^1.15.6",
+        "http": "0.0.0",
+        "https": "^1.0.0",
+        "moment": "^2.24.0",
+        "mysql": "^2.17.1",
+        "mysql2": "^1.6.5",
+        "node-querybuilder": "^1.2.2",
+        "nodemailer": "^6.2.1",
+        "passport": "^0.4.0",
+        "passport-local": "^1.0.0",
+        "qs": "^6.7.0",
+        "req-flash": "0.0.3",
+        "sequelize": "^5.8.9",
+        "strict-password-generator": "^1.1.2"
+    }
 }

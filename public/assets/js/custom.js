@@ -1,12 +1,36 @@
-$(document).ready(function()
-{
-    $(document).on("change, keyup , mouseup", "#eth_token_amount", function()
-    {
-        var sels = parseFloat($("#eth_token_amount").val());
-        var xels_token = sels;
+$(document).ready(function() {
+    $('#RDDTable').DataTable();
+    $('#adminTable').DataTable();
+    $('.dataTables_length').addClass('bs-select');
 
-        $("#xels_amount").val(xels_token);
+
+    $("#addmin_add").click(function() {
+        $(".error").hide();
+        var hasError = false;
+        var passwordVal = $("#newinputPassword").val();
+        var checkVal = $("#cinputPassword").val();
+        if (passwordVal != checkVal) {
+            $("#cinputPassword").after('<span class="error">Passwords do not match.</span>');
+            hasError = true;
+        }
+        if (hasError == true) {
+            return false;
+        }
     });
+    $("#change_pw").click(function() {
+        $(".error").hide();
+        var hasError = false;
+        var passwordVal = $("#newpPasswordchange").val();
+        var checkVal = $("#cPasswordchange").val();
+        if (passwordVal != checkVal) {
+            $("#cPasswordchange").after('<span class="error">Passwords do not match.</span>');
+            hasError = true;
+        }
+        if (hasError == true) {
+            return false;
+        }
+    });
+
 });
 
 function setTooltip(message, $this = '') {
@@ -24,12 +48,25 @@ function copyText(text) {
     return true;
 }
 
-  $(document).on('click','.btn-copy',function(){
-      var textTarget = $($(this).attr('data-copy'));
-      copyText(textTarget.text());
-      setTooltip('Copied', this);
-      var _this = this;
-      setTimeout(function(){
-          $(_this).tooltip('hide').removeAttr('data-original-title');
-      },1000)
-  })
+$(document).on('click', '.btn-copy', function() {
+    var textTarget = $($(this).attr('data-copy'));
+    copyText(textTarget.text().trim());
+    setTooltip('Copied', this);
+    var _this = this;
+    setTimeout(function() {
+        $(_this).tooltip('hide').removeAttr('data-original-title');
+    }, 1000)
+})
+
+$(document).on("click", ".address-scan", function(e) {
+    var myBookId = $(this).data('id');
+    $("div .modal-body").qrcode({
+        text: myBookId
+    });
+    // $('#addBookDialog').modal('show');
+});
+
+$('#barcodeModal').on('hide.bs.modal', function() {
+    $("div .modal-body").empty();
+
+});

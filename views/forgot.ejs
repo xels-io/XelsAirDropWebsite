@@ -1,0 +1,36 @@
+
+<%- include('./layout/header'); -%>
+
+<section class="section-theme">
+    <div class="container">
+
+ <% if (typeof message != 'undefined' && message) { %>
+    <p class="alert alert-success">
+        <%= message %>
+    </p>
+    <% } else if(typeof errMessage != 'undefined' && errMessage) { %>
+        <p class="alert alert-danger">
+            <%= errMessage %>
+        </p>
+        <% } %>
+        <div class="row">
+            <div class="col-md-5 my-auto">
+<form class="log-in-form ng-pristine ng-valid form-theme" action="/forgot" method="POST">
+
+    <div class="form-group">
+        <fieldset>
+            <input type="email" id="inputEmail" name="email" class="form-control" placeholder="Email address" required autofocus>
+            <legend>Email</legend>
+        </fieldset>
+    </div>
+
+    <div class="text-center mb-2 mb-md-5">
+        <button class="btn btn-theme" type="submit">Reset Passowrd</button>
+    </div>
+</form>
+<a href="/">Sign In</a>
+</div>
+</div>
+          
+</div>
+</section>

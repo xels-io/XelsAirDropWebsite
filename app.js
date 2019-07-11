@@ -5,6 +5,7 @@ const { getHomePage } = require('./controller/index');
 const { walletCreate } = require('./controller/rdd');
 const { getSignUpPage } = require('./controller/signup');
 let encryption = require('./system/encryption');
+const env = require('./config/environment');
 
 const passport = require("./config/passport");
 const dbconfig = require('./config/database');
@@ -180,7 +181,6 @@ app.post('/getbalance', isLoggedIn, (req, res) => {
                             walletName: registeredList.length > 0 ? registeredList[0].walletName : '',
                             message: req.flash('balanceUpdate'),
                             bAmount: amount
-                                // typeW: responserows.length? responserows:emp;
                         })
                         // res.redirect('/rddDetails?id=' + req.body.wallet_id);
                 }).catch(err => {
@@ -423,7 +423,134 @@ function isLoggedIn(req, res, next) {
         res.redirect("/");
     }
 };
+app.get('/forgot', function(req, res) {
+    console.log("hi");
+    res.render('forgot.ejs', {
+       // user: req.user
+    });
+});
 
+app.post('/forgot', function(req, res, next) {
+    async.waterfall([
+        function(done) {
+            crypto.randomBytes(20, function(err, buf) {
+                var token = buf.toString('hex');
+                done(err, token);
+            });
+        },
+        function(token, done) {
+            queryMethod.selectUser(req.body.email).then((rows) => {
+                console.log(rows);
+                if (!rows.length) {
+                    req.flash('error', 'No account with that email address exists.');
+                    return res.redirect('/forgot');
+                }
+                let resetPasswordExpires = moment(Date.now() + 3600000).format('YYYY-MM-DD HH:mm:ss');; // 1 hour
+                let updateRegisterdAddress = "UPDATE user SET resetPasswordToken ='" + token + "' , resetPasswordExpires='" + resetPasswordExpires + "' WHERE email = '" + req.body.email + "'";
+                console.log(updateRegisterdAddress);
+                connection.query(updateRegisterdAddress, (err, result) => {
+                    if (err)
+                        done(err);
+                    done(err, token, rows);
+                });
+            }).catch(err => {
+                done(err);
+            });
+        },
+        function(token, user, done) {
+
+            sgMail.setApiKey(env.Send_APi_key);
+            const mailOptions = {
+                to: user[0].email,
+                from: 'passwordreset@xels.io.com',
+                subject: 'Node.js Password Reset',
+                text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
+                    'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
+                    'http://' + req.headers.host + '/reset/' + token + '\n\n' +
+                    'If you did not request this, please ignore this email and your password will remain unchanged.\n'
+            };
+            sgMail.send(mailOptions).then(() => {
+                    req.flash('info', 'An e-mail has been sent to ' + user[0].email + ' with further instructions.');
+                    res.render('forgot.ejs', {
+                        message: req.flash('info')
+                    });
+                })
+                .catch(error => {
+                    req.flash('info', 'Mail not sent');
+                    res.render('forgot.ejs', {
+                        errMessage: req.flash('info')
+                    });
+                    //console.log("mailsend err");
+                });
+        }
+    ], function(err) {
+
+        if (err) {
+            console.log("waterfall err");
+            return next(err);
+        }
+        res.redirect('/forgot');
+    });
+});
+
+app.get('/reset/:token', function(req, res) {
+    console.log("token");
+    console.log(req.params.token);
+    //console.log(req.user);
+    let userQuery = "select * from user where resetPasswordToken= '"+ req.params.token +"' and resetPasswordExpires > " + Date.now();
+    console.log(userQuery);
+    connection.query(userQuery, (err, rows) => {
+        console.log(rows);
+        if (!rows) {
+            req.flash('error', 'Password reset token is invalid or has expired.');
+            return res.redirect('/forgot');
+        }
+        console.log(rows);
+        res.render('reset.ejs', {
+            token: rows
+        });
+    });
+});
+app.post('/reset/:token', function(req, res) {
+    let userQuery = "select * from user where resetPasswordToken= '"+ req.params.token +"' and resetPasswordExpires > " + Date.now();
+
+    connection.query(userQuery, (err, rows) => {
+
+        if (rows.length === 0) {
+            req.flash('error', 'Password reset token is invalid or has expired.');
+            return res.redirect('back');
+        }
+        let user =new Object();
+        user.password = queryMethod.generateHash(req.body.newpPassword);
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpires = undefined;
+
+        let updateAdmin = "UPDATE user SET password='" + user.password + "', resetPasswordToken ='" + user.resetPasswordToken + "' , resetPasswordExpires='" + user.resetPasswordExpires + "' WHERE email='" + req.body.email + "'";
+       // console.log(updateAdmin);
+        connection.query(updateAdmin, (err, updatedRows) => {
+
+            if (updatedRows) {
+               
+                req.flash('success', 'Success! Your password has been changed.');
+                res.render('reset.ejs', {
+                    token: rows, 
+                    message: req.flash('success')
+                });
+                
+            }
+            else
+            {
+                req.flash('err', 'error');
+                res.render('reset.ejs', {
+                    token: rows, 
+                    errMessage: req.flash('err')
+                });
+            }
+        
+        });         
+       
+    });
+});
 // app.get('/success', (req, res) => res.send("Welcome "+req.query.username+"!!"));
 // app.get('/error', (req, res) => res.send("error logging in"));
 
@@ -432,15 +559,16 @@ function isLoggedIn(req, res, next) {
 //Every route middleware
 app.use(function(req, res, next) {
 
-    if (!req.secure) {
-        res.redirect(301, `https://${req.headers.host}${req.url}`);
-    } else {
-        res.header("Access-Control-Allow-Origin", "*");
-        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, X-Assassin-RequestHash");
-        global.Request = req;
-        global.Response = res;
-        next();
-    }
+    // if (!req.secure) {
+    //     res.redirect(301, `https://${req.headers.host}${req.url}`);
+    // } 
+    // else {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, X-Assassin-RequestHash");
+    global.Request = req;
+    global.Response = res;
+    next();
+    //}
 
 });
 

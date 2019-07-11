@@ -224,7 +224,7 @@ function deleteUserList(userId) {
 function updateRegisteredAddress(registeredId, address) {
     return new Promise((resolve, reject) => {
         let updateRegisterdAddress = "UPDATE registered_list SET registered_address ='" + address + "' WHERE id = " + registeredId;
-        //console.log(updateRegisterdAddress);
+        console.log(updateRegisterdAddress);
         connection.query(updateRegisterdAddress, (err, result) => {
             if (err)
                 reject(err);

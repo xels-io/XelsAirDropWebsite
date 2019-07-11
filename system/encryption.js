@@ -16,7 +16,7 @@ const options = {
 function passwordGenerator() {
     let newPassword = pwordGenerator.generatePassword(options);
 
-    console.log(newPassword);
+    //console.log(newPassword);
     return newPassword;
 }
 
