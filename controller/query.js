@@ -33,6 +33,31 @@ function RDDWalletWithRegisteredList(walletId) {
     })
 }
 
+function WalletMappingAddress(orgId) {
+    return new Promise((resolve, reject) => {
+        let selectWallet = "select  rdd_wallet.* from rdd_wallet where organization_id =" + orgId;
+        connection.query(selectWallet, (err, rows) => {
+            if (err)
+                reject(err);
+            resolve(rows);
+        })
+    })
+}
+// function userWalletMappingAddress(userId, orgId) {
+//     return new Promise((resolve, reject) => {
+//         let selectAdminWallet = "select  rdd_wallet.*  from rdd_wallet where organization_id=" + orgId;
+
+//         //let selectAdminWallet = "select  rdd_wallet.* , organization_details.name from rdd_wallet inner join organization_details on organization_details.id =" + orgId + " and organization_details.id = rdd_wallet.organization_id";
+//         connection.query(selectAdminWallet, (err, rows) => {
+//             if (err)
+//                 reject(err);
+//             resolve(rows);
+//         })
+//     })
+// }
+
+
+
 function RDDWalletRow(walletId) {
     return new Promise((resolve, reject) => {
         let selectQuery = "select * from rdd_wallet where id = " + walletId;
@@ -56,33 +81,12 @@ function RDDWalletRow(walletId) {
 //     })
 // }
 
-function userWalletMappingAddress(userId, orgId) {
-    return new Promise((resolve, reject) => {
-        let selectAdminWallet = "select  rdd_wallet.* , organization_details.name from rdd_wallet inner join organization_details on organization_details.id =" + orgId + " and organization_details.id = rdd_wallet.organization_id";
-        connection.query(selectAdminWallet, (err, rows) => {
-            if (err)
-                reject(err);
-            resolve(rows);
-        })
-    })
-}
 
-function WalletMappingAddress(orgId) {
-    return new Promise((resolve, reject) => {
-        let selectWallet = "select  rdd_wallet.* from rdd_wallet where rdd_wallet.organization_id =" + orgId;
-        console.log(selectWallet);
-        connection.query(selectWallet, (err, rows) => {
-            if (err)
-                reject(err);
-            resolve(rows);
-        })
-    })
-}
 
 function typeOfWallet(temp_wallet_id) {
 
     return new Promise((resolve, reject) => {
-        let selectQuery = "select rdd_wallet.walletName, rdd_wallet.rdd_type, rdd_type.* from rdd_wallet inner join rdd_type ON rdd_wallet.rdd_type = rdd_type.id and rdd_wallet.id= " + temp_wallet_id;
+        let selectQuery = "select rdd_wallet.walletName, rdd_wallet.balance, rdd_wallet.rdd_type, rdd_type.* from rdd_wallet inner join rdd_type ON rdd_wallet.rdd_type = rdd_type.id and rdd_wallet.id= " + temp_wallet_id;
         connection.query(selectQuery, (err, rows) => {
             if (err)
                 reject(err);
@@ -149,7 +153,7 @@ function updateTypeofWallet(type, wallet_id) {
 function updateAddress(walletId, address) {
 
     return new Promise((resolve, reject) => {
-        console.log("new");
+        // console.log("new");
         let updateWalletAddress = "UPDATE rdd_wallet SET address='" + address + "' WHERE id=" + walletId;
         connection.query(updateWalletAddress, (err, result) => {
             if (err)
@@ -323,7 +327,7 @@ module.exports.updateAddress = updateAddress;
 
 module.exports.selectUser = selectUser;
 module.exports.userWalletMapping = userWalletMapping;
-module.exports.userWalletMappingAddress = userWalletMappingAddress;
+//module.exports.userWalletMappingAddress = userWalletMappingAddress;
 
 
 module.exports.userOrganizationList = userOrganizationList;

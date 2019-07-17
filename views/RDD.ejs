@@ -10,23 +10,23 @@
                             <form class="form-theme" method="POST" action="/createRDD" id="rddWallet">
                                 <div class="section-title">Create a new wallet</div>
 
-                                <% if (typeof rddMessage != 'undefined' && rddMessage) { %>
-                                    <p class="alert alert-success">
-                                        <%= rddMessage %>
-                                    </p>
-                                    <% } else if(typeof rddErrMessage != 'undefined' && rddErrMessage) { %>
-                                        <p class="alert alert-danger">
-                                            <%- rddErrMessage %>
-                                        </p>
-                                        <% } %>
-                                            <div class="form-group">
-                                                <!-- <label for="walletName">Name</label> -->
-                                                <input type="text" class="form-control" id="walletName" name="walletName" placeholder="Enter a RDD wallet name." required>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="submit" class="btn btn-theme btn-success mb-2" value="Submit">Create a new wallet</button>
-                                                <button type="reset" class="btn btn-theme btn-warning">Cancel</button>
-                                            </div>
+
+                                <p class="alert-success">
+
+                                </p>
+
+                                <p class="alert-danger">
+
+                                </p>
+
+                                <div class="form-group">
+                                    <!-- <label for="walletName">Name</label> -->
+                                    <input type="text" class="form-control" id="walletName" name="walletName" placeholder="Enter a RDD wallet name." required>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-theme btn-success mb-2" value="Submit">Create a new wallet</button>
+                                    <button type="reset" id="walletCancel" class="btn btn-theme btn-warning">Cancel</button>
+                                </div>
                             </form>
                         </div>
                     </div>
@@ -36,3 +36,5 @@
 
         <%- include('./layout/footer'); -%>
             <!-- /GUI-->
+
+            <script type="text/JavaScript" src="/js/createRDD.js"></script>

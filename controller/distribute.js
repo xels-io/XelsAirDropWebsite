@@ -7,11 +7,11 @@ function distributeXels(rddWalletDetails) {
 
     return new Promise((resolve, reject) => {
         query.RDDWalletWithRegisteredList(rddWalletDetails.walletId).then(walletDetails => {
-            //console.log(walletDetails[0].balance);
+            console.log(walletDetails[0].balance);
             let balance = walletDetails[0].balance - 1;
-            //console.log(balance);
+            console.log(balance);
             let amount_divide_into_xels_addresses = balance / walletDetails.length;
-            //console.log("divide = " + amount_divide_into_xels_addresses);
+            console.log("divide = " + amount_divide_into_xels_addresses);
             var finalList = walletDetails.map(function(obj) {
                 return {
                     destinationAddress: obj.registered_address,
@@ -19,12 +19,12 @@ function distributeXels(rddWalletDetails) {
                 }
 
             });
-           // console.log(finalList);
+            console.log(finalList);
             // resolve(1);
             if (finalList.length > 0) {
                 estimateFee(walletDetails, finalList).then(fee => {
                     let estimatedfee = fee.InnerMsg / 100000000;
-                   // console.log(estimatedfee);
+                    console.log(estimatedfee);
                     // amountCal(estimatedfee, walletDetails[0].balance, finalList).then(addressAmount => {
                     BuildTransaction(finalList, walletDetails, estimatedfee).then(hexData => {
                         let hexString = hexData.InnerMsg.hex;
@@ -69,21 +69,21 @@ function getBalance(walletID) {
     });
 }
 
-function amountCal(estimatedfee, balance, mappedAddress) {
-    return new Promise((resolve, reject) => {
-        let lengthOfArray = mappedAddress.length;
-        let TotalBalance = balance - 1;
-        console.log(TotalBalance);
-        let amountReceive = TotalBalance / lengthOfArray;
-        const newAddress = mappedAddress.map(address => {
-            return {
-                destinationAddress: address.destinationAddress,
-                amount: amountReceive
-            };
-        })
-        resolve(newAddress);
-    })
-}
+// function amountCal(estimatedfee, balance, mappedAddress) {
+//     return new Promise((resolve, reject) => {
+//         let lengthOfArray = mappedAddress.length;
+//         let TotalBalance = balance - 1;
+//         console.log(TotalBalance);
+//         let amountReceive = TotalBalance / lengthOfArray;
+//         const newAddress = mappedAddress.map(address => {
+//             return {
+//                 destinationAddress: address.destinationAddress,
+//                 amount: amountReceive
+//             };
+//         })
+//         resolve(newAddress);
+//     })
+// }
 
 function estimateFee(walletDetails, xels_address) {
     return new Promise((resolve, reject) => {

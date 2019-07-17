@@ -3,266 +3,254 @@
     <%- include('./layout/partials/navbar'); -%>
         <section class="section-theme">
             <div class="container">
+                <div class="title">Welcome <strong><%= userId%></div>
+                <div class="row">
+                    <p class="alert-success"></p>
+                    <p class="alert-danger"></p>
+                </div>
                 <!-- <div class="section-title">RDD List</div> -->
                 <!-- <p class="color-theme">Welcome <strong>Name</strong> </p> -->
-                <div class="row mb-md-4 mb-3">
+                    <div class="row mb-md-4 mb-3">
 
-                    <div class="col-lg-4 col-md-6 col-sm-8">
-                        <!-- <div class="html5-dialog"> -->
+                        <div class="col-lg-4 col-md-6 col-sm-8">
+                            <!-- <div class="html5-dialog"> -->
 
-                        <button id="adminShow" class="btn btn-theme btn-success btn-block mb-2" data-toggle="modal" data-target="#adminModal"><i class="fa fa-user pr-3"></i> Add New Admin</button>
-                        <!-- </div> -->
+                            <button id="adminShow" class="btn btn-theme btn-success btn-block mb-2" data-toggle="modal" data-target="#adminModal"><i class="fa fa-user pr-3"></i> Add New Admin</button>
+                            <!-- </div> -->
+                            <button id="id_pw" class="btn btn-theme btn-success btn-block mb-2" data-toggle="modal" data-target="#changePwModal"><i class="fa fa-key pr-3" ></i>Change Password</button>
 
-
-                        <button id="id_pw" class="btn btn-theme btn-success btn-block mb-2" data-toggle="modal" data-target="#changePwModal"><i class="fa fa-key pr-3" ></i>Change Password</button>
-
-
-                    </div>
-                    <div class="col-lg-4 col-md-6 col-sm-8">
-                        <p class="alert-success"></p>
-                        <p class="alert-danger"></p>
-                        <!-- <% if (typeof message != 'undefined' && message) { %>
-                            <p class="alert alert-success">
-                                <%= message %>
-                            </p>
-                            <% } else if(typeof errMessage != 'undefined' && errMessage) { %>
-                                <p class="alert alert-danger">
-                                    <%= errMessage %>
-                                </p>
-                                <% } %> -->
-                    </div>
-                    <div id="msg"></div>
-                </div>
-
-
-                <div class="tab-content tab-content-theme box-theme p-3" id="nav-tabContent">
-                    <div class="row">
-                        <div class="col">
-                            <h2 class="color-theme mb-md-4 mb-2" style="text-align: center;margin: auto;">RDD Wallets</h2>
                         </div>
                     </div>
-                    <div class="tab-pane fade show active" id="nav-public" role="tabpanel" aria-labelledby="nav-public-tab">
+
+
+                    <div class="tab-content tab-content-theme box-theme p-3" id="nav-tabContent">
                         <div class="row">
-                            <div class="col" id="register_div">
-                                <div class="table-responsive-sm">
-                                    <!-- <% if(list.length > 0 ){ %> -->
-                                    <table id="RDDTable" class="table-hover table table-sm" cellspacing="0" width="100%">
-                                        <thead>
-                                            <tr class="table-success">
-                                                <th class="th-sm">Name
-                                                </th>
-                                                <th class="th-sm">Address
-                                                </th>
-                                                <th></th>
-                                                <th class="th-sm">QR
-                                                </th>
-                                                <th class="th-sm">Action
-                                                </th>
-                                            </tr>
-                                            <!-- <% } %> -->
-                                        </thead>
-                                        <tbody>
-                                            <% for (var i = 0; i < list.length; i++) { %>
-                                                <tr>
-                                                    <td>
-                                                        <a class="tableLink" href="/rddDetails?id=<%= list[i].id %>">
-                                                            <%= list[i].walletName %>
-                                                        </a>
-                                                    </td>
-                                                    <td>
-                                                        <b id="copy_xels_<%=i%>">
+                            <div class="col">
+                                <h2 class="color-theme mb-md-4 mb-2" style="text-align: center;margin: auto;">RDD Wallets</h2>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade show active" id="nav-public" role="tabpanel" aria-labelledby="nav-public-tab">
+                            <div class="row">
+                                <div class="col" id="register_div">
+                                    <div class="table-responsive-sm">
+                                        <!-- <% if(list.length > 0 ){ %> -->
+                                        <table id="RDDTable" class="table-hover table table-sm" cellspacing="0" width="100%">
+                                            <thead>
+                                                <tr class="table-success">
+                                                    <th class="th-sm">Name
+                                                    </th>
+                                                    <th class="th-sm">Address
+                                                    </th>
+                                                    <th></th>
+                                                    <th class="th-sm">QR
+                                                    </th>
+                                                    <th class="th-sm">Action
+                                                    </th>
+                                                </tr>
+                                                <!-- <% } %> -->
+                                            </thead>
+                                            <tbody>
+                                                <% for (var i = 0; i < list.length; i++) { %>
+                                                    <tr>
+                                                        <td>
+                                                            <a class="tableLink" href="/rddDetails?id=<%= list[i].id %>">
+                                                                <%= list[i].walletName %>
+                                                            </a>
+                                                        </td>
+                                                        <td>
+                                                            <b id="copy_xels_<%=i%>">
                                                                 <%= list[i].address %>
                                                             </b>
-                                                    </td>
-                                                    <td>
-                                                        <button type="button" class="btn btn-default btn-copy js-tooltip js-copy" data-toggle="tooltip" data-copy="#copy_xels_<%=i%>" title="Copy to clipboard" data-placement="top">
+                                                        </td>
+                                                        <td>
+                                                            <button type="button" class="btn btn-default btn-copy js-tooltip js-copy" data-toggle="tooltip" data-copy="#copy_xels_<%=i%>" title="Copy to clipboard" data-placement="top">
                                                                 <svg class="icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="24" height="24" viewBox="0 0 24 24"><path d="M17,9H7V7H17M17,13H7V11H17M14,17H7V15H14M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3M19,3H14.82C14.4,1.84 13.3,1 12,1C10.7,1 9.6,1.84 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3Z" />
                                                                 </svg>
                                                             </button>
-                                                    </td>
-                                                    <td>
-                                                        <button type="button" class="address-scan btn btn-default" data-toggle="modal" data-id="<%- list[i].address %>" data-target="#barcodeModal" data-myvalue="<%- list[i].address %>">
+                                                        </td>
+                                                        <td>
+                                                            <button type="button" class="address-scan btn btn-default" data-toggle="modal" data-id="<%- list[i].address %>" data-target="#barcodeModal" data-myvalue="<%- list[i].address %>">
                                                                 <i class="fa fa-qrcode" aria-hidden="true"> Scan </i> 
                                                             </button>
-                                                    </td>
-                                                    <td>
-                                                        <form method="post" action="/updateRDDWalletAddress" id="updateRDDAddress_<%= list[i].id %>">
-                                                            <input type="hidden" name="wName" value="<%= list[i].walletName %>" />
-                                                            <input type="hidden" name="wId" value="<%= list[i].id %>" />
-                                                            <button type="button" name="up" class="updateWAddress btn btn-success js-tooltip" title="Update Address"> <i class="fa fa-refresh"></i></button>
+                                                        </td>
+                                                        <td>
+                                                            <form method="post" action="/updateRDDWalletAddress" id="updateRDDAddress_<%= list[i].id %>">
+                                                                <input type="hidden" name="wName" value="<%= list[i].walletName %>" />
+                                                                <input type="hidden" name="wId" value="<%= list[i].id %>" />
+                                                                <button type="button" name="up" class="updateWAddress btn btn-success js-tooltip" title="Update Address"> <i class="fa fa-refresh"></i></button>
+                                                            </form>
+                                                        </td>
+                                                    </tr>
+                                                    <% } %>
+                                            </tbody>
+
+                                        </table>
+                                        <!-- Scan Bar Modal -->
+                                        <div class="modal fade" id="barcodeModal" tabindex="-1" role="dialog" aria-labelledby="barcodeModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <div class="modal-title" id="barcodeModalLabel">Address</div>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body text-center" style="margin: auto;">
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-warning" data-dismiss="modal">Close</button>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Scan Bar Modal -->
+                                        <!-- Add admin Modal -->
+                                        <div class="modal fade" id="adminModal" tabindex="-1" role="dialog" aria-labelledby="adminModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h2 class="form-signin-heading heading-dialog-theme" id="adminModalLabel">Add Admin </h2>
+
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p class="div-success"></p>
+                                                        <form class="form-theme" action="/rddList/admin" method="POST" id="addAdminForm">
+
+                                                            <input type="hidden" name="organizationId" value="<%=organizationId%>" />
+
+                                                            <div class="form-group">
+                                                                <fieldset>
+                                                                    <input type="email" id="inputEmail" name="email" class="form-control" placeholder="Email address" required>
+                                                                    <legend>Email address</legend>
+                                                                </fieldset>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <fieldset>
+                                                                    <input type="password" id="newinputPassword" name="password" class="form-control" placeholder="Password" required title="Password must contain: Minimum 8 characters atleast 1 Alphabet and 1 Number" pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$">
+                                                                    <legend>Password</legend>
+                                                                </fieldset>
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                <fieldset>
+                                                                    <input type="password" title="Please enter the same Password as above" id="cinputPassword" name="cpassword" class="form-control" placeholder="Confirm Password" required />
+                                                                    <legend>Confirm Password</legend>
+                                                                </fieldset>
+                                                            </div>
+                                                            <button class="btn btn-success" type="submit">Add Admin</button>
+                                                            <button id="adminExit" class="btn btn-warning" data-dismiss="modal">Cancel</button>
+
                                                         </form>
-                                                    </td>
-                                                </tr>
-                                                <% } %>
-                                        </tbody>
-
-                                    </table>
-                                    <!-- Scan Bar Modal -->
-                                    <div class="modal fade" id="barcodeModal" tabindex="-1" role="dialog" aria-labelledby="barcodeModalLabel" aria-hidden="true">
-                                        <div class="modal-dialog" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <div class="modal-title" id="barcodeModalLabel">Address</div>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                </div>
-                                                <div class="modal-body text-center" style="margin: auto;">
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-warning" data-dismiss="modal">Close</button>
-
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <!-- Scan Bar Modal -->
-                                    <!-- Add admin Modal -->
-                                    <div class="modal fade" id="adminModal" tabindex="-1" role="dialog" aria-labelledby="adminModalLabel" aria-hidden="true">
-                                        <div class="modal-dialog" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h2 class="form-signin-heading heading-dialog-theme" id="adminModalLabel">Add Admin </h2>
-
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <!--  Add admin Modal -->
+                                        <!-- change password Modal -->
+                                        <div class="modal fade" id="changePwModal" tabindex="-1" role="dialog" aria-labelledby="changePwModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h2 class="form-signin-heading  heading-dialog-theme">Change Password</h2>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                             <span aria-hidden="true">&times;</span>
                                                         </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <p class="div-success"></p>
-                                                    <form class="form-theme" action="/rddList/admin" method="POST" id="addAdminForm">
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p class="div-success"></p>
+                                                        <p class="div-danger"></p>
 
-                                                        <input type="hidden" name="organizationId" value="<%=organizationId%>" />
-
-                                                        <div class="form-group">
-                                                            <fieldset>
-                                                                <input type="email" id="inputEmail" name="email" class="form-control" placeholder="Email address" required>
-                                                                <legend>Email address</legend>
-                                                            </fieldset>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <fieldset>
-                                                                <input type="password" id="newinputPassword" name="password" class="form-control" placeholder="Password" required title="Password must contain: Minimum 8 characters atleast 1 Alphabet and 1 Number" pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$">
-                                                                <legend>Password</legend>
-                                                            </fieldset>
-                                                        </div>
-
-                                                        <div class="form-group">
-                                                            <fieldset>
-                                                                <input type="password" title="Please enter the same Password as above" id="cinputPassword" name="cpassword" class="form-control" placeholder="Confirm Password" required />
-                                                                <legend>Confirm Password</legend>
-                                                            </fieldset>
-                                                        </div>
-                                                        <button class="btn btn-success" type="submit">Add Admin</button>
-                                                        <button id="adminExit" class="btn btn-warning" data-dismiss="modal">Cancel</button>
-
-                                                    </form>
-                                                </div>
-                                                <div class="modal-footer">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!--  Add admin Modal -->
-                                    <!-- change password Modal -->
-                                    <div class="modal fade" id="changePwModal" tabindex="-1" role="dialog" aria-labelledby="changePwModalLabel" aria-hidden="true">
-                                        <div class="modal-dialog" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h2 class="form-signin-heading  heading-dialog-theme">Change Password</h2>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <p class="div-success"></p>
-                                                    <p class="div-danger"></p>
-
-                                                    <form class="form-theme" action="/rddList/updatePw" method="POST" id="changePassword">
-                                                        <div class="form-group ">
-                                                            <fieldset>
-                                                                <input type="password" id="oldpPassword" name="oldpPassword" class="form-control" placeholder="Old password" required autofocus>
-                                                                <legend>Old password</legend>
-                                                            </fieldset>
-                                                        </div>
-                                                        <div class="form-group ">
-                                                            <fieldset>
-                                                                <input type="password" id="newpPasswordchange" name="newpPasswordchange" class="form-control" placeholder="New password" pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$" title="Password must contain:
+                                                        <form class="form-theme" action="/rddList/updatePw" method="POST" id="changePassword">
+                                                            <div class="form-group ">
+                                                                <fieldset>
+                                                                    <input type="password" id="oldpPassword" name="oldpPassword" class="form-control" placeholder="Old password" required autofocus>
+                                                                    <legend>Old password</legend>
+                                                                </fieldset>
+                                                            </div>
+                                                            <div class="form-group ">
+                                                                <fieldset>
+                                                                    <input type="password" id="newpPasswordchange" name="newpPasswordchange" class="form-control" placeholder="New password" pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$" title="Password must contain:
                                                                     Minimum 8 characters atleast 1 Alphabet and 1 Number" required>
-                                                                <legend>New password</legend>
-                                                            </fieldset>
-                                                        </div>
-                                                        <input type="hidden" name="userId" value="<%=userId%>" />
-                                                        <div class="form-group">
-                                                            <fieldset>
-                                                                <input type="password" title="Please enter the same Password as above" id="cPasswordchange" name="cinputPasswordchange" class="form-control" placeholder="Confirm Password" required />
-                                                                <legend>Confirm Password</legend>
-                                                            </fieldset>
-                                                        </div>
-                                                        <button class="btn btn-success" type="submit" id="change_pw">Update</button>
-                                                        <button id="pwExit" class="btn btn-warning" data-dismiss="modal">Cancel</button>
-                                                    </form>
-                                                </div>
-                                                <div class="modal-footer">
+                                                                    <legend>New password</legend>
+                                                                </fieldset>
+                                                            </div>
+                                                            <input type="hidden" name="userId" value="<%=userId%>" />
+                                                            <div class="form-group">
+                                                                <fieldset>
+                                                                    <input type="password" title="Please enter the same Password as above" id="cPasswordchange" name="cinputPasswordchange" class="form-control" placeholder="Confirm Password" required />
+                                                                    <legend>Confirm Password</legend>
+                                                                </fieldset>
+                                                            </div>
+                                                            <button class="btn btn-success" type="submit" id="change_pw">Update</button>
+                                                            <button id="pwExit" class="btn btn-warning" data-dismiss="modal">Cancel</button>
+                                                        </form>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
+                                        <!--  change password Modal -->
+
                                     </div>
-                                    <!--  change password Modal -->
-
                                 </div>
+
                             </div>
-
                         </div>
                     </div>
-                </div>
-                <div style="margin-top:5%">
+                    <div style="margin-top:5%">
 
-                </div>
-                <div class="tab-content tab-content-theme box-theme p-3" id="nav-tabContent">
-                    <div class="row">
-                        <div class="col">
-                            <h2 class="color-theme mb-md-4 mb-2" style="text-align: center;margin: auto;">Admins</h2>
-                        </div>
                     </div>
-                    <div class="tab-pane fade show active" id="nav-public" role="tabpanel" aria-labelledby="nav-public-tab">
+                    <div class="tab-content tab-content-theme box-theme p-3" id="nav-tabContent">
                         <div class="row">
-                            <div class="col" id="admin_div">
-                                <div class="table-responsive-sm">
-                                    <!-- <% if(adminList.length > 0 ){ %> -->
-                                    <table id="adminTable" class="table-hover table table-sm" cellspacing="0" width="100%">
-                                        <thead>
-                                            <tr class="table-success">
-                                                <th class="th-sm">Email
-                                                </th>
-                                                <th class="th-sm">Organization Name
-                                                </th>
-                                                <!-- <th></th> -->
-
-                                            </tr>
-                                            <!-- <% } %> -->
-                                        </thead>
-                                        <tbody>
-                                            <% for (var i = 0; i < adminList.length; i++) { %>
-                                                <tr>
-                                                    <td>
-                                                        <%= adminList[i].email %>
-                                                    </td>
-                                                    <td>
-                                                        <%= adminList[i].name %>
-                                                    </td>
-                                                </tr>
-                                                <% } %>
-                                        </tbody>
-
-                                    </table>
-                                </div>
+                            <div class="col">
+                                <h2 class="color-theme mb-md-4 mb-2" style="text-align: center;margin: auto;">Admins</h2>
                             </div>
+                        </div>
+                        <div class="tab-pane fade show active" id="nav-public" role="tabpanel" aria-labelledby="nav-public-tab">
+                            <div class="row">
+                                <div class="col" id="admin_div">
+                                    <div class="table-responsive-sm">
+                                        <!-- <% if(adminList.length > 0 ){ %> -->
+                                        <table id="adminTable" class="table-hover table table-sm" cellspacing="0" width="100%">
+                                            <thead>
+                                                <tr class="table-success">
+                                                    <th class="th-sm">Email
+                                                    </th>
+                                                    <th class="th-sm">Organization Name
+                                                    </th>
+                                                    <!-- <th></th> -->
 
+                                                </tr>
+                                                <!-- <% } %> -->
+                                            </thead>
+                                            <tbody>
+                                                <% for (var i = 0; i < adminList.length; i++) { %>
+                                                    <tr>
+                                                        <td>
+                                                            <%= adminList[i].email %>
+                                                        </td>
+                                                        <td>
+                                                            <%= adminList[i].name %>
+                                                        </td>
+                                                    </tr>
+                                                    <% } %>
+                                            </tbody>
+
+                                        </table>
+                                    </div>
+                                </div>
+
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
             </div>
         </section>

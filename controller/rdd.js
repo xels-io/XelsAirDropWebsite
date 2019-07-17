@@ -9,6 +9,7 @@ const queryCall = require('./query');
 module.exports = {
 
     walletCreate: (req, res) => {
+        console.log("create");
         let getPassword = encryp.passwordGenerator();
         getMnemonicsApi().then(mnemonic => {
             let walletParam = {
@@ -37,33 +38,127 @@ module.exports = {
                             insertWalletUserMapping(waletUser);
                             if (rowsInserted.insertId) {
                                 req.flash('rddMessage', "Wallet Created Successfully");
-                                res.render('RDD.ejs', { rddMessage: req.flash('rddMessage') });
+                                res.json({
+                                    message: req.flash('rddMessage')
+                                });
+                                res.end();
+
+                                //res.render('RDD.ejs', { rddMessage: req.flash('rddMessage') });
                             }
                         }).catch(err => {
                             console.log(err);
+                            req.flash('rddMessage', err.InnerMsg);
+                            res.json({
+                                errMessage: req.flash('rddMessage')
+                            });
+                            res.end();
+                        });
+
+                    }).catch(err => {
+                        console.log(err.InnerMsg);
+                        req.flash('rddMessage', err.InnerMsg);
+                        res.json({
+                            errMessage: req.flash('rddMessage')
+                        });
+                        res.end();
+                    });
+
+            }).catch(err => {
+                // console.log("wallet");
+                req.flash('rddErrMessage', err.InnerMsg);
+
+                res.json({
+                    errMessage: req.flash('rddErrMessage')
+                });
+                res.end();
+                //res.render('RDD.ejs', { rddErrMessage: req.flash('rddErrMessage') });
+
+            });
+        });
+    },
+
+    adminCreate: (req, res) => {
+        queryCall.selectUser(req.body.email).then(dbUser => {
+            //console.log(dbUser);
+            queryCall.WalletMappingAddress(req.user.organization_id).then(response => {
+                let rddArr = response;
+                if (dbUser.length) {
+                    req.flash('adminMessage', 'That email is already taken.');
+                    // res.send(req.body);
+                    res.json({ errMessage: 'That email is already taken.' });
+                    res.end();
+                } else {
+                    queryCall.insertionNewAdmin(req.body.email, req.body.organizationId, req.body.password).then(insertRow => {
+                        req.flash('adminMessage', "New admin added successfully");
+                        queryCall.userOrganizationList(req.user.id, req.user.organization_id).then(userList => {
+                            app.locals.userList = userList;
+                            res.json({
+                                // list: rddArr,
+                                userId: req.body.email,
+                                adminList: userList,
+                                organizationId: req.body.organizationId,
+                                message: "New admin added successfully"
+                            });
+                            res.end();
+
+                        }).catch(err => {
+                            return err;
                         });
 
                     }).catch(err => {
                         console.log(err);
                     });
-
+                }
             }).catch(err => {
-                console.log("wallet");
-                req.flash('rddErrMessage', err.InnerMsg);
-                res.render('RDD.ejs', { rddErrMessage: req.flash('rddErrMessage') });
-
+                console.log(err);
             });
+
+        }).catch(err => {
+            return err;
+        });
+    },
+    passwordChange: (req, res) => {
+        let newPw = queryCall.generateHash(req.body.newpPasswordchange);
+        queryCall.userPwMatch(req.body.userId, req.body.oldpPassword).then(response => {
+            if (response.length) {
+                let updateAdmin = "UPDATE user SET password='" + newPw + "' WHERE email='" + req.body.userId + "'";
+                connection.query(updateAdmin, (err, rows) => {
+                    if (err)
+                        res.send(err);
+                    else {
+                        req.flash('pwMessage', "Password Changed successfully");
+                        res.json({
+                            message: req.flash('pwMessage')
+                        });
+                        res.end();
+                    }
+                });
+            } else {
+                req.flash('errMessage', response);
+                res.json({
+                    errMessage: req.flash('errMessage')
+                });
+                res.end();
+            }
+        }).catch(err => {
+            console.log(err);
+            console.log("userPwMatch err");
+            req.flash('pwMessage', err);
+            res.json({
+                errMessage: req.flash('pwMessage')
+            });
+            res.end();
         });
     },
     getUpdateAddress: (req, res) => {
-        console.log(req.body.wName + " = " + req.body.wId);
+        // console.log(req.body.wName + " = " + req.body.wId);
         let walletName = req.body.wName;
         unUsedAddress(walletName)
             .then(response => {
                 let newAddress = response.InnerMsg;
                 queryCall.updateAddress(req.body.wId, newAddress)
                     .then(updated => {
-                        console.log(updated)
+                        // console.log(updated)
                         if (updated.insertId) {
                             queryCall.WalletMappingAddress(req.user.organization_id)
                                 .then(walletRows => {
@@ -76,7 +171,7 @@ module.exports = {
                                     res.end();
                                 })
                                 .catch(err => {
-                                    console.log("userWalletMappingAddress err");
+                                    console.log("WalletMappingAddress err");
                                 });
                         } else {
                             req.flash('errMessage', 'Try to refresh after using this address atleast once');

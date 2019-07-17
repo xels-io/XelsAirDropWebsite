@@ -5,6 +5,7 @@
         <section class="section-theme">
             <div class="container">
                 <div class="section-title">Welcome <strong><%= walletName%></div>
+                   <p >Your wallet is <b class="type"> <%= walletType%></b></p> 
                 <!-- <p class="color-theme">Welcome <strong><%= walletName%></strong> </p> -->
                     <div class="row mb-3">
                         <div class="col-lg-4 col-md-5">
@@ -12,9 +13,8 @@
                                 <nav class="nav-tabs-theme">
                                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
                                         <a class="nav-item nav-link btn-theme btn-success active" id="nav-public-tab" data-toggle="tab" href="#nav-public" role="tab" aria-controls="nav-public" aria-selected="true">     
-                                 Public
-                                </a>
-
+                                        Public
+                                        </a>
                                         <a class="nav-item nav-link btn-theme btn-success" id="nav-private-tab" data-toggle="tab" href="#nav-private" role="tab" aria-controls="nav-private" aria-selected="false">                              
                                  Private
                                 </a>
@@ -25,10 +25,13 @@
                             </form>
                         </div>
                     </div>
+                    <div class="row">
+                        <p class="alert-success"></p>
+                        <p class="alert-danger"></p>
+                    </div>
                     <div class="row mb-3">
                         <div class="col-lg-3 offset-lg-5 col-md-5 offset-md-2 order-md-1 my-auto">
-                            <p class="alert-success"></p>
-                            <p class="alert-danger"></p>
+
                             <% if (typeof message != 'undefined' && message) { %>
                                 <p class="alert alert-success">
                                     <%= message %>
@@ -41,16 +44,13 @@
 
                                         <div class="card card-theme">
                                             <div class="card-header">Balance</div>
-                                            <div class="card-body px-2">
-                                                <div class="mb-3">
+                                            <div class="card-body">
+                                                <div class="row">
                                                     Wallet Balance is
                                                     <p class="balance-show">
                                                         <%= bAmount%>
                                                     </p>
 
-                                                    <!-- <% if ( typeof bAmount != 'undefined' && bAmount) { %>
-                                                    <b> hi <%= bAmount%></b>
-                                                    <% } %> -->
                                                 </div>
                                                 <div class="mb-3">
                                                     <form class="" action="/getbalance" method="POST" id="walletBalance">
@@ -136,7 +136,7 @@
                                                                     <form method="post" action="/deleteRegisteredList" id="deleteRegisterForm">
                                                                         <input type="hidden" name="walletId" value="<%=walletId%>" />
                                                                         <input type="hidden" name="registeredId" value="<%=list[i].id%>" />
-                                                                        <button type="button" name="delete" class="delete" id="<%=list[i].id%>" onClick="return confirm('Are you sure you want to delete?')">
+                                                                        <button type="button" name="delete" class="delete btn-danger" id="<%=list[i].id%>" onClick="return confirm('Are you sure you want to delete?')">
                                                                                     <i class="fa fa-trash"></i></button>
                                                                     </form>
                                                                 </div>
@@ -195,6 +195,7 @@
                                                     </div>
                                                     <div class="modal-body">
                                                         <p class="div-success"></p>
+                                                        <p class="div-danger"></p>
                                                         <form class="form-theme" action="/registerAddress" method="POST" id="registerAddress">
                                                             <div class="form-group">
                                                                 <fieldset>

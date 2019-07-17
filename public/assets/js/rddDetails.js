@@ -18,7 +18,7 @@ $(document).ready(function() {
                         let deleteButton = `<form method="post" action="/deleteRegisteredList" id="deleteRegisterForm">` +
                             `<input type="hidden" name="walletId" value="` + response.walletId + `" />` +
                             `<input type="hidden" name="registeredId" value="` + list[i].id + `"/>` +
-                            `<button type="button" name="delete" class="delete" id="` + list[i].id + `" onClick="return confirm('Are you sure you want to delete?')"><i class="fa fa-trash"></i></button></form></div></div>`;
+                            `<button type="button" name="delete" class="delete btn-danger" id="` + list[i].id + `" onClick="return confirm('Are you sure you want to delete?')"><i class="fa fa-trash"></i></button></form></div></div>`;
                         let editButton = `<div class="row"><div class="col-md-4"><button type="button" class="updateAddress btn btn-default" data-id="` + list[i].id + `" data-toggle="modal" data-target="#editModal"><i class="fa fa-pencil"></i></button></div><div class="col-md-4">`;
 
 
@@ -30,7 +30,7 @@ $(document).ready(function() {
                     let info = `Showing 1 to ` + len + ` of ` + len + ` entries`;
                     $('#registeredAddressTable_info').html(info);
                 } else if (response.errMessage) {
-                    $(".div-success").html(response.errMessage[0]);
+                    $(".div-danger").html(response.errMessage[0]);
                 }
             }
         });
@@ -75,7 +75,7 @@ $(document).ready(function() {
                         let deleteButton = `<form method="post" action="/deleteRegisteredList" id="deleteRegisterForm">` +
                             `<input type="hidden" name="walletId" value="` + list[i].rdd_id + `" />` +
                             `<input type="hidden" name="registeredId" value="` + list[i].id + `"/>` +
-                            `<button type="button" name="delete" class="delete" id="` + list[i].id + `" onClick="return confirm('Are you sure you want to delete?')"><i class="fa fa-trash"></i></button></form></div></div>`;
+                            `<button type="button" name="delete" class="delete btn-danger" id="` + list[i].id + `" onClick="return confirm('Are you sure you want to delete?')"><i class="fa fa-trash"></i></button></form></div></div>`;
                         let editButton = `<div class="row"><div class="col-md-4"><button type="button" class="updateAddress btn btn-default" data-id="` + list[i].id + `" data-toggle="modal" data-target="#editModal"><i class="fa fa-pencil"></i></button></div><div class="col-md-4">`;
 
                         var m = '<tr><td>' + list[i].registered_address + '</td><td>' + editButton + deleteButton + '</td></tr>';
@@ -113,7 +113,7 @@ $(document).ready(function() {
                         let deleteButton = `<form method="post" action="/deleteRegisteredList" id="deleteRegisterForm">` +
                             `<input type="hidden" name="walletId" value="` + list[i].rdd_id + `" />` +
                             `<input type="hidden" name="registeredId" value="` + list[i].id + `"/>` +
-                            `<button type="button" name="delete" class="delete" id="` + list[i].id + `" onClick="return confirm('Are you sure you want to delete?')"><i class="fa fa-trash"></i></button></form></div></div>`;
+                            `<button type="button" name="delete" class="delete btn-danger" id="` + list[i].id + `" onClick="return confirm('Are you sure you want to delete?')"><i class="fa fa-trash"></i></button></form></div></div>`;
                         let editButton = `<div class="row"><div class="col-md-4"><button type="button" class="updateAddress btn btn-default" data-id="` + list[i].id + `" data-toggle="modal" data-target="#editModal"><i class="fa fa-pencil"></i></button></div><div class="col-md-4">`;
 
                         var m = '<tr><td>' + list[i].registered_address + '</td><td>' + editButton + deleteButton + '</td></tr>';
@@ -121,8 +121,14 @@ $(document).ready(function() {
                     }
                     $(".alert-success").html(response.message);
                     let len = list.length;
-                    let info = `Showing 1 to ` + len + ` of ` + len + ` entries`;
-                    $('#registeredAddressTable_info').html(info);
+                    if (len === 0) {
+                        let info = `Showing 0 to ` + len + ` of ` + len + ` entries`;
+                        $('#registeredAddressTable_info').html(info);
+                    } else {
+                        let info = `Showing 1 to ` + len + ` of ` + len + ` entries`;
+                        $('#registeredAddressTable_info').html(info);
+                    }
+
                 } else if (response.errMessage) {
                     $(".alert-danger").html(response.errMessage)
                         // $(".alert-danger").show();
@@ -189,6 +195,13 @@ $(document).ready(function() {
         //console.log(sendData);
         $.post('./typeWallet', sendData, function(res) {
                 // console.log(res);
+                if (res.message) {
+                    $('.alert-success').html(res.message[0]);
+                    $('.type').html();
+                }
+                if (res.errMessage) {
+                    $('.alert-success').html(res.errMessage[0])
+                }
             })
             //  document.getElementById("radioBtn").submit(target);
     });

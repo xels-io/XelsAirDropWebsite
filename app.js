@@ -2,8 +2,10 @@ require('./system/require');
 require('./system/loader');
 const https = require('https');
 const { getHomePage } = require('./controller/index');
-const { walletCreate, getUpdateAddress } = require('./controller/rdd');
+const { walletCreate, adminCreate, passwordChange, getUpdateAddress } = require('./controller/rdd');
 const { getSignUpPage } = require('./controller/signup');
+const { addRegisteredAddress, updateRegisteredAddress, updateWalletType, deleteRegisteredAddress } = require('./controller/crudRddDetails');
+
 let encryption = require('./system/encryption');
 const env = require('./config/environment');
 
@@ -90,7 +92,7 @@ server.listen(990);
 //app.get('/', getHomePage);
 app.get('/', (req, res) => {
     if (req.isAuthenticated()) {
-        res.redirect('/about');
+        res.redirect('/rddList');
     } else {
         res.render('index.ejs', { message: req.flash('loginMessage') });
     }
@@ -122,12 +124,15 @@ app.get('/error', (req, res) => {
 app.get('/rddDetails', isLoggedIn, (req, res) => {
     let temp_wallet_id = req.query.id;
     queryMethod.typeOfWallet(temp_wallet_id).then(response => {
+
         queryMethod.registeredAddressList(temp_wallet_id).then(registeredList => {
+            console.log(registeredList);
             res.render('rddDetails.ejs', {
                 walletId: temp_wallet_id,
                 list: registeredList,
-                walletName: registeredList.length > 0 ? registeredList[0].walletName : '',
-                bAmount: registeredList.length > 0 ? registeredList[0].balance : 0
+                walletType: response[0].typeName,
+                walletName: response.length > 0 ? response[0].walletName : response[0].walletName,
+                bAmount: response.length > 0 ? response[0].balance : 0
             })
         }).catch(err => {
             console.log(err);
@@ -151,33 +156,14 @@ app.post('/distributeXels', isLoggedIn, (req, res) => {
                     message: req.flash('message')
                 });
                 res.end();
-                // res.render('rddDetails.ejs', {
-                //     walletId: req.body.wallet_id,
-                //     message: req.flash('message'),
-                //     //list: registeredList,
-                //     walletName: registeredList.length > 0 ? registeredList[0].walletName : '',
-                //     bAmount: registeredList.length > 0 ? registeredList[0].balance : 0
-                // });
             }
-
-            //res.redirect('/rddDetails?id=' + req.body.wallet_id);
         }).catch(err => {
             req.flash('distributeErrMessage', err);
             res.json({
                 message: req.flash('distributeErrMessage')
             });
             res.end();
-            // res.render('rddDetails.ejs', {
-            //     walletId: req.body.wallet_id,
-            //     list: registeredList,
-            //     errMessage: req.flash('distributeErrMessage'),
-            //     walletName: registeredList.length > 0 ? registeredList[0].walletName : '',
-            //     bAmount: registeredList.length > 0 ? registeredList[0].balance : 0
-            // });
         });
-    // }).catch(err => {
-    //     console.log(err);
-    // });
 
 });
 app.post('/getbalance', isLoggedIn, (req, res) => {
@@ -192,15 +178,6 @@ app.post('/getbalance', isLoggedIn, (req, res) => {
                     bAmount: amount
                 });
                 res.end();
-                //req.flash('balanceUpdate', 'Rdd wallet balance is ' + amount);
-                // res.render('rddDetails.ejs', {
-                //         walletId: walletId,
-                //         list: registeredList,
-                //         walletName: registeredList.length > 0 ? registeredList[0].walletName : '',
-                //         // message: req.flash('balanceUpdate'),
-                //         bAmount: amount
-                //     })
-                // res.redirect('/rddDetails?id=' + req.body.wallet_id);
             }).catch(err => {
                 return err;
             });
@@ -221,61 +198,9 @@ app.post('/createRDD', isLoggedIn, walletCreate);
 
 app.post('/updateRDDWalletAddress', isLoggedIn, getUpdateAddress);
 
-app.post('/deleteRegisteredList', isLoggedIn, (req, res) => {
-    console.log(req.body.registeredId);
-    const registeredId = req.body.registeredId;
-    queryMethod.deleteRegisteredList(registeredId).then(response => {
-        queryMethod.registeredAddressList(req.body.walletId)
-            .then(registeredList => {
-                res.json({
-                    list: registeredList,
-                    message: "Address Deleted successfully"
-                });
-                res.end();
-            }).catch(err => {
-                return err;
-            });
-        //res.redirect('/rddDetails?id=' + req.body.walletId);
-    }).catch(err => {
-        return err;
-    });
-});
-app.post('/updateRegisteredAddress', isLoggedIn, (req, res) => {
+app.post('/deleteRegisteredList', isLoggedIn, deleteRegisteredAddress);
 
-    const registeredId = req.body.reg_id;
-    let address = req.body.updateAddress;
-    queryMethod.updateRegisteredAddress(registeredId, address).then(response => {
-        //console.log(response);
-        if (response.changedRows) {
-            queryMethod.registeredAddressList(req.body.wallet_id)
-                .then(registeredList => {
-                    res.json({
-                        list: registeredList,
-                        message: "Address updated successfully"
-                    });
-                    res.end();
-                })
-        } else {
-            req.flash('updateErrorAddress', "Address already registered. Please insert different one");
-            res.json({
-                errMessage: "This address already exists. Please update with different one"
-            });
-            res.end();
-        }
-
-        //res.redirect('/rddDetails?id=' + req.body.wallet_id);
-    }).catch(err => {
-        req.flash('updateErrorAddress', "Address already registered. Please insert different one");
-        res.json({
-            errMessage: "This address already exists. Please insert different one"
-        });
-        res.end();
-        // return err;
-    });
-});
-
-
-
+app.post('/updateRegisteredAddress', isLoggedIn, updateRegisteredAddress);
 
 // app.post('/admin/delete/:id', isLoggedIn, (req, res) => {
 //     const adminId = req.body.adminId;
@@ -290,7 +215,7 @@ app.post('/updateRegisteredAddress', isLoggedIn, (req, res) => {
 app.get('/rddList', isLoggedIn, (req, res) => {
     queryMethod.userOrganizationList(req.user.id, req.user.organization_id).then(userList => {
         app.locals.userList = userList;
-        queryMethod.userWalletMappingAddress(req.user.id, req.user.organization_id).then(response => {
+        queryMethod.WalletMappingAddress(req.user.organization_id).then(response => {
             let rddArr = response;
             res.render('rddList.ejs', {
                 list: rddArr,
@@ -327,165 +252,16 @@ app.post('/login', passport.authenticate('local-login', {
 }));
 
 
-app.post('/registerAddress', (req, res) => {
-    let temp_wallet_id = req.body.wallet_id;
-    queryMethod.typeOfWallet(temp_wallet_id).then(response => {
-        queryMethod.insertionRegisterList(req.body.address, req.body.wallet_id).then(response => {
-            if (response.insertId) {
-                req.flash('registerMessage', "Address registered successfully");
-                queryMethod.registeredAddressList(temp_wallet_id)
-                    .then(registeredList => {
+app.post('/registerAddress', isLoggedIn, addRegisteredAddress);
 
-                        res.json({
-                            // list: rddArr,
-                            walletId: temp_wallet_id,
-                            list: registeredList,
-                            message: req.flash('registerMessage'),
-                            walletName: registeredList.length > 0 ? registeredList[0].walletName : '',
-                            bAmount: registeredList.length > 0 ? registeredList[0].balance : 0
-                        });
-                        res.end();
-                        // res.render('rddDetails.ejs', {
-                        // walletId: temp_wallet_id,
-                        // list: registeredList,
-                        // message: req.flash('registerMessage'),
-                        // walletName: registeredList.length > 0 ? registeredList[0].walletName : '',
-                        // bAmount: registeredList.length > 0 ? registeredList[0].balance : 0
-                        //     })
-                        //res.redirect('rddDetails?id=' + req.body.wallet_id);
-                    }).catch(err => {
-
-                    });
-            } else {
-
-                req.flash('registerErrorMessage', "Address already registered. Please insert different one");
-                queryMethod.registeredAddressList(temp_wallet_id)
-                    .then(registeredList => {
-                        res.json({
-                            errMessage: req.flash('registerErrorMessage')
-                        });
-                        res.end();
-                        // res.render('rddDetails.ejs', {
-                        //         walletId: temp_wallet_id,
-                        //         list: registeredList,
-                        //         errMessage: req.flash('registerErrorMessage'),
-                        //         walletName: registeredList.length > 0 ? registeredList[0].walletName : '',
-                        //         bAmount: registeredList.length > 0 ? registeredList[0].balance : 0
-                        //     })
-                        //res.redirect('rddDetails?id=' + req.body.wallet_id);
-                    }).catch(err => {
-
-                    });
-            }
-
-
-        }).catch(err => {
-            console.log(err);
-            req.flash('registerErrMsg', err.InnerMsg);
-            res.render('rddDetails.ejs', {
-                walletId: req.body.wallet_id,
-                list: registeredList,
-                errMessage: req.flash('registerErrMsg'),
-                walletName: registeredList.length > 0 ? registeredList[0].walletName : '',
-                bAmount: registeredList.length > 0 ? registeredList[0].balance : 0
-            });
-        });
-    }).catch(err => {
-        console.log(err);
-    });
-
-    // queryMethod.insertionRegisterList(req.body.address, req.body.wallet_id).then(response => {
-    //     req.flash('rddMessage', "Address registered successfully");
-    //     res.redirect('rddDetails?id=' + req.body.wallet_id);
-    // }).catch(err => {
-    //     console.log(err);
-    // });
-});
-app.post('/typeWallet', (req, res) => {
-    queryMethod.updateTypeofWallet(req.body.type, req.body.wallet_id).then(response => {
-        res.redirect('rddDetails?id=' + req.body.wallet_id);
-    }).catch(err => {
-        console.log(err);
-    });
-});
+app.post('/typeWallet', isLoggedIn, updateWalletType);
 
 
 
-app.post('/rddList/admin', (req, res) => {
-    queryMethod.selectUser(req.body.email).then(dbUser => {
-        console.log(dbUser);
-        queryMethod.userWalletMappingAddress(req.user.id, req.user.organization_id).then(response => {
-            let rddArr = response;
-            if (dbUser.length) {
-                req.flash('adminMessage', 'That email is already taken.');
-                // res.send(req.body);
-                res.json({ errMessage: 'That email is already taken.' });
-                res.end();
-            } else {
-                queryMethod.insertionNewAdmin(req.body.email, req.body.organizationId, req.body.password).then(insertRow => {
-                    req.flash('adminMessage', "New admin added successfully");
-                    queryMethod.userOrganizationList(req.user.id, req.user.organization_id).then(userList => {
-                        app.locals.userList = userList;
-                        res.json({
-                            // list: rddArr,
-                            userId: req.body.email,
-                            adminList: userList,
-                            organizationId: req.body.organizationId,
-                            message: "New admin added successfully"
-                        });
-                        res.end();
+app.post('/rddList/admin', isLoggedIn, adminCreate);
 
-                    }).catch(err => {
-                        return err;
-                    });
+app.post('/rddList/updatePw', isLoggedIn, passwordChange);
 
-                }).catch(err => {
-                    console.log(err);
-                });
-            }
-        }).catch(err => {
-            console.log(err);
-        });
-
-    }).catch(err => {
-        return err;
-    });
-
-
-});
-app.post('/rddList/updatePw', (req, res) => {
-    let newPw = queryMethod.generateHash(req.body.newpPasswordchange);
-    queryMethod.userPwMatch(req.body.userId, req.body.oldpPassword).then(response => {
-        if (response.length) {
-            let updateAdmin = "UPDATE user SET password='" + newPw + "' WHERE email='" + req.body.userId + "'";
-            connection.query(updateAdmin, (err, rows) => {
-                if (err)
-                    res.send(err);
-                else {
-                    req.flash('pwMessage', "Password Changed successfully");
-                    res.json({
-                        message: req.flash('pwMessage')
-                    });
-                    res.end();
-                }
-            });
-        } else {
-            req.flash('errMessage', response);
-            res.json({
-                errMessage: req.flash('errMessage')
-            });
-            res.end();
-        }
-    }).catch(err => {
-        console.log(err);
-        console.log("userPwMatch err");
-        req.flash('pwMessage', err);
-        res.json({
-            errMessage: req.flash('pwMessage')
-        });
-        res.end();
-    });
-});
 app.get('/about', isLoggedIn, (req, res) => {
     res.render('about.ejs', {});
 });
