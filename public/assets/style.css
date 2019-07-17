@@ -163,3 +163,6 @@ a.tableLink:hover {
     vertical-align: middle;
 }
 
+.modal-body {
+    margin: auto;
+}

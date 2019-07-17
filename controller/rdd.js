@@ -3,6 +3,7 @@ require('../system/require');
 const apiEnv = require('../config/environment');
 const appMethod = require('../app');
 const connection = mysql.createConnection(dbconfig.connection);
+const queryCall = require('./query');
 
 
 module.exports = {
@@ -54,6 +55,59 @@ module.exports = {
             });
         });
     },
+    getUpdateAddress: (req, res) => {
+        console.log(req.body.wName + " = " + req.body.wId);
+        let walletName = req.body.wName;
+        unUsedAddress(walletName)
+            .then(response => {
+                let newAddress = response.InnerMsg;
+                queryCall.updateAddress(req.body.wId, newAddress)
+                    .then(updated => {
+                        console.log(updated)
+                        if (updated.insertId) {
+                            queryCall.WalletMappingAddress(req.user.organization_id)
+                                .then(walletRows => {
+                                    let rddArr = walletRows;
+                                    req.flash('Message', 'Address updated');
+                                    res.json({
+                                        list: rddArr,
+                                        message: req.flash('Message')
+                                    });
+                                    res.end();
+                                })
+                                .catch(err => {
+                                    console.log("userWalletMappingAddress err");
+                                });
+                        } else {
+                            req.flash('errMessage', 'Try to refresh after using this address atleast once');
+                            res.json({
+                                errMessage: req.flash('errMessage')
+                            });
+                            res.end();
+                        }
+
+                    }).catch(err => {
+                        console.log("update err");
+                        console.log(err);
+                        req.flash('errMessage', err);
+                        res.json({
+                            //  list: rddArr,
+                            errMessage: req.flash('errMessage'),
+                        });
+                        res.end();
+                    });
+            })
+            .catch(err => {
+                console.log("getaddress err");
+                req.flash('rddErrMessage', err.InnerMsg);
+                res.json({
+                    errMessage: req.flash('rddErrMessage'),
+                });
+                res.end();
+                //res.render('rddList.ejs', { errMessage: req.flash('rddErrMessage') });
+
+            });
+    }
 }
 
 function getAddress(walletParam) {
@@ -89,6 +143,24 @@ function walletAddress(walletName) {
         });
     })
 }
+
+function unUsedAddress(walletName) {
+    return new Promise((resolve, reject) => {
+        const unUsedAddressParam = {
+            'URL': '/api/wallet/unusedaddress',
+            'walletName': walletName,
+            'accountName': 'account 0'
+        }
+        let url = apiEnv.baseXels + apiEnv.GetApiURL;
+        axios.get(url, { params: unUsedAddressParam }).then(response => {
+            resolve(response.data);
+        }).catch(err => {
+            console.log(err);
+            reject(err);
+        });
+    })
+}
+
 
 function apiWallet(walletParam) {
 
@@ -155,3 +227,4 @@ function insertWalletUserMapping(param) {
 module.exports.getMnemonicsApi = getMnemonicsApi;
 module.exports.apiWallet = apiWallet;
 module.exports.insertWallet = insertWallet;
+//module.exports.unUsedAddress = unUsedAddress;

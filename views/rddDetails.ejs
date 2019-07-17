@@ -1,240 +1,229 @@
 <%- include('./layout/header'); -%>
 
-<%- include('./layout/partials/navbar'); -%>
+    <%- include('./layout/partials/navbar'); -%>
 
-<section class="section-theme">
-    <div class="container">
-        <div class="section-title">Welcome <strong><%= walletName%></div>
-        <!-- <p class="color-theme">Welcome <strong><%= walletName%></strong> </p> -->
-        <div class="row mb-3">
-            <div class="col-lg-4 col-md-5">
-                <form class="" action="/typeWallet" method="POST" id="radioBtn">
-                    <nav class="nav-tabs-theme">
-                        <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                            <a class="nav-item nav-link btn-theme btn-success active" id="nav-public-tab" data-toggle="tab" href="#nav-public" role="tab" aria-controls="nav-public" aria-selected="true">     
-                                Public
-                            </a>
-                            <a class="nav-item nav-link btn-theme btn-success" id="nav-private-tab" data-toggle="tab" href="#nav-private" role="tab" aria-controls="nav-private" aria-selected="false">                              
-                                Private
-                            </a>
-                        </div>
-                    </nav>
-                    <input type="hidden" name="wallet_id" value="<%=walletId%>" />
-                    <input type="hidden" value="1" name="type" id="radio_type" />
-                </form>
-            </div>
-        </div>
-        <div class="row mb-3">
-            <div class="col-lg-3 offset-lg-5 col-md-5 offset-md-2 order-md-1 my-auto">
-                <% if (typeof message != 'undefined' && message) { %>
-                <p class="alert alert-success">
-                    <%= message %>
-                </p>
-                <% } else if(typeof errMessage != 'undefined' && errMessage) { %>
-                <p class="alert alert-danger">
-                    <%= errMessage %>
-                </p>
-                <% } %>
+        <section class="section-theme">
+            <div class="container">
+                <div class="section-title">Welcome <strong><%= walletName%></div>
+                <!-- <p class="color-theme">Welcome <strong><%= walletName%></strong> </p> -->
+                    <div class="row mb-3">
+                        <div class="col-lg-4 col-md-5">
+                            <form class="" action="/typeWallet" method="POST" id="radioBtn">
+                                <nav class="nav-tabs-theme">
+                                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                                        <a class="nav-item nav-link btn-theme btn-success active" id="nav-public-tab" data-toggle="tab" href="#nav-public" role="tab" aria-controls="nav-public" aria-selected="true">     
+                                 Public
+                                </a>
 
-                <div class="card card-theme">
-                    <div class="card-header">Balance</div>
-                    <div class="card-body px-2">
-                        <div class="mb-3">Wallet Balance is <%= bAmount%></div>
-                        <!-- <% if ( typeof bAmount != 'undefined' && bAmount) { %>
-                        <b> hi <%= bAmount%></b>
-                        <% } %> -->
-                        <div class="mb-3">
-
-                            <form class="" action="/getbalance" method="POST">
+                                        <a class="nav-item nav-link btn-theme btn-success" id="nav-private-tab" data-toggle="tab" href="#nav-private" role="tab" aria-controls="nav-private" aria-selected="false">                              
+                                 Private
+                                </a>
+                                    </div>
+                                </nav>
                                 <input type="hidden" name="wallet_id" value="<%=walletId%>" />
-                                <button class="btn btn-block btn-theme mb-2" type="submit" id="balanceCheck"> <i class="fa fa-coins pr-3"></i>Balance Check</button>
+                                <input type="hidden" value="1" name="type" id="radio_type" />
                             </form>
-
                         </div>
                     </div>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-5 order-md-0 my-auto">
-                <div class="html5-dialog">
-                    <dialog id="registerWindow" class="dialog-theme">
-                        <form class="form-theme" action="/registerAddress" method="POST">
-                            <h2 class="form-signin-heading heading-dialog-theme">Register New Addrees</h2>
-                            <div class="form-group">
-                                <fieldset>
-                                    <input type="text" id="address" minlength="26" name="address" class="form-control" placeholder="Register an Address" required autofocus>
-                                    <legend>Register an Address</legend>
-                                </fieldset>
-                            </div>
-                            <input type="hidden" name="wallet_id" value="<%=walletId%>" />
-                            <button class="btn btn-theme btn-success" type="submit">Add</button>
-                            <button id="showExit" class="btn btn-theme btn-warning">Exit</button>
-                        </form>
-                    </dialog>
-                    <button id="Registershow" class="btn btn-theme btn-success btn-block mb-2"><i class="fa fa-plus pr-3"></i> Add Registered List</button>
-                </div>
-
-
-                <div class="mb-3">
-
-                    <form class="" action="/distributeXels" method="POST" id="distribute_form">
-                        <input type="hidden" name="wallet_id" value="<%=walletId%>" />
-                        <% if ( typeof bAmount != 'undefined' && bAmount) { %>
-                        <input type="hidden" id="amountVal" value="<%=bAmount%>" />
-                        <% } %>
-                        <button class="btn btn-theme btn-danger btn-block mb-2" type="submit" id="distribution" disabled> <i class="pr-3"></i>Distribute</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-
-        <div class="tab-content tab-content-theme box-theme p-3" id="nav-tabContent">
-            <div class="row">
-                <div class="col">
-                    <h2 class="color-theme mb-md-4 mb-2" style="text-align: center;margin: auto;">Registered Address</h2>
-                </div>
-            </div>
-            <div class="tab-pane fade show active" id="nav-public" role="tabpanel" aria-labelledby="nav-public-tab">
-                <div class="row">
-                    <div class="col" id="register_div">
-                        <div class="table-responsive-sm">
-                            <% if(list.length){ %>
-                            <table id="registeredAddress" class=" table-hover table table-sm" cellspacing="0" width="100%">
-                                <thead>
-                                    <tr class="table-success">
-
-                                        <th class=" th-sm">Address
-                                        </th>
-
-                                        <th class="th-sm"> Action
-                                        </th>
-                                    </tr>
+                    <div class="row mb-3">
+                        <div class="col-lg-3 offset-lg-5 col-md-5 offset-md-2 order-md-1 my-auto">
+                            <p class="alert-success"></p>
+                            <p class="alert-danger"></p>
+                            <% if (typeof message != 'undefined' && message) { %>
+                                <p class="alert alert-success">
+                                    <%= message %>
+                                </p>
+                                <% } else if(typeof errMessage != 'undefined' && errMessage) { %>
+                                    <p class="alert alert-danger">
+                                        <%= errMessage %>
+                                    </p>
                                     <% } %>
-                                </thead>
-                                <tbody>
-                                    <% for (var i = 0; i < list.length; i++) { %>
-                                    <tr>
 
-                                        <td>
-                                            <%= list[i].registered_address %>
-                                        </td>
-                                        <td>
-                                            <form method="post" action="/registeredList/delete/<%= list[i].id %>" style="float:right">
+                                        <div class="card card-theme">
+                                            <div class="card-header">Balance</div>
+                                            <div class="card-body px-2">
+                                                <div class="mb-3">
+                                                    Wallet Balance is
+                                                    <p class="balance-show">
+                                                        <%= bAmount%>
+                                                    </p>
 
-                                                <button type="submit" name="delete" class="delete" onClick="return confirm('Are you sure you want to delete?')">
-
-                                                    <i class="fa fa-trash"></i></button>
-                                                <input type="hidden" name="walletId" value="<%=list[i].walletId%>" />
-                                                <input type="hidden" name="registeredId" value="<%=list[i].id%>" />
-                                            </form>
-                                            <!-- <form method="post" action="/registeredList/edit/<%= list[i].id %>" style="float:right">
-                                                <button type="submit" name="edit" class="edit" onClick="return confirm('Are you sure you want to Edit?')">
-                                               
-                                                <i class="fa fa-pencil"></i>
-                                                <input type="hidden" name="walletId" value="<%=list[i].walletId%>" />
-                                                <input type="hidden" name="registeredId" value="<%=list[i].id%>" />
-                                            </form> -->
-
-                                            <button type="button" class="updateAddress btn btn-default" data-id="<%- list[i].id %>" data-toggle="modal" data-target="#editModal">
-                                                <i class="fa fa-pencil"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <% } %>
-                                </tbody>
-                            </table>
-
-                            <!-- Modal -->
-                            <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
-                                <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="editModalLabel">Update Address</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <form class="form-theme" action="/updateRegisteredAddress" method="POST">
-                                                <h2 class="form-signin-heading heading-dialog-theme">Update Addrees</h2>
-                                                <div class="form-group">
-                                                    <fieldset>
-                                                        <input type="text" id="updateAddress" minlength="26" name="updateAddress" class="form-control" placeholder="Register an Address" required>
-                                                        <legend>Register an Address</legend>
-                                                    </fieldset>
+                                                    <!-- <% if ( typeof bAmount != 'undefined' && bAmount) { %>
+                                                    <b> hi <%= bAmount%></b>
+                                                    <% } %> -->
                                                 </div>
-                                                <input type="hidden" name="reg_id" value="" id="regId" />
-                                                <input type="hidden" name="wallet_id" value="<%=walletId%>" />
-                                                <button class="btn btn-theme btn-success" type="submit">Update</button>
-                                                <button type="button" class="btn btn-warning" data-dismiss="modal">Close</button>
-                                            </form>
-                                        </div>
-                                        <div class="modal-footer">
+                                                <div class="mb-3">
+                                                    <form class="" action="/getbalance" method="POST" id="walletBalance">
+                                                        <input type="hidden" name="wallet_id" value="<%=walletId%>" />
+                                                        <button class="btn btn-block btn-theme mb-2" type="submit" id="balanceCheck"> <i class="fa fa-coins pr-3"></i>Balance Refresh</button>
+                                                    </form>
 
+                                                </div>
+                                            </div>
                                         </div>
+                        </div>
+                        <div class="col-lg-4 col-md-5 order-md-0 my-auto">
+
+
+                            <button id="Registershow" class="btn btn-theme btn-success btn-block mb-2" data-toggle="modal" data-target="#registerModal"><i class="fa fa-plus pr-3"></i> Add Registered Address</button>
+
+
+
+                            <div class="mb-3">
+
+                                <form class="" action="/distributeXels" method="POST" id="distribute_form">
+                                    <input type="hidden" name="wallet_id" value="<%=walletId%>" />
+                                    <% if ( typeof bAmount != 'undefined' && bAmount) { %>
+                                        <input type="hidden" id="amountVal" value="<%=bAmount%>" />
+                                        <% } %>
+                                            <button class="btn btn-theme btn-danger btn-block mb-2" type="submit" id="distribution" disabled> <i class="pr-3"></i>Distribute</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="tab-content tab-content-theme box-theme p-3" id="nav-tabContent">
+                        <div class="row">
+                            <div class="col">
+                                <h2 class="color-theme mb-md-4 mb-2" style="text-align: center;margin: auto;">
+                                    <strong>Registered Address</strong>
+                                </h2>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade show active" id="nav-public" role="tabpanel" aria-labelledby="nav-public-tab">
+                            <div class="row">
+                                <div class="col" id="register_div">
+                                    <div class="table-responsive-sm">
+
+                                        <table id="registeredAddressTable" class=" table-hover table table-sm" cellspacing="0" width="100%">
+
+                                            <thead>
+                                                <tr class="table-success">
+
+                                                    <th class=" th-sm">Address
+                                                    </th>
+
+                                                    <th class="th-sm"> Action
+                                                    </th>
+                                                </tr>
+
+                                            </thead>
+
+                                            <!-- <tbody>
+                                                <% if(!list.length){ %>
+                                                    <tr>No data to display</tr>
+
+
+
+                                            </tbody>
+                                            <% } %> -->
+                                            <tbody>
+                                                <% for (var i = 0; i < list.length; i++) { %>
+                                                    <tr>
+                                                        <td>
+                                                            <%= list[i].registered_address %>
+                                                        </td>
+                                                        <td>
+                                                            <div class="row">
+                                                                <div class="col-md-4">
+                                                                    <button type="button" class="updateAddress btn btn-default" data-id="<%- list[i].id %>" data-toggle="modal" data-target="#editModal">
+                                                                         <i class="fa fa-pencil"></i>
+                                                                    </button>
+
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <form method="post" action="/deleteRegisteredList" id="deleteRegisterForm">
+                                                                        <input type="hidden" name="walletId" value="<%=walletId%>" />
+                                                                        <input type="hidden" name="registeredId" value="<%=list[i].id%>" />
+                                                                        <button type="button" name="delete" class="delete" id="<%=list[i].id%>" onClick="return confirm('Are you sure you want to delete?')">
+                                                                                    <i class="fa fa-trash"></i></button>
+                                                                    </form>
+                                                                </div>
+
+                                                            </div>
+
+                                                        </td>
+                                                    </tr>
+                                                    <% } %>
+                                            </tbody>
+                                        </table>
+
+                                        <!-- Update Address Modal -->
+                                        <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h2 class="modal-title" id="editModalLabel">Update Address</h2>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p class="div-success"></p>
+                                                        <p class="div-danger"></p>
+                                                        <form class="form-theme" action="/updateRegisteredAddress" method="POST" id="updateRegisterAddressForm">
+                                                            <div class="form-group">
+                                                                <fieldset>
+                                                                    <input type="text" id="updateAddress" minlength="26" name="updateAddress" class="form-control" placeholder="Register an Address" required>
+                                                                    <legend>Register an Address</legend>
+                                                                </fieldset>
+                                                            </div>
+                                                            <input type="hidden" name="reg_id" value="" id="regId" />
+                                                            <input type="hidden" name="wallet_id" value="<%=walletId%>" />
+                                                            <button class="btn btn-success" type="submit">Update</button>
+                                                            <button class="btn btn-warning" id="updateCancel" data-dismiss="modal">Cancel</button>
+                                                        </form>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Update Address Modal -->
+
+                                        <!-- Register Modal -->
+                                        <div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="registerModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h2 class="form-signin-heading heading-dialog-theme" id="registerModalLabel">Register New Address </h2>
+
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p class="div-success"></p>
+                                                        <form class="form-theme" action="/registerAddress" method="POST" id="registerAddress">
+                                                            <div class="form-group">
+                                                                <fieldset>
+                                                                    <input type="text" id="address" minlength="26" name="address" class="form-control" placeholder="Register an Address" required autofocus>
+                                                                    <legend>Register an address</legend>
+                                                                </fieldset>
+                                                            </div>
+                                                            <input type="hidden" name="wallet_id" value="<%=walletId%>" />
+                                                            <button class="btn btn-theme btn-success" type="submit">Add</button>
+                                                            <button id="registerExit" class="btn btn-warning" type="reset" data-dismiss="modal">Cancel</button>
+
+                                                        </form>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--  Register Modal -->
                                     </div>
                                 </div>
+
                             </div>
-                            <!-- Modal -->
                         </div>
                     </div>
-
                 </div>
-            </div>
-        </div>
-    </div>
-</section>
+        </section>
 
-<!-- <script type="text/JavaScript" src="/js/dialog.js"></script> -->
-<script>
-    (function () {
-
-        var registerDialog = document.getElementById('registerWindow');
-        var addRegister = document.getElementById('Registershow');
-        var exitButton = document.getElementById('showExit');
-
-        addRegister.onclick = function () {
-            registerDialog.show();
-            addRegister.style.display = "none";
-        };
-        exitButton.onclick = function () {
-            registerDialog.close();
-            addRegister.style.display = "block";
-        };
-    })();
-</script>
-<script>
-    $(document).ready(function () {
-        $('#registeredAddress').DataTable();
-        $('.dataTables_length').addClass('bs-select');
-
-        //console.log($("#amountVal").val());
-        if ($("#amountVal").val() > 10) {
-            $("#distribution").attr("disabled", false);
-        }
-        $('.nav-tabs a').click(function (e) {
-            var target = $(e.target).attr("id") // activated tab
-            if (target == 'nav-private-tab') {
-                $('#radio_type').val(2);
-            } else {
-                $('#radio_type').val(1);
-            }
-            var sendData = $('#radioBtn').serialize();
-            //console.log(sendData);
-            $.post('./typeWallet', sendData, function (res) {
-                // console.log(res);
-            })
-            //  document.getElementById("radioBtn").submit(target);
-        });
-        $(document).on("click", ".updateAddress", function (e) {
-
-            var myregisteredId = $(this).data('id');
-            console.log(myregisteredId);
-            $("#regId").val(myregisteredId);
-
-        });
-
-
-
-    });
-</script>
+        <!-- <script type="text/JavaScript" src="/js/dialog.js"></script> -->
+        <script>
+        </script>
+        <script type="text/JavaScript" src="/js/rddDetails.js"></script>

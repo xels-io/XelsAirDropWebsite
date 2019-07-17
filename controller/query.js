@@ -67,15 +67,26 @@ function userWalletMappingAddress(userId, orgId) {
     })
 }
 
-function typeOfWallet(temp_wallet_id) {
+function WalletMappingAddress(orgId) {
     return new Promise((resolve, reject) => {
-        let selectQuery = "select rdd_wallet.walletName, rdd_wallet.rdd_type, rdd_type.* from rdd_wallet inner join rdd_type ON rdd_wallet.rdd_type=rdd_type.id and rdd_wallet.id= " + temp_wallet_id;
+        let selectWallet = "select  rdd_wallet.* from rdd_wallet where rdd_wallet.organization_id =" + orgId;
+        console.log(selectWallet);
+        connection.query(selectWallet, (err, rows) => {
+            if (err)
+                reject(err);
+            resolve(rows);
+        })
+    })
+}
+
+function typeOfWallet(temp_wallet_id) {
+
+    return new Promise((resolve, reject) => {
+        let selectQuery = "select rdd_wallet.walletName, rdd_wallet.rdd_type, rdd_type.* from rdd_wallet inner join rdd_type ON rdd_wallet.rdd_type = rdd_type.id and rdd_wallet.id= " + temp_wallet_id;
         connection.query(selectQuery, (err, rows) => {
             if (err)
                 reject(err);
-
             resolve(rows);
-
         })
     });
 
@@ -83,7 +94,8 @@ function typeOfWallet(temp_wallet_id) {
 
 function registeredAddressList(temp_wallet_id) {
     return new Promise((resolve, reject) => {
-        let selectRegisteredQuery = "select registered_list.* , rdd_wallet.walletName, rdd_wallet.id as walletId, rdd_wallet.balance from registered_list inner join rdd_wallet on registered_list.rdd_id = rdd_wallet.id and registered_list.rdd_id = " + temp_wallet_id;
+        // let selectRegisteredQuery = "select registered_list.* , rdd_wallet.walletName, rdd_wallet.id as walletId, rdd_wallet.balance from registered_list inner join rdd_wallet on registered_list.rdd_id = rdd_wallet.id and registered_list.rdd_id = " + temp_wallet_id;
+        let selectRegisteredQuery = "select registered_list.*  from registered_list where rdd_id = " + temp_wallet_id;
 
         connection.query(selectRegisteredQuery, (err, rows) => {
             if (err)
@@ -134,6 +146,38 @@ function updateTypeofWallet(type, wallet_id) {
 
 }
 
+function updateAddress(walletId, address) {
+
+    return new Promise((resolve, reject) => {
+        console.log("new");
+        let updateWalletAddress = "UPDATE rdd_wallet SET address='" + address + "' WHERE id=" + walletId;
+        connection.query(updateWalletAddress, (err, result) => {
+            if (err)
+                reject(err);
+            resolve(result);
+        });
+
+        // let checkAddress = "select *  from rdd_wallet where address='" + address + "'";
+        // connection.query(checkAddress, (err, rows) => {
+        //     if (err)
+        //         reject(err);
+        //     else if (rows.length) {
+        //         resolve(rows);
+        //     } else {
+        //         let updateWalletAddress = "UPDATE rdd_wallet SET address='" + address + "' WHERE id=" + walletId;
+        //         connection.query(updateWalletAddress, (err, result) => {
+        //             if (err)
+        //                 reject(err);
+        //             resolve(result);
+        //         });
+        //     }
+
+        // });
+
+    });
+}
+
+
 function deleteRegisteredList(registeredId) {
     return new Promise((resolve, reject) => {
         const deleteRegisterList = "DELETE FROM registered_list WHERE id = " + registeredId;
@@ -148,12 +192,24 @@ function deleteRegisteredList(registeredId) {
 
 function insertionRegisterList(address, wallet_id) {
     return new Promise((resolve, reject) => {
-        let insertRegisterList = "INSERT INTO registered_list (registered_address , rdd_id ) values ('" + address + "', " + wallet_id + " )";
-        connection.query(insertRegisterList, (err, result) => {
+        let checkDuplicate = "select * from registered_list where registered_address= '" + address + "'";
+        connection.query(checkDuplicate, (err, rows) => {
             if (err)
                 reject(err);
-            resolve(result);
+            else if (rows.length) {
+                resolve(rows);
+            } else {
+                let insertRegisterList = "INSERT INTO registered_list (registered_address , rdd_id ) values ('" + address + "', " + wallet_id + " )";
+                connection.query(insertRegisterList, (err, result) => {
+
+                    if (err)
+                        reject(err);
+                    resolve(result);
+                });
+            }
+
         });
+
     });
 }
 
@@ -223,15 +279,27 @@ function deleteUserList(userId) {
 
 function updateRegisteredAddress(registeredId, address) {
     return new Promise((resolve, reject) => {
-        let updateRegisterdAddress = "UPDATE registered_list SET registered_address ='" + address + "' WHERE id = " + registeredId;
-        console.log(updateRegisterdAddress);
-        connection.query(updateRegisterdAddress, (err, result) => {
+        let checkDuplicate = "select * from registered_list where registered_address= '" + address + "'";
+        connection.query(checkDuplicate, (err, rows) => {
             if (err)
                 reject(err);
-            resolve(result);
+            else if (rows.length) {
+                resolve(rows);
+            } else {
+                let updateRegisterdAddress = "UPDATE registered_list SET registered_address ='" + address + "' WHERE id = " + registeredId;
+                // console.log(updateRegisterdAddress);
+                connection.query(updateRegisterdAddress, (err, result) => {
+                    console.log(result);
+                    if (err)
+                        reject(err);
+                    resolve(result);
+                });
+            }
         });
+
     });
 }
+
 module.exports.generateHash = generateHash;
 module.exports.RDDWalletWithRegisteredList = RDDWalletWithRegisteredList;
 module.exports.validPassword = validPassword;
@@ -251,6 +319,8 @@ module.exports.registerAdmin = registerAdmin;
 
 module.exports.updateTypeofWallet = updateTypeofWallet;
 module.exports.updateBalance = updateBalance;
+module.exports.updateAddress = updateAddress;
+
 module.exports.selectUser = selectUser;
 module.exports.userWalletMapping = userWalletMapping;
 module.exports.userWalletMappingAddress = userWalletMappingAddress;
@@ -258,4 +328,6 @@ module.exports.userWalletMappingAddress = userWalletMappingAddress;
 
 module.exports.userOrganizationList = userOrganizationList;
 
-module.exports.updateRegisteredAddress = updateRegisteredAddress
+module.exports.updateRegisteredAddress = updateRegisteredAddress;
+
+module.exports.WalletMappingAddress = WalletMappingAddress;
