@@ -3,6 +3,8 @@ require('./system/loader');
 const https = require('https');
 const { getHomePage } = require('./controller/index');
 const { walletCreate, adminCreate, passwordChange, getUpdateAddress } = require('./controller/rdd');
+const { forgotPassword, passworddReset } = require('./controller/passwordReset');
+
 const { getSignUpPage } = require('./controller/signup');
 const { addRegisteredAddress, updateRegisteredAddress, updateWalletType, deleteRegisteredAddress } = require('./controller/crudRddDetails');
 
@@ -122,11 +124,12 @@ app.get('/error', (req, res) => {
 });
 
 app.get('/rddDetails', isLoggedIn, (req, res) => {
+    // console.log()
     let temp_wallet_id = req.query.id;
     queryMethod.typeOfWallet(temp_wallet_id).then(response => {
 
         queryMethod.registeredAddressList(temp_wallet_id).then(registeredList => {
-            console.log(registeredList);
+            // console.log(registeredList);
             res.render('rddDetails.ejs', {
                 walletId: temp_wallet_id,
                 list: registeredList,
@@ -149,18 +152,24 @@ app.post('/distributeXels', isLoggedIn, (req, res) => {
         //queryMethod.registeredAddressList(req.body.wallet_id).then(registeredList => {
     distribute.distributeXels(param)
         .then(response => {
-            console.log(response);
-            if (response.InnerMsg.transactionId) {
+
+            if (response.InnerMsg && response.InnerMsg.transactionId) {
                 req.flash('message', "Distributed successfully");
                 res.json({
                     message: req.flash('message')
+                });
+                res.end();
+            } else {
+                req.flash('message', "Registered address is not available");
+                res.json({
+                    errMessage: req.flash('message')
                 });
                 res.end();
             }
         }).catch(err => {
             req.flash('distributeErrMessage', err);
             res.json({
-                message: req.flash('distributeErrMessage')
+                errMessage: req.flash('distributeErrMessage')
             });
             res.end();
         });
@@ -173,7 +182,7 @@ app.post('/getbalance', isLoggedIn, (req, res) => {
         let amount = balance[0].amountConfirmed / 100000000;
         queryMethod.updateBalance(amount, walletId)
             .then(response => {
-                console.log(response);
+                //console.log(response);
                 res.json({
                     bAmount: amount
                 });
@@ -194,7 +203,7 @@ app.get('/createRDD', isLoggedIn, (req, res) => {
         message: req.flash('rddMessage')
     });
 });
-app.post('/createRDD', isLoggedIn, walletCreate);
+app.post('/createRDDWallet', isLoggedIn, walletCreate);
 
 app.post('/updateRDDWalletAddress', isLoggedIn, getUpdateAddress);
 
@@ -283,74 +292,8 @@ app.get('/forgot', function(req, res) {
     });
 });
 
-app.post('/forgot', function(req, res, next) {
-    async.waterfall([
-        function(done) {
-            crypto.randomBytes(20, function(err, buf) {
-                var token = buf.toString('hex');
-                done(err, token);
-            });
-        },
-        function(token, done) {
-            queryMethod.selectUser(req.body.email).then((rows) => {
-                // console.log(rows);
-                if (!rows.length) {
-                    req.flash('error', 'No account with that email address exists.');
-                    // return res.redirect('/forgot');
-                    res.render('forgot.ejs', {
-                        errMessage: req.flash('error')
-                    });
-                }
-                let resetPasswordExpires = moment(Date.now() + 3600000).format('YYYY-MM-DD HH:mm:ss');; // 1 hour
-                let updateRegisterdAddress = "UPDATE user SET resetPasswordToken ='" + token + "' , resetPasswordExpires='" + resetPasswordExpires + "' WHERE email = '" + req.body.email + "'";
-                //  console.log(updateRegisterdAddress);
-                connection.query(updateRegisterdAddress, (err, result) => {
-                    if (err)
-                        done(err);
-                    done(err, token, rows);
-                });
-            }).catch(err => {
-                done(err);
-            });
-        },
-        function(token, user, done) {
-            console.log(user);
-            if (user.length > 0) {
-                sgMail.setApiKey(env.Send_APi_key);
-                const mailOptions = {
-                    to: user[0].email,
-                    from: 'passwordreset@xels.io.com',
-                    subject: 'Node.js Password Reset',
-                    text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
-                        'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
-                        'http://' + req.headers.host + '/reset/' + token + '\n\n' +
-                        'If you did not request this, please ignore this email and your password will remain unchanged.\n'
-                };
-                sgMail.send(mailOptions).then(() => {
-                        req.flash('info', 'An e-mail has been sent to ' + user[0].email + ' with further instructions.');
-                        res.render('forgot.ejs', {
-                            message: req.flash('info')
-                        });
-                    })
-                    .catch(error => {
-                        req.flash('info', 'Mail not sent');
-                        res.render('forgot.ejs', {
-                            errMessage: req.flash('info')
-                        });
-                        //console.log("mailsend err");
-                    });
-            }
-
-        }
-    ], function(err) {
-
-        if (err) {
-            console.log("waterfall err");
-            return next(err);
-        }
-        res.redirect('/forgot');
-    });
-});
+app.post('/forgotPw', forgotPassword);
+//});
 
 app.get('/reset/:token', function(req, res) {
 
@@ -382,46 +325,7 @@ app.get('/reset/:token', function(req, res) {
 
     });
 });
-app.post('/reset/:token', function(req, res) {
-    let userQuery = "select * from user where resetPasswordToken= '" + req.params.token + "'";
-    console.log("post Token");
-    console.log(req.body);
-    connection.query(userQuery, (err, rows) => {
-        if (rows.length === 0) {
-            req.flash('error', 'Password reset token is invalid or has expired.');
-            res.render('forgot.ejs', {
-                errMessage: req.flash('error')
-            });
-        }
-        let user = new Object();
-        user.password = queryMethod.generateHash(req.body.newpPassword);
-        user.resetPasswordToken = undefined;
-        user.resetPasswordExpires = undefined;
-
-        let updateAdmin = "UPDATE user SET password='" + user.password + "', resetPasswordToken ='" + user.resetPasswordToken + "' , resetPasswordExpires='" + user.resetPasswordExpires + "' WHERE email='" + req.body.email + "'";
-        // console.log(updateAdmin);
-        connection.query(updateAdmin, (err, updatedRows) => {
-
-            if (updatedRows) {
-
-                req.flash('success', 'Success! Your password has been changed.');
-                res.render('reset.ejs', {
-                    token: rows,
-                    message: req.flash('success')
-                });
-
-            } else {
-                req.flash('err', err.InnerMsg);
-                res.render('reset.ejs', {
-                    token: rows,
-                    errMessage: req.flash('err')
-                });
-            }
-
-        });
-
-    });
-});
+app.post('/reset/:token', passworddReset);
 // app.get('/success', (req, res) => res.send("Welcome "+req.query.username+"!!"));
 // app.get('/error', (req, res) => res.send("error logging in"));
 

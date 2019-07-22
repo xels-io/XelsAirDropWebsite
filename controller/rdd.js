@@ -9,7 +9,7 @@ const queryCall = require('./query');
 module.exports = {
 
     walletCreate: (req, res) => {
-        console.log("create");
+        //console.log("create");
         let getPassword = encryp.passwordGenerator();
         getMnemonicsApi().then(mnemonic => {
             let walletParam = {
@@ -37,13 +37,13 @@ module.exports = {
                             }
                             insertWalletUserMapping(waletUser);
                             if (rowsInserted.insertId) {
+                                let walletId = rowsInserted.insertId;
                                 req.flash('rddMessage', "Wallet Created Successfully");
                                 res.json({
-                                    message: req.flash('rddMessage')
+                                    message: req.flash('rddMessage'),
+                                    Location: '/rddDetails?id=' + walletId
                                 });
                                 res.end();
-
-                                //res.render('RDD.ejs', { rddMessage: req.flash('rddMessage') });
                             }
                         }).catch(err => {
                             console.log(err);
@@ -57,10 +57,8 @@ module.exports = {
                     }).catch(err => {
                         console.log(err.InnerMsg);
                         req.flash('rddMessage', err.InnerMsg);
-                        res.json({
-                            errMessage: req.flash('rddMessage')
-                        });
-                        res.end();
+
+                        // res.render('RDD.ejs', { rddErrMessage: req.flash('rddErrMessage') });
                     });
 
             }).catch(err => {
@@ -155,11 +153,14 @@ module.exports = {
         let walletName = req.body.wName;
         unUsedAddress(walletName)
             .then(response => {
+                console.log(response.InnerMsg);
                 let newAddress = response.InnerMsg;
+                console.log(req.body.wId);
                 queryCall.updateAddress(req.body.wId, newAddress)
                     .then(updated => {
-                        // console.log(updated)
-                        if (updated.insertId) {
+                        console.log(updated);
+                        if (updated.affectedRows > 0) {
+                            console.log("hello update ");
                             queryCall.WalletMappingAddress(req.user.organization_id)
                                 .then(walletRows => {
                                     let rddArr = walletRows;
@@ -296,15 +297,22 @@ function getMnemonicsApi() {
 function insertWallet(walletParam, orgId) {
 
     return new Promise((resolve, reject) => {
-
-        let insertRdd = "INSERT INTO rdd_wallet (walletName , password , address, mnemonics, passphrase, organization_id  ) values ('" + walletParam.name + "','" + encryp.enCryptPassword(walletParam.password) + "','" + walletParam.address + "', '" + walletParam.mnemonic + "', " + walletParam.passphrase + " , " + orgId + ")";
-        connection.query(insertRdd, (err, rows) => {
+        let selectTYpe = "select * from rdd_type where typeName= 'Private'";
+        connection.query(selectTYpe, (err, typeRows) => {
             if (err)
                 reject(err);
             else {
-                resolve(rows);
+                let insertRdd = "INSERT INTO rdd_wallet (walletName , password , address, mnemonics, passphrase, organization_id ,rdd_type ) values ('" + walletParam.name + "','" + encryp.enCryptPassword(walletParam.password) + "','" + walletParam.address + "', '" + walletParam.mnemonic + "', " + walletParam.passphrase + " , " + orgId + ", " + typeRows[0].id + ")";
+                connection.query(insertRdd, (err, rows) => {
+                    if (err)
+                        reject(err);
+                    else {
+                        resolve(rows);
+                    }
+                });
             }
         });
+
     });
 }
 

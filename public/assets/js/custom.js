@@ -60,13 +60,13 @@ $(document).on('click', '.btn-copy', function() {
 
 $(document).on("click", ".address-scan", function(e) {
     var myBookId = $(this).data('id');
-    $("div .modal-body").qrcode({
+    $('#barcodeModal').find(".modal-body").qrcode({
         text: myBookId
     });
     // $('#addBookDialog').modal('show');
 });
 
 $('#barcodeModal').on('hide.bs.modal', function() {
-    $("div .modal-body").empty();
+    $(this).find(".modal-body").empty();
 
 });

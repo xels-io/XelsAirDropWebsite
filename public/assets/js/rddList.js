@@ -54,8 +54,10 @@ $(document).ready(function() {
                 //console.log(response);
                 if (response.message) {
                     $(".div-success").html(response.message[0]);
+                    $(".div-danger").empty();
                 } else if (response.errMessage) {
-                    $(".div-danger").html(response.errMessage[0])
+                    $(".div-danger").html(response.errMessage[0]);
+                    $(".div-success").empty();
 
                 }
             }
@@ -89,8 +91,10 @@ $(document).ready(function() {
                         $('#RDDTable tbody').append(m);
                     }
                     $(".alert-success").html(response.message[0]);
+                    $(".alert-danger").empty();
                 } else if (response.errMessage) {
-                    $(".alert-danger").html(response.errMessage[0])
+                    $(".alert-danger").html(response.errMessage[0]);
+                    $(".alert-success").empty();
                 }
             }
         });

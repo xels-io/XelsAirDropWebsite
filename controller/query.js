@@ -24,7 +24,8 @@ function userWalletMapping(walletId) {
 
 function RDDWalletWithRegisteredList(walletId) {
     return new Promise((resolve, reject) => {
-        let selectQuery = "select rdd_wallet.*, registered_list.registered_address from rdd_wallet inner join registered_list on rdd_wallet.id = registered_list.rdd_id and registered_list.rdd_id = " + walletId;
+        let selectQuery = "select rdd_wallet.*, registered_list.registered_address from rdd_wallet inner join registered_list on rdd_wallet.id = registered_list.rdd_id and registered_list.deleted = 0 and registered_list.rdd_id = " + walletId;
+        // console.log(selectQuery);
         connection.query(selectQuery, (err, rows) => {
             if (err)
                 reject(err);
@@ -99,7 +100,7 @@ function typeOfWallet(temp_wallet_id) {
 function registeredAddressList(temp_wallet_id) {
     return new Promise((resolve, reject) => {
         // let selectRegisteredQuery = "select registered_list.* , rdd_wallet.walletName, rdd_wallet.id as walletId, rdd_wallet.balance from registered_list inner join rdd_wallet on registered_list.rdd_id = rdd_wallet.id and registered_list.rdd_id = " + temp_wallet_id;
-        let selectRegisteredQuery = "select registered_list.*  from registered_list where rdd_id = " + temp_wallet_id;
+        let selectRegisteredQuery = "select registered_list.*  from registered_list where rdd_id = " + temp_wallet_id + " and deleted = 0";
 
         connection.query(selectRegisteredQuery, (err, rows) => {
             if (err)
@@ -153,30 +154,23 @@ function updateTypeofWallet(type, wallet_id) {
 function updateAddress(walletId, address) {
 
     return new Promise((resolve, reject) => {
-        // console.log("new");
-        let updateWalletAddress = "UPDATE rdd_wallet SET address='" + address + "' WHERE id=" + walletId;
-        connection.query(updateWalletAddress, (err, result) => {
+
+        let checkAddress = "select *  from rdd_wallet where address='" + address + "'";
+        connection.query(checkAddress, (err, rows) => {
             if (err)
                 reject(err);
-            resolve(result);
+            else if (rows.length) {
+                resolve(rows);
+            } else {
+                let updateWalletAddress = "UPDATE rdd_wallet SET address='" + address + "' WHERE id=" + walletId;
+                connection.query(updateWalletAddress, (err, result) => {
+                    if (err)
+                        reject(err);
+                    resolve(result);
+                });
+            }
+
         });
-
-        // let checkAddress = "select *  from rdd_wallet where address='" + address + "'";
-        // connection.query(checkAddress, (err, rows) => {
-        //     if (err)
-        //         reject(err);
-        //     else if (rows.length) {
-        //         resolve(rows);
-        //     } else {
-        //         let updateWalletAddress = "UPDATE rdd_wallet SET address='" + address + "' WHERE id=" + walletId;
-        //         connection.query(updateWalletAddress, (err, result) => {
-        //             if (err)
-        //                 reject(err);
-        //             resolve(result);
-        //         });
-        //     }
-
-        // });
 
     });
 }
@@ -184,8 +178,10 @@ function updateAddress(walletId, address) {
 
 function deleteRegisteredList(registeredId) {
     return new Promise((resolve, reject) => {
-        const deleteRegisterList = "DELETE FROM registered_list WHERE id = " + registeredId;
-        connection.query(deleteRegisterList, (err, result) => {
+        let updateDeletion = "update registered_list SET deleted = 1 WHERE id = " + registeredId;
+        console.log(updateDeletion);
+        //const deleteRegisterList = "DELETE FROM registered_list WHERE id = " + registeredId;
+        connection.query(updateDeletion, (err, result) => {
             if (err)
                 reject(err);
             resolve(result);
@@ -196,16 +192,28 @@ function deleteRegisteredList(registeredId) {
 
 function insertionRegisterList(address, wallet_id) {
     return new Promise((resolve, reject) => {
-        let checkDuplicate = "select * from registered_list where registered_address= '" + address + "'";
+        let checkDuplicate = "select * from registered_list where registered_address= '" + address + "'and rdd_id =" + wallet_id;
         connection.query(checkDuplicate, (err, rows) => {
             if (err)
                 reject(err);
             else if (rows.length) {
-                resolve(rows);
+                if (rows[0].deleted === 1) {
+                    let updateRegisterList = "Update registered_list SET deleted = 0 where registered_address='" + address + "' and rdd_id=" + wallet_id;
+                    //console.log(updateRegisterList);
+                    connection.query(updateRegisterList, (err, Updatedresult) => {
+                        //console.log("result");
+                        if (err)
+                            reject(err);
+                        resolve(Updatedresult);
+                    });
+                } else {
+                    resolve(rows);
+                }
+
             } else {
                 let insertRegisterList = "INSERT INTO registered_list (registered_address , rdd_id ) values ('" + address + "', " + wallet_id + " )";
-                connection.query(insertRegisterList, (err, result) => {
-
+                connection.qu
+                ery(insertRegisterList, (err, result) => {
                     if (err)
                         reject(err);
                     resolve(result);
@@ -291,7 +299,7 @@ function updateRegisteredAddress(registeredId, address) {
                 resolve(rows);
             } else {
                 let updateRegisterdAddress = "UPDATE registered_list SET registered_address ='" + address + "' WHERE id = " + registeredId;
-                // console.log(updateRegisterdAddress);
+                console.log(updateRegisterdAddress);
                 connection.query(updateRegisterdAddress, (err, result) => {
                     console.log(result);
                     if (err)

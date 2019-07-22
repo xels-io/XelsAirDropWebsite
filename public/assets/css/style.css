@@ -708,20 +708,25 @@
             
             p.div-danger,
             .alert-danger {
-                background-color: #ffc107;
+                background-color: #f0d174;
                 width: 100%;
                 text-align: center;
             }
             
             p.div-success,
             .alert-success {
-                background-color: #aeeaa1;
+                background-color: #89c07d;
                 width: 100%;
                 text-align: center;
             }
             
             p.balance-show {
                 padding-left: 2%;
+            }
+            
+            a.tableLink {
+                text-decoration: underline;
+                color: #53B848
             }
             /*.register-section .footer-menu span.dot {
     padding: 0 35px

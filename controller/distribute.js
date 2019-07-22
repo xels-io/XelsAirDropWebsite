@@ -6,46 +6,55 @@ let encryp = require('../system/encryption');
 function distributeXels(rddWalletDetails) {
 
     return new Promise((resolve, reject) => {
-        query.RDDWalletWithRegisteredList(rddWalletDetails.walletId).then(walletDetails => {
-            console.log(walletDetails[0].balance);
-            let balance = walletDetails[0].balance - 1;
-            console.log(balance);
-            let amount_divide_into_xels_addresses = balance / walletDetails.length;
-            console.log("divide = " + amount_divide_into_xels_addresses);
-            var finalList = walletDetails.map(function(obj) {
-                return {
-                    destinationAddress: obj.registered_address,
-                    amount: amount_divide_into_xels_addresses
+        query.RDDWalletWithRegisteredList(rddWalletDetails.walletId)
+            .then(walletDetails => {
+                if (walletDetails.length > 0) {
+                    // console.log(walletDetails[0].balance);
+                    let balance = walletDetails[0].balance - 1;
+                    //console.log(balance);
+                    let amount_divide_into_xels_addresses = balance / walletDetails.length;
+                    console.log("divide = " + amount_divide_into_xels_addresses);
+                    var finalList = walletDetails.map(function(obj) {
+                        return {
+                            destinationAddress: obj.registered_address,
+                            amount: amount_divide_into_xels_addresses
+                        }
+
+                    });
+                    console.log(finalList);
+                    if (finalList.length > 0) {
+                        estimateFee(walletDetails, finalList)
+                            .then(fee => {
+                                let estimatedfee = fee.InnerMsg / 100000000;
+                                console.log(estimatedfee);
+                                // amountCal(estimatedfee, walletDetails[0].balance, finalList).then(addressAmount => {
+                                BuildTransaction(finalList, walletDetails, estimatedfee)
+                                    .then(hexData => {
+                                        let hexString = hexData.InnerMsg.hex;
+                                        SendTransaction(hexString).then(success => {
+                                            let txid = success.InnerMsg.transactionId;
+                                            resolve(success);
+                                        }).catch(err => {
+                                            reject(err);
+                                        });
+                                    }).catch(err => {
+                                        reject(err);
+                                    });
+                            }).catch(err => {
+                                reject(err);
+                            });
+                    }
+                } else {
+
+                    let response = {
+                        msg: "No list available"
+                    }
+                    resolve(response);
                 }
 
+            }).catch(err => {
+                reject(err);
             });
-            console.log(finalList);
-            // resolve(1);
-            if (finalList.length > 0) {
-                estimateFee(walletDetails, finalList).then(fee => {
-                    let estimatedfee = fee.InnerMsg / 100000000;
-                    console.log(estimatedfee);
-                    // amountCal(estimatedfee, walletDetails[0].balance, finalList).then(addressAmount => {
-                    BuildTransaction(finalList, walletDetails, estimatedfee).then(hexData => {
-                        let hexString = hexData.InnerMsg.hex;
-                        SendTransaction(hexString).then(success => {
-                            let txid = success.InnerMsg.transactionId;
-                            resolve(success);
-                        }).catch(err => {
-                            reject(err);
-                        });
-                    }).catch(err => {
-                        reject(err);
-                    });
-                    // }).catch(err => {
-                    //     reject(err);
-                    // });
-
-                }).catch(err => {
-                    reject(err);
-                });
-            }
-        })
     });
 }
 

@@ -32,35 +32,27 @@
                     <div class="row mb-3">
                         <div class="col-lg-3 offset-lg-5 col-md-5 offset-md-2 order-md-1 my-auto">
 
-                            <% if (typeof message != 'undefined' && message) { %>
-                                <p class="alert alert-success">
-                                    <%= message %>
-                                </p>
-                                <% } else if(typeof errMessage != 'undefined' && errMessage) { %>
-                                    <p class="alert alert-danger">
-                                        <%= errMessage %>
-                                    </p>
-                                    <% } %>
 
-                                        <div class="card card-theme">
-                                            <div class="card-header">Balance</div>
-                                            <div class="card-body">
-                                                <div class="row">
-                                                    Wallet Balance is
-                                                    <p class="balance-show">
-                                                        <%= bAmount%>
-                                                    </p>
 
-                                                </div>
-                                                <div class="mb-3">
-                                                    <form class="" action="/getbalance" method="POST" id="walletBalance">
-                                                        <input type="hidden" name="wallet_id" value="<%=walletId%>" />
-                                                        <button class="btn btn-block btn-theme mb-2" type="submit" id="balanceCheck"> <i class="fa fa-coins pr-3"></i>Balance Refresh</button>
-                                                    </form>
+                            <div class="card card-theme">
+                                <div class="card-header">Balance</div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        Wallet Balance is
+                                        <p class="balance-show">
+                                            <%= bAmount%>
+                                        </p>
 
-                                                </div>
-                                            </div>
-                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <form class="" action="/getbalance" method="POST" id="walletBalance">
+                                            <input type="hidden" name="wallet_id" value="<%=walletId%>" />
+                                            <button class="btn btn-block btn-theme mb-2" type="submit" id="balanceCheck"> <i class="fa fa-coins pr-3"></i>Balance Refresh</button>
+                                        </form>
+
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="col-lg-4 col-md-5 order-md-0 my-auto">
 
@@ -110,14 +102,6 @@
 
                                             </thead>
 
-                                            <!-- <tbody>
-                                                <% if(!list.length){ %>
-                                                    <tr>No data to display</tr>
-
-
-
-                                            </tbody>
-                                            <% } %> -->
                                             <tbody>
                                                 <% for (var i = 0; i < list.length; i++) { %>
                                                     <tr>
@@ -127,16 +111,17 @@
                                                         <td>
                                                             <div class="row">
                                                                 <div class="col-md-4">
-                                                                    <button type="button" class="updateAddress btn btn-default" data-id="<%- list[i].id %>" data-toggle="modal" data-target="#editModal">
+                                                                    <button type="button" class="updateAddress btn btn-default" data-id="<%- list[i].id%>" data-toggle="modal" data-target="#editModal" value="<%- list[i].registered_address %>">
                                                                          <i class="fa fa-pencil"></i>
                                                                     </button>
+
 
                                                                 </div>
                                                                 <div class="col-md-4">
                                                                     <form method="post" action="/deleteRegisteredList" id="deleteRegisterForm">
                                                                         <input type="hidden" name="walletId" value="<%=walletId%>" />
                                                                         <input type="hidden" name="registeredId" value="<%=list[i].id%>" />
-                                                                        <button type="button" name="delete" class="delete btn-danger" id="<%=list[i].id%>" onClick="return confirm('Are you sure you want to delete?')">
+                                                                        <button type="button" name="delete" class="delete btn-danger" id="<%=list[i].id%>">
                                                                                     <i class="fa fa-trash"></i></button>
                                                                     </form>
                                                                 </div>
@@ -145,6 +130,7 @@
 
                                                         </td>
                                                     </tr>
+
                                                     <% } %>
                                             </tbody>
                                         </table>
@@ -156,8 +142,8 @@
                                                     <div class="modal-header">
                                                         <h2 class="modal-title" id="editModalLabel">Update Address</h2>
                                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                <span aria-hidden="true">&times;</span>
-                                                            </button>
+<span aria-hidden="true">&times;</span>
+</button>
                                                     </div>
                                                     <div class="modal-body">
                                                         <p class="div-success"></p>
@@ -165,8 +151,8 @@
                                                         <form class="form-theme" action="/updateRegisteredAddress" method="POST" id="updateRegisterAddressForm">
                                                             <div class="form-group">
                                                                 <fieldset>
-                                                                    <input type="text" id="updateAddress" minlength="26" name="updateAddress" class="form-control" placeholder="Register an Address" required>
-                                                                    <legend>Register an Address</legend>
+                                                                    <input type="text" id="updateAddressInput" value="" minlength="26" name="updateAddress" class="form-control" placeholder="Register an Address" required>
+                                                                    <legend>Update Existing Address</legend>
                                                                 </fieldset>
                                                             </div>
                                                             <input type="hidden" name="reg_id" value="" id="regId" />

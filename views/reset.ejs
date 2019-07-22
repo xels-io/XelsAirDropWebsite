@@ -1,7 +1,7 @@
 <%- include('./layout/header'); -%>
 
-<section class="section-theme">
-    <div class="container">
+    <section class="section-theme">
+        <div class="container">
             <% if (typeof message != 'undefined' && message) { %>
                 <p class="alert alert-success">
                     <%= message %> <a href="/">Go to Login page </a>
@@ -11,54 +11,54 @@
                         <%= errMessage %>
                     </p>
                     <% } %>
-            
-                    <% if(token.length){ %>
-            
-        <div class="row">
-            <div class="col-md-5 my-auto">
-                    <form class="form-theme" action="/reset/<%-token[0].resetPasswordToken%>" method="POST">
-                        <h2 class="form-signin-heading  heading-dialog-theme">Change password</h2>
-                    
-                        <div class="form-group ">
-                            <fieldset>
-                                <input type="password" id="newpPassword" name="newpPassword" class="form-control" placeholder="New password" pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$" title="Password must contain:
+
+                        <% if(token.length){ %>
+
+                            <div class="row">
+                                <div class="col-md-5 my-auto">
+                                    <form class="form-theme" id="resetPw" action="/reset/<%-token[0].resetPasswordToken%>" method="POST">
+                                        <h2 class="form-signin-heading  heading-dialog-theme">Change password</h2>
+
+                                        <div class="form-group ">
+                                            <fieldset>
+                                                <input type="password" id="newpPassword" name="newpPassword" class="form-control" placeholder="New password" pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$" title="Password must contain:
                             Minimum 8 characters atleast 1 Alphabet and 1 Number" required>
-                                <legend>New password</legend>
-                            </fieldset>
-                        </div>
-                        <input type="hidden" name="email" value="<%=token[0].email%>" />
-                        <div class="form-group">
-                            <fieldset>
-                                <input type="password" title="Please enter the same Password as above" id="cPassword" name="cinputPassword" class="form-control" placeholder="Confirm Password" required />
-                                <legend>Confirm Password</legend>
-                            </fieldset>
-                        </div>
-                        <button class="btn btn-theme btn-success" type="submit" id="change_pw">Reset Password</button>
-                        <button id="idExit" class="btn btn-theme btn-warning">Exit</button>
-                    </form>
-                    <% } %>
-                </div>
-        </div>
-                
-                
+                                                <legend>New password</legend>
+                                            </fieldset>
+                                        </div>
+                                        <input type="hidden" name="email" value="<%=token[0].email%>" />
+                                        <div class="form-group">
+                                            <fieldset>
+                                                <input type="password" title="Please enter the same Password as above" id="cPassword" name="cinputPassword" class="form-control" placeholder="Confirm Password" required />
+                                                <legend>Confirm Password</legend>
+                                            </fieldset>
+                                        </div>
+                                        <button class="btn btn-theme btn-success" type="submit" id="change_pw">Reset Password</button>
+                                        <button id="idExit" class="btn btn-theme btn-warning">Exit</button>
+                                    </form>
+                                    <% } %>
+                                </div>
+                            </div>
+
+
         </div>
     </section>
- 
-<script>
-    $(document).ready(function() {
-        $("#change_pw").click(function() {
-        $(".error").hide();
-        var hasError = false;
-        var passwordVal = $("#newpPassword").val();
-        var checkVal = $("#cPassword").val();
-        if (passwordVal != checkVal) {
-            $("#cPassword").after('<span class="error">Passwords do not match.</span>');
-            hasError = true;
-        }
-        if (hasError == true) {
-            return false;
-        }
-    });
 
-});
+    <script>
+        $(document).ready(function() {
+            $("#change_pw").click(function() {
+                $(".error").hide();
+                var hasError = false;
+                var passwordVal = $("#newpPassword").val();
+                var checkVal = $("#cPassword").val();
+                if (passwordVal != checkVal) {
+                    $("#cPassword").after('<span class="error">Passwords do not match.</span>');
+                    hasError = true;
+                }
+                if (hasError == true) {
+                    return false;
+                }
+            });
+
+        });
     </script>
