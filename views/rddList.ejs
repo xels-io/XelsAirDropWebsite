@@ -3,6 +3,10 @@
     <%- include('./layout/partials/navbar'); -%>
         <section class="section-theme">
             <div class="container">
+
+                <div class="section-title">
+                    <%= organizationName %>
+                </div>
                 <div class="title">Welcome <strong><%= userId%></div>
                 <div class="row">
                     <p class="alert-success"></p>
@@ -112,7 +116,7 @@
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
-                                                            <h2 class="form-signin-heading heading-dialog-theme" id="adminModalLabel">Add Admin </h2>
+                                                            <h2 class="modal-title" id="adminModalLabel">Add Admin </h2>
 
                                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
@@ -120,6 +124,7 @@
                                                         </div>
                                                         <div class="modal-body">
                                                             <p class="div-success"></p>
+                                                            <p class="div-danger"></p>
                                                             <form class="form-theme" action="/rddList/admin" method="POST" id="addAdminForm">
 
                                                                 <input type="hidden" name="organizationId" value="<%=organizationId%>" />
@@ -159,7 +164,7 @@
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
-                                                            <h2 class="form-signin-heading  heading-dialog-theme">Change Password</h2>
+                                                            <h2 class="modal-title">Change Password</h2>
                                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>

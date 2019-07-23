@@ -89,11 +89,12 @@ module.exports = {
                     queryCall.insertionNewAdmin(req.body.email, req.body.organizationId, req.body.password).then(insertRow => {
                         req.flash('adminMessage', "New admin added successfully");
                         queryCall.userOrganizationList(req.user.id, req.user.organization_id).then(userList => {
-                            app.locals.userList = userList;
+
+                            let mUser = userList.filter(user => user.id != req.user.id);
+                            app.locals.userList = mUser;
                             res.json({
-                                // list: rddArr,
                                 userId: req.body.email,
-                                adminList: userList,
+                                adminList: mUser,
                                 organizationId: req.body.organizationId,
                                 message: "New admin added successfully"
                             });

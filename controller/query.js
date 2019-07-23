@@ -212,8 +212,7 @@ function insertionRegisterList(address, wallet_id) {
 
             } else {
                 let insertRegisterList = "INSERT INTO registered_list (registered_address , rdd_id ) values ('" + address + "', " + wallet_id + " )";
-                connection.qu
-                ery(insertRegisterList, (err, result) => {
+                connection.query(insertRegisterList, (err, result) => {
                     if (err)
                         reject(err);
                     resolve(result);
@@ -267,7 +266,7 @@ function selectUser(email) {
 
 function userOrganizationList(uId, OrgId) {
     return new Promise((resolve, reject) => {
-        let selectUser = "select user.*, organization_details.name from user inner join organization_details on user.organization_id = organization_details.id and organization_details.id = " + OrgId + " and user.id != " + uId;
+        let selectUser = "select user.*, organization_details.name from user inner join organization_details on user.organization_id = organization_details.id and organization_details.id = " + OrgId; //+ " and user.id != " + uId;
         connection.query(selectUser, (err, result) => {
             if (err)
                 reject(err);
