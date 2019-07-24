@@ -204,6 +204,34 @@ module.exports = {
                 //res.render('rddList.ejs', { errMessage: req.flash('rddErrMessage') });
 
             });
+    },
+    getRddWalletAdminList: (req, res) => {
+        queryCall.userOrganizationList(req.user.id, req.user.organization_id).then(userList => {
+
+            let organizationName = '';
+            let adminList;
+            let mUser = userList.filter(user => user.id != req.user.id);
+            app.locals.userList = mUser;
+            organizationName = userList[0].name;
+            adminList = mUser;
+            queryCall.WalletMappingAddress(req.user.organization_id)
+                .then(response => {
+                    let rddArr = response;
+
+                    res.render('rddList.ejs', {
+                        organizationName: organizationName,
+                        list: rddArr,
+                        adminList: adminList,
+                        userId: req.user.email,
+                        organizationId: req.user.organization_id
+                            //message: req.flash('adminMessage'),
+                    });
+                }).catch(err => {
+                    return err;
+                });
+        }).catch(err => {
+            return err;
+        });
     }
 }
 

@@ -21,8 +21,8 @@
 
                                         <div class="form-group ">
                                             <fieldset>
-                                                <input type="password" id="newpPassword" name="newpPassword" class="form-control" placeholder="New password" pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$" title="Password must contain:
-                            Minimum 8 characters atleast 1 Alphabet and 1 Number" required>
+                                                <input type="password" id="newpPassword" name="newpPassword" class="form-control" placeholder="New password" title="Password must contain: Minimum 8 characters atleast one uppercase letter, one lowercase letter, one number and one special character" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+                                                    required>
                                                 <legend>New password</legend>
                                             </fieldset>
                                         </div>

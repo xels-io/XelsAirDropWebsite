@@ -118,5 +118,34 @@ module.exports = {
             });
 
         });
+    },
+    getToken: (req, res) => {
+        let time = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
+
+        let userQuery = "select * from user where resetPasswordToken= '" + req.params.token + "'";
+        //console.log(userQuery);
+        //let userQuery = "select * from user where resetPasswordToken= '" + req.params.token + "' and DATE_FORMAT(resetPasswordExpires, 'YYYY-MM-DD HH:mm:ss') > " + time;
+        connection.query(userQuery, (err, rows) => {
+            if (rows.length === 0) {
+                req.flash('error', 'Reset Token does not exist.');
+                res.render('forgot.ejs', {
+                    errMessage: req.flash('error')
+                });
+            } else {
+                let sqlTime = moment(rows[0].resetPasswordExpires).format('YYYY-MM-DD HH:mm:ss');
+                if (sqlTime > time) {
+                    res.render('reset.ejs', {
+                        token: rows
+                    });
+                } else if (sqlTime < time) {
+                    req.flash('error', 'Password reset token is invalid or has expired.');
+                    res.render('forgot.ejs', {
+                        errMessage: req.flash('error')
+                    });
+
+                }
+            }
+
+        });
     }
 }
