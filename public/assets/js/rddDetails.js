@@ -1,6 +1,7 @@
 $(document).ready(function() {
     $('#registeredAddressTable').DataTable();
     $('.dataTables_length').addClass('bs-select');
+    $('#registeredAddressTable td.dataTables_empty').html("No registered address available yet");
 
     function divEmpty() {
         $(".div-success").empty();

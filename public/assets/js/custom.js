@@ -1,6 +1,10 @@
 $(document).ready(function() {
-    $('#RDDTable').DataTable();
+
     $('#adminTable').DataTable();
+    // $('#RDDTable').DataTable();
+    $('#nTable').DataTable();
+    $('#adminTable td.dataTables_empty').html("No admin created yet ");
+    $('#nTable td.dataTables_empty').html("No RDD Wallet created yet. Please create RDD Wallet ");
     $('.dataTables_length').addClass('bs-select');
 
 

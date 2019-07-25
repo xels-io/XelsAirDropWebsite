@@ -90,11 +90,11 @@ module.exports = {
                         req.flash('adminMessage', "New admin added successfully");
                         queryCall.userOrganizationList(req.user.id, req.user.organization_id).then(userList => {
 
-                            let mUser = userList.filter(user => user.id != req.user.id);
-                            app.locals.userList = mUser;
+                            // let mUser = userList.filter(user => user.id != req.user.id);
+                            // app.locals.userList = mUser;
                             res.json({
                                 userId: req.body.email,
-                                adminList: mUser,
+                                adminList: userList,
                                 organizationId: req.body.organizationId,
                                 message: "New admin added successfully"
                             });
@@ -210,10 +210,10 @@ module.exports = {
 
             let organizationName = '';
             let adminList;
-            let mUser = userList.filter(user => user.id != req.user.id);
-            app.locals.userList = mUser;
+            // let mUser = userList.filter(user => user.id != req.user.id);
+            // app.locals.userList = mUser;
             organizationName = userList[0].name;
-            adminList = mUser;
+            adminList = userList;
             queryCall.WalletMappingAddress(req.user.organization_id)
                 .then(response => {
                     let rddArr = response;

@@ -16,15 +16,17 @@ module.exports = {
                 });
             },
             function(token, done) {
-                console.log(req.body);
+
                 queryMethod.selectUser(req.body.email).then((rows) => {
                     // console.log(rows);
                     if (!rows.length) {
                         req.flash('error', 'No account with that email address exists.');
 
-                        res.render('forgot.ejs', {
+                        res.json({
                             errMessage: req.flash('error')
-                        });
+                        })
+
+                        res.end();
                     }
                     let resetPasswordExpires = moment(Date.now() + 3600000).format('YYYY-MM-DD HH:mm:ss');; // 1 hour
                     let updateRegisterdAddress = "UPDATE user SET resetPasswordToken ='" + token + "' , resetPasswordExpires='" + resetPasswordExpires + "' WHERE email = '" + req.body.email + "'";
@@ -39,7 +41,7 @@ module.exports = {
                 });
             },
             function(token, user, done) {
-                // console.log(user);
+
                 if (user.length > 0) {
                     sgMail.setApiKey(env.Send_APi_key);
                     const mailOptions = {
@@ -54,15 +56,17 @@ module.exports = {
                     sgMail.send(mailOptions).then(() => {
                             req.flash('info', 'An e-mail has been sent to ' + user[0].email + ' with further instructions.');
 
-                            res.render('forgot.ejs', {
+                            res.json({
                                 message: req.flash('info')
                             });
+                            res.end();
                         })
                         .catch(error => {
                             req.flash('info', 'Mail not sent');
-                            res.render('forgot.ejs', {
+                            res.json({
                                 errMessage: req.flash('info')
                             });
+                            res.end();
                             //console.log("mailsend err");
                         });
                 }
