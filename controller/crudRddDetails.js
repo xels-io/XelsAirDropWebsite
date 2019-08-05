@@ -2,13 +2,31 @@ const env = require('../config/environment');
 const queryMethod = require('./query');
 
 module.exports = {
+    getRddDetails: (req, res) => {
+        let temp_wallet_id = req.query.id;
+        queryMethod.typeOfWallet(temp_wallet_id).then(response => {
+
+            queryMethod.registeredAddressList(temp_wallet_id).then(registeredList => {
+                // console.log(registeredList);
+                res.render('rddDetails.ejs', {
+                    walletId: temp_wallet_id,
+                    list: registeredList,
+                    walletType: response[0].typeName,
+                    walletName: response.length > 0 ? response[0].walletName : response[0].walletName,
+                    bAmount: response.length > 0 ? response[0].balance : 0
+                })
+            }).catch(err => {
+                console.log(err);
+            });
+        }).catch(err => {
+            console.log(err);
+        });
+    },
     addRegisteredAddress: (req, res) => {
         let temp_wallet_id = req.body.wallet_id;
         queryMethod.typeOfWallet(temp_wallet_id).then(response => {
             queryMethod.insertionRegisterList(req.body.address, req.body.wallet_id).then(response => {
-                // console.log("response");
-                // console.log(response);
-                // console.log("response2");
+
                 if (response.insertId || response.affectedRows > 0) {
                     req.flash('registerMessage', "Address registered successfully");
                     queryMethod.registeredAddressList(temp_wallet_id)
@@ -27,15 +45,15 @@ module.exports = {
                         });
                 } else {
                     req.flash('registerErrorMessage', "Address already registered. Please insert different one");
-                    queryMethod.registeredAddressList(temp_wallet_id)
-                        .then(registeredList => {
-                            res.json({
-                                errMessage: req.flash('registerErrorMessage')
-                            });
-                            res.end();
-                        }).catch(err => {
+                    // queryMethod.registeredAddressList(temp_wallet_id)
+                    //     .then(registeredList => {
+                    res.json({
+                        errMessage: req.flash('registerErrorMessage')
+                    });
+                    res.end();
+                    // }).catch(err => {
 
-                        });
+                    // });
                 }
             }).catch(err => {
                 console.log(err);

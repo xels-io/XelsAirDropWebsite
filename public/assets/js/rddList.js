@@ -19,32 +19,38 @@ $(document).ready(function() {
                     let len = adminList.length;
                     let info = `Showing 1 to ` + len + ` of ` + len + ` entries`;
                     $('#adminTable_info').html(info);
+                    $(".div-danger").empty();
                 } else if (response.errMessage) {
-                    $(".div-success").html(response.errMessage)
+                    $(".div-danger").html(response.errMessage);
+                    $(".div-success").empty();
                 }
             }
         });
 
         return false;
     });
-    $("#adminModal").on("hide.bs.modal", function() {
-        $(this).find('#addAdminForm')[0].reset();
-    });
-    $('#adminExit').click(function(e) {
+
+    function divEmpty() {
         $(".div-success").empty();
         $(".div-danger").empty();
+    }
+    $("#adminModal").on("hide.bs.modal", function() {
+        $(this).find('#addAdminForm')[0].reset();
+        divEmpty();
+    });
+    $('#adminExit').click(function(e) {
+        divEmpty();
     });
 
     $("#changePwModal").on("hide.bs.modal", function() {
         $(this).find('#changePassword')[0].reset();
+        divEmpty();
     });
     $('#pwExit').click(function(e) {
-        $(".div-success").empty();
-        $(".div-danger").empty();
+        divEmpty();
     });
     $('#changePassword').submit(function(e) {
-        $(".div-success").empty();
-        $(".div-danger").empty();
+        divEmpty();
         e.preventDefault();
         $.ajax({
             type: "POST",

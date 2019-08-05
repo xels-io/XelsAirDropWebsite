@@ -1,6 +1,7 @@
 $(document).ready(function() {
     $('#registeredAddressTable').DataTable();
     $('.dataTables_length').addClass('bs-select');
+    $('#registeredAddressTable td.dataTables_empty').html("No registered address available yet");
 
     function divEmpty() {
         $(".div-success").empty();
@@ -21,14 +22,12 @@ $(document).ready(function() {
                     console.log(list);
                     $('#registeredAddressTable tbody').empty();
                     for (let i in list) {
-                        let deleteButton = `<form method="post" action="/deleteRegisteredList" id="deleteRegisterForm">` +
-                            `<input type="hidden" name="walletId" value="` + response.walletId + `" />` +
-                            `<input type="hidden" name="registeredId" value="` + list[i].id + `"/>` +
-                            `<button type="button" name="delete" class="delete btn-danger" id="` + list[i].id + `" ><i class="fa fa-trash"></i></button></form></div></div>`;
+                        let deletebtn = `<button type="button" name="delete" class="deleteModal btn-danger" data-toggle="modal" data-id="` + list[i].id + `" data-target="#confirm-delete">
+                        <i class="fa fa-trash"></i></button>`;
+
                         let editButton = `<div class="row"><div class="col-md-4"><button type="button" class="updateAddress btn btn-default" data-id="` + list[i].id + `" data-toggle="modal" data-target="#editModal" value="` + list[i].registered_address + `"><i class="fa fa-pencil"></i></button></div><div class="col-md-4">`;
 
-
-                        var m = '<tr><td>' + list[i].registered_address + '</td><td>' + editButton + deleteButton + '</td></tr>';
+                        var m = '<tr><td>' + list[i].registered_address + '</td><td>' + editButton + deletebtn + '</td></tr>';
                         $('#registeredAddressTable tbody').append(m);
 
                     }
@@ -68,20 +67,17 @@ $(document).ready(function() {
             data: $(this).serialize(),
             success: function(response) {
                 //  console.log(response);
-
                 if (response.list) {
                     $(".div-success").html(response.message);
                     let list = response.list;
                     $('#registeredAddressTable tbody').empty();
                     for (let i in list) {
+                        let deletebtn = `<button type="button" name="delete" class="deleteModal btn-danger" data-toggle="modal" data-id="` + list[i].id + `" data-target="#confirm-delete">
+                        <i class="fa fa-trash"></i></button>`;
 
-                        let deleteButton = `<form method="post" action="/deleteRegisteredList" id="deleteRegisterForm">` +
-                            `<input type="hidden" name="walletId" value="` + list[i].rdd_id + `" />` +
-                            `<input type="hidden" name="registeredId" value="` + list[i].id + `"/>` +
-                            `<button type="button" name="delete" class="delete btn-danger" id="` + list[i].id + `" ><i class="fa fa-trash"></i></button></form></div></div>`;
                         let editButton = `<div class="row"><div class="col-md-4"><button type="button" class="updateAddress btn btn-default" data-id="` + list[i].id + `" data-toggle="modal" data-target="#editModal" value="` + list[i].registered_address + `"><i class="fa fa-pencil"></i></button></div><div class="col-md-4">`;
 
-                        var m = '<tr><td>' + list[i].registered_address + '</td><td>' + editButton + deleteButton + '</td></tr>';
+                        var m = '<tr><td>' + list[i].registered_address + '</td><td>' + editButton + deletebtn + '</td></tr>';
                         $('#registeredAddressTable tbody').append(m);
                     }
                 } else if (response.errMessage) {
@@ -92,39 +88,37 @@ $(document).ready(function() {
 
         return false;
     });
-    $(document).on('click', '.delete', function(e) {
 
-        if (!confirm('Are you sure to delete this item?'))
-            return;
+    $(document).on("click", ".deleteModal", function(e) {
+        var registerId = $(this).data('id');
+
+        $('#registerId').val(registerId);
+
+    });
+    $(document).on('click', '.Okbtn', function(e) {
         e.preventDefault();
         $.ajax({
             type: "POST",
             url: '/deleteRegisteredList',
             data: $(this).closest('form').serialize(),
             success: function(response) {
-                // console.log(response);
+                // $('#confirm-delete').attr("data-dismiss", "modal");
+                $('#confirm-delete').modal('hide');
                 if (response.list) {
                     let list = response.list;
                     $('#registeredAddressTable tbody').empty();
                     for (let i in list) {
-                        let thead = `<thead>
-                        <tr class="table-success">
-                            <th class=" th-sm">Address
-                            </th>
-                            <th class="th-sm"> Action
-                            </th>
-                        </tr>
-                    </thead>`;
-                        let deleteButton = `<form method="post" action="/deleteRegisteredList" id="deleteRegisterForm">` +
-                            `<input type="hidden" name="walletId" value="` + list[i].rdd_id + `" />` +
-                            `<input type="hidden" name="registeredId" value="` + list[i].id + `"/>` +
-                            `<button type="button" name="delete" class="delete btn-danger" id="` + list[i].id + `" ><i class="fa fa-trash"></i></button></form></div></div>`;
+                        let deletebtn = `<button type="button" name="delete" class="deleteModal btn-danger" data-toggle="modal" data-id="` + list[i].id + `" data-target="#confirm-delete">
+                        <i class="fa fa-trash"></i></button>`;
+
+
                         let editButton = `<div class="row"><div class="col-md-4"><button type="button" class="updateAddress btn btn-default" data-id="` + list[i].id + `" data-toggle="modal" data-target="#editModal" value="` + list[i].registered_address + `"><i class="fa fa-pencil"></i></button></div><div class="col-md-4">`;
 
-                        var m = '<tr><td>' + list[i].registered_address + '</td><td>' + editButton + deleteButton + '</td></tr>';
+                        var m = '<tr><td>' + list[i].registered_address + '</td><td>' + editButton + deletebtn + '</td></tr>';
                         $('#registeredAddressTable tbody').append(m);
                     }
                     $(".alert-success").html(response.message);
+                    $(".alert-danger").empty();
                     let len = list.length;
                     if (len === 0) {
                         let info = `Showing 0 to ` + len + ` of ` + len + ` entries`;
@@ -135,8 +129,9 @@ $(document).ready(function() {
                     }
 
                 } else if (response.errMessage) {
-                    $(".alert-danger").html(response.errMessage)
-                        // $(".alert-danger").show();
+                    $(".alert-danger").html(response.errMessage);
+                    $(".alert-success").empty();
+                    // $(".alert-danger").show();
                 }
             }
         });
@@ -151,7 +146,7 @@ $(document).ready(function() {
             url: '/getbalance',
             data: $(this).serialize(),
             success: function(response) {
-                console.log(response);
+                // console.log(response);
                 if (response.bAmount) {
 
                     $(".balance-show").html(response.bAmount);
@@ -188,7 +183,6 @@ $(document).ready(function() {
 
         return false;
     });
-    //console.log($("#amountVal").val());
     if ($("#amountVal").val() > 10) {
         $("#distribution").attr("disabled", false);
     }
