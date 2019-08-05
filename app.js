@@ -8,9 +8,8 @@ const { forgotPassword, passworddReset, getToken } = require('./controller/passw
 const { getSignUpPage } = require('./controller/signup');
 const { getRddDetails, addRegisteredAddress, updateRegisteredAddress, updateWalletType, deleteRegisteredAddress } = require('./controller/crudRddDetails');
 
-//let encryption = require('./system/encryption');
+let encryption = require('./system/encryption');
 const env = require('./config/environment');
-
 const passport = require("./config/passport");
 const dbconfig = require('./config/database');
 const queryMethod = require('./controller/query');
@@ -22,7 +21,7 @@ const connection = mysql.createConnection(dbconfig.connection);
 
 connection.connect(function(err) {
     if (err) throw err;
-    console.log("Connected!");
+    console.log("DB Connected!");
 });
 
 
@@ -35,14 +34,16 @@ app.locals.userList;
 // app.use(express.json());
 // app.use(express.urlencoded({ extended: false }));
 
+
+
 app.use(cors());
 
 app.use(bodyParser.json({ type: 'application/json' })); // parse form data client
 app.use(bodyParser.urlencoded({ extended: false }));
 //ssl ce
-let httpPort = 990;
+let httpPort = env.httpPort;
 
-let httpsPort = 1400;
+let httpsPort = env.httpsPort;
 // configure middleware
 app.set('port', process.env.port || httpPort); // set express to use this port
 app.set('views', path.join(__dirname, 'views')); // set express to look in this folder to render our view
@@ -66,28 +67,50 @@ app.use(passport.session());
 app.use(flash());
 
 
-//import ssl certificate
-const httpsOptions = {
-    cert: fs.readFileSync(path.join(__dirname, 'ssl_certificate', 'xels_io.crt')),
-    ca: fs.readFileSync(path.join(__dirname, 'ssl_certificate', 'xels_io.ca-bundle')),
-    key: fs.readFileSync(path.join(__dirname, 'ssl_certificate', 'xels_io_private_key.key'))
-}
+
 
 
 // set the app to listen on the port
 const server = http.createServer(app);
+
+if(env.https){
+    //import ssl certificate
+    const httpsOptions = {
+        cert: fs.readFileSync(path.join(__dirname, 'ssl_certificate', 'xels_io.crt')),
+        ca: fs.readFileSync(path.join(__dirname, 'ssl_certificate', 'xels_io.ca-bundle')),
+        key: fs.readFileSync(path.join(__dirname, 'ssl_certificate', 'xels_io_private_key.key'))
+    }
 //create httpsServer
-// const httpsServer = https.createServer(httpsOptions, app);
+    const httpsServer = https.createServer(httpsOptions, app);
 
-// httpsServer.listen(httpsPort, () => {
-//     console.log(`Listening on port: ${httpsPort}`);
-// });
-// var server = http.createServer((req, res) => {
-//     res.writeHead(301, { Location: `https://${req.headers.host}${req.url}` });
-//     res.end();
-// });
 
-server.listen(990);
+    httpsServer.listen(httpsPort, () => {
+        console.log(`Listening on port: ${httpsPort}`);
+    });
+}
+
+
+server.listen(httpPort, () => {
+    console.log(`Listening on port: ${httpPort}`);
+});
+
+//Every route middleware
+app.use(function(req, res, next) {
+
+    if(!req.secure )
+    {
+        if(env.https){
+            res.redirect(301, `https://${req.headers.host}${req.url}`);
+        }
+    }
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, X-Assassin-RequestHash");
+    global.Request = req;
+    global.Response = res;
+    next();
+
+});
+
 
 /**  get Index page Starts here
  *
@@ -99,7 +122,7 @@ app.get('/', (req, res) => {
     } else {
         res.render('index.ejs', { message: req.flash('loginMessage') });
     }
-});
+})
 /**  get Register page Starts here
  *
  *
@@ -128,30 +151,34 @@ app.get('/logout', (req, res) => {
     req.logout();
     res.redirect('/');
 });
+
 /** get rdd wallet details starts here
  *
  *
  */
+
 app.get('/rddDetails', isLoggedIn, getRddDetails);
 /**  rdd wallet distribution details starts here
  *
  *
  */
+
 app.post('/distributeXels', isLoggedIn, (req, res) => {
     let param = {
-            walletId: req.body.wallet_id
-        }
-        //queryMethod.registeredAddressList(req.body.wallet_id).then(registeredList => {
+        walletId: req.body.wallet_id
+    }
     distribute.distributeXels(param)
         .then(response => {
-
+            console.log(response);
             if (response.InnerMsg && response.InnerMsg.transactionId) {
                 req.flash('message', "Distributed successfully");
                 res.json({
                     message: req.flash('message')
                 });
                 res.end();
-            } else {
+
+            }
+            else {
                 req.flash('message', "Registered address is not available");
                 res.json({
                     errMessage: req.flash('message')
@@ -159,15 +186,14 @@ app.post('/distributeXels', isLoggedIn, (req, res) => {
                 res.end();
             }
         }).catch(err => {
-            req.flash('distributeErrMessage', err);
-            res.json({
-                errMessage: req.flash('distributeErrMessage')
-            });
-            res.end();
+        req.flash('distributeErrMessage', err);
+        res.json({
+            errMessage: req.flash('distributeErrMessage')
         });
+        res.end();
+    });
 
 });
-
 /**  Get rdd wallet balance details starts here
  *
  *
@@ -179,19 +205,19 @@ app.post('/getbalance', isLoggedIn, (req, res) => {
         let amount = balance[0].amountConfirmed / 100000000;
         queryMethod.updateBalance(amount, walletId)
             .then(response => {
-                //console.log(response);
+                console.log(response);
                 res.json({
                     bAmount: amount
                 });
                 res.end();
+
             }).catch(err => {
-                return err;
-            });
+            return err;
+        });
 
     }).catch(err => {
         console.log(err);
     });
-
 });
 /**  Create rdd wallet Page starts here
  *
@@ -208,52 +234,56 @@ app.get('/createRDD', isLoggedIn, (req, res) => {
  *
  *
  */
-app.post('/createRDDWallet', isLoggedIn, walletCreate);
+app.post('/createRDDWallet', isLoggedIn , walletCreate);
 
 /**  update rdd wallet address starts here
  *
  *
  */
 app.post('/updateRDDWalletAddress', isLoggedIn, getUpdateAddress);
-
 /**  delete Registered List address starts here
  *
  *
  */
 app.post('/deleteRegisteredList', isLoggedIn, deleteRegisteredAddress);
-
 /**  Update Registered List address starts here
  *
  *
  */
 app.post('/updateRegisteredAddress', isLoggedIn, updateRegisteredAddress);
 
-/**  Get RDD wallet list page with "RDD wallets and admins list" starts here
- *
- *
- */
+// app.post('/admin/delete/:id', isLoggedIn, (req, res) => {
+//     const adminId = req.body.adminId;
+//     //console.log(adminId);
+//     queryMethod.deleteUserList(adminId).then(response => {
+//         res.redirect('/rddList');
+//     }).catch(err => {
+//         return err;
+//     });
+// });
 app.get('/rddList', isLoggedIn, getRddWalletAdminList);
 /**  Register Method starts here
  *
  *
  */
+
 app.post('/register', passport.authenticate('local-signup', {
     successRedirect: '/rddList',
     failureRedirect: '/register'
 }));
-
 /**  Get Login Page starts here
  *
  *
  */
+
 app.get('/login', (req, res) => {
     res.render('index.ejs', { message: req.flash('loginMessage') });
 });
 /** Login Page starts here
  *
- * 
- * 
- * 
+ *
+ *
+ *
  */
 // process the login form
 app.post('/login', passport.authenticate('local-login', {
@@ -261,25 +291,21 @@ app.post('/login', passport.authenticate('local-login', {
     failureRedirect: '/', // redirect back to the login page if there is an error
     failureFlash: true // allow flash messages
 }));
-
 /**  Register Address method starts here
  *
  *
  */
 app.post('/registerAddress', isLoggedIn, addRegisteredAddress);
-
 /**  Type of RDD wallet method starts here
  *
  *
  */
 app.post('/typeWallet', isLoggedIn, updateWalletType);
-
 /**  Add New Admin method starts here
  *
  *
  */
 app.post('/rddList/admin', isLoggedIn, adminCreate);
-
 /**  Update Password of current admin method starts here
  *
  *
@@ -292,26 +318,11 @@ app.post('/rddList/updatePw', isLoggedIn, passwordChange);
 app.get('/about', isLoggedIn, (req, res) => {
     res.render('about.ejs', {});
 });
-
-
-/** User is loogen in or not starts here
- *
- *
- */
-function isLoggedIn(req, res, next) {
-    if (req.isAuthenticated())
-        return next();
-    else {
-        req['header']['Referrer'] = req.url;
-        res.redirect("/");
-    }
-};
 /**  Get Password forgot Page starts here
  *
  *
  */
 app.get('/forgot', function(req, res) {
-    console.log("hi");
     res.render('forgot.ejs', {
         // user: req.user
     });
@@ -332,27 +343,26 @@ app.get('/reset/:token', getToken);
  *
  *
  */
-
 app.post('/reset/:token', passworddReset);
+/** User is loogen in or not starts here
+ *
+ *
+ */
+function isLoggedIn(req, res, next) {
+    if (req.isAuthenticated())
+        return next();
+    else {
+        req['header']['Referrer'] = req.url;
+        console.log(req['header']['Referrer']);
+        res.redirect("/");
+    }
+};
+
+// app.get('/success', (req, res) => res.send("Welcome "+req.query.username+"!!"));
+// app.get('/error', (req, res) => res.send("error logging in"));
 
 
 //Every route middleware
-//Every route middleware
-app.use(function(req, res, next) {
-
-    // if (!req.secure) {
-    //     res.redirect(301, `https://${req.headers.host}${req.url}`);
-    // } 
-    // else {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, X-Assassin-RequestHash");
-    global.Request = req;
-    global.Response = res;
-    next();
-    //}
-
-});
 
 module.exports.isLoggedIn = isLoggedIn;
 module.exports = connection;
-module.exports = app;

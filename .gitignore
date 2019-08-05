@@ -2,7 +2,10 @@ node_modules/
 package-lock.json
 /nbproject/private/
 
-/config/*
+/config/environment.js
 !/config/index.html
 nbproject/project.properties
 nbproject/
+/.idea
+/ssl_certificate/*
+!/ssl_certificate/readme.txt
