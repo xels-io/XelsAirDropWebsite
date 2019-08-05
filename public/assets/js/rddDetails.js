@@ -117,8 +117,8 @@ $(document).ready(function() {
                         var m = '<tr><td>' + list[i].registered_address + '</td><td>' + editButton + deletebtn + '</td></tr>';
                         $('#registeredAddressTable tbody').append(m);
                     }
-                    $(".alert-success").html(response.message);
-                    $(".alert-danger").empty();
+                    $(".alert-success").addClass('show').find('.msg').html(response.message);
+                    $(".alert-danger").removeClass('show').find('.msg').empty();
                     let len = list.length;
                     if (len === 0) {
                         let info = `Showing 0 to ` + len + ` of ` + len + ` entries`;
@@ -129,9 +129,9 @@ $(document).ready(function() {
                     }
 
                 } else if (response.errMessage) {
-                    $(".alert-danger").html(response.errMessage);
-                    $(".alert-success").empty();
-                    // $(".alert-danger").show();
+                    $(".alert-danger").addClass('show').find('.msg').html(response.errMessage);
+                    $(".alert-success").removeClass('show').find('.msg').empty();
+                    // $(".alert-danger").addClass('show);
                 }
             }
         });
@@ -170,12 +170,12 @@ $(document).ready(function() {
             data: $(this).serialize(),
             success: function(response) {
                 if (response.message) {
-                    $(".alert-success").html(response.message[0]);
+                    $(".alert-success").addClass('show').find('.msg').html(response.message[0]);
                     $('#distribution').prop('disabled', true);
-                    $(".alert-danger").empty();
+                    $(".alert-danger").removeClass('show').find('.msg').empty();
                 } else if (response.errMessage) {
-                    $(".alert-danger").html(response.errMessage[0]);
-                    $(".alert-success").empty();
+                    $(".alert-danger").addClass('show').find('.msg').html(response.errMessage[0]);
+                    $(".alert-success").removeClass('show').find('.msg').empty();
                     $('#distribution').prop('disabled', true);
                 }
             }
@@ -198,11 +198,11 @@ $(document).ready(function() {
         $.post('./typeWallet', sendData, function(res) {
                 // console.log(res);
                 if (res.message) {
-                    $('.alert-success').html(res.message[0]);
+                    $('.alert-success').addClass('show').find('.msg').html(res.message[0]);
                     $('.type').html(res.walletType);
                 }
                 if (res.errMessage) {
-                    $('.alert-danger').html(res.errMessage[0])
+                    $('.alert-danger').addClass('show').find('.msg').html(res.errMessage[0])
                 }
             })
             //  document.getElementById("radioBtn").submit(target);

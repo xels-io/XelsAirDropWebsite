@@ -72,7 +72,7 @@ a:focus {
 }
 
 .section-theme {
-    padding: 80px 0;
+    padding: 30px 0;
 }
 
 .subscribe-form input {
@@ -544,10 +544,12 @@ Nav tabs theme style
 
 .nav-tabs-theme .nav-tabs .nav-item {
     border: 1px solid #53B848;
+    background: #FFF;
+    color: #53B848;
     border-radius: 22px;
     text-align: center;
     width: calc(50% + 17.5px);
-    z-index: 1;
+    z-index: 0;
 }
 
 .nav-tabs-theme .nav-tabs .nav-item:nth-child(2) {
@@ -568,11 +570,11 @@ border-bottom-right-radius: 0;
 .nav-tabs-theme .btn-success:not(:disabled):not(.disabled).active,
 .nav-tabs-theme .btn-success:not(:disabled):not(.disabled):active,
 .nav-tabs-theme .show>.btn-success.dropdown-toggle .nav-tabs-theme .nav-tabs .nav-item.active.show {
-    background-color: #FFF;
+    background-color: #53B848;
     border: 1px solid #53B848;
     border-radius: 22px;
-    color: #53B848;
-    z-index: 0;
+    color: #FFF;
+    z-index: 1;
 }
 /* ===================
 Dialog theme style
@@ -620,6 +622,7 @@ Tab-content Query
 
 .table-theme-2nd {
     border-spacing: 0 2rem !important;
+    border-collapse: separate;
 }
 
 .table-theme-2nd.table td, .table-theme-2nd.table th {
@@ -760,6 +763,15 @@ p.balance-show {
 a.tableLink {
     text-decoration: underline;
     color: #53B848
+}
+.message-view{
+    width: 100%;
+}
+.message-view .alert{
+    display: none;
+}
+.message-view .show{
+    display: block;
 }
 /*.register-section .footer-menu span.dot {
 padding: 0 35px
