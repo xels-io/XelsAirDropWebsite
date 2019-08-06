@@ -773,6 +773,11 @@ a.tableLink {
 .message-view .show{
     display: block;
 }
+
+.modal-open {
+    overflow: auto;
+    padding-right: 0 !important;
+}
 /*.register-section .footer-menu span.dot {
 padding: 0 35px
 }*/
