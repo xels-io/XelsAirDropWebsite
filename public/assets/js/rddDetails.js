@@ -139,7 +139,7 @@ $(document).ready(function() {
         return false;
     });
 
-    $('#walletBalance').submit(function(e) {
+    $(document).on('submit','#walletBalance',function(e) {
         e.preventDefault();
         $.ajax({
             type: "POST",

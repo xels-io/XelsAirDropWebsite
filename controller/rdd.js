@@ -154,14 +154,14 @@ module.exports = {
         let walletName = req.body.wName;
         unUsedAddress(walletName)
             .then(response => {
-                console.log(response.InnerMsg);
+                //console.log(response.InnerMsg);
                 let newAddress = response.InnerMsg;
-                console.log(req.body.wId);
+                //console.log(req.body.wId);
                 queryCall.updateAddress(req.body.wId, newAddress)
                     .then(updated => {
-                        console.log(updated);
+                        //console.log(updated);
                         if (updated.affectedRows > 0) {
-                            console.log("hello update ");
+                            //console.log("hello update ");
                             queryCall.WalletMappingAddress(req.user.organization_id)
                                 .then(walletRows => {
                                     let rddArr = walletRows;
