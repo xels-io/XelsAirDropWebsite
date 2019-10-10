@@ -147,8 +147,7 @@ $(document).ready(function() {
             data: $(this).serialize(),
             success: function(response) {
                 // console.log(response);
-                if (response.bAmount) {
-
+                if (response.bAmount >= 0) {
                     $(".balance-show").html(response.bAmount);
 
                     if (response.bAmount > 10) {
