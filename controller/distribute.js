@@ -11,8 +11,9 @@ function distributeXels(rddWalletDetails) {
                 if (walletDetails.length > 0) {
                     // console.log(walletDetails[0].balance);
                     let balance = walletDetails[0].balance - 1;
-                    //console.log(balance);
+                    // console.log(balance);
                     let amount_divide_into_xels_addresses = balance / walletDetails.length;
+                    amount_divide_into_xels_addresses = parseFloat(amount_divide_into_xels_addresses.toFixed(8));
                     console.log("divide = " + amount_divide_into_xels_addresses);
                     var finalList = walletDetails.map(function(obj) {
                         return {
@@ -26,7 +27,7 @@ function distributeXels(rddWalletDetails) {
                         estimateFee(walletDetails, finalList)
                             .then(fee => {
                                 let estimatedfee = fee.InnerMsg / 100000000;
-                                console.log(estimatedfee);
+                                console.log('estimatedfee',estimatedfee);
                                 // amountCal(estimatedfee, walletDetails[0].balance, finalList).then(addressAmount => {
                                 BuildTransaction(finalList, walletDetails, estimatedfee)
                                     .then(hexData => {
@@ -41,6 +42,7 @@ function distributeXels(rddWalletDetails) {
                                         reject(err);
                                     });
                             }).catch(err => {
+                                console.log(err)
                                 reject(err);
                             });
                     }

@@ -114,7 +114,6 @@ passport.use("local-login", new LocalStrategy({
         // if password is wrong, return the message
         if (!validPw(rows[0].password))
             return done(null, false, req.flash('loginMessage', 'Oops! Wrong password.')); // create the loginMessage and save it to session as flashdata
-        console.log(rows[0]);
         // all is well, return successful user
         return done(null, rows[0]);
     }).catch(err => {

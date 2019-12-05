@@ -67,9 +67,6 @@ app.use(passport.session());
 app.use(flash());
 
 
-
-
-
 // set the app to listen on the port
 const server = http.createServer(app);
 
@@ -105,8 +102,6 @@ app.use(function(req, res, next) {
     }
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, X-Assassin-RequestHash");
-    global.Request = req;
-    global.Response = res;
     next();
 
 });
@@ -205,7 +200,6 @@ app.post('/getbalance', isLoggedIn, (req, res) => {
         let amount = balance[0].amountConfirmed / 100000000;
         queryMethod.updateBalance(amount, walletId)
             .then(response => {
-                console.log(response);
                 res.json({
                     bAmount: amount
                 });

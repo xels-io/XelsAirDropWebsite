@@ -62,7 +62,8 @@ module.exports = {
                     });
 
             }).catch(err => {
-                // console.log("wallet");
+                console.log('Pass:',getPassword)
+                console.log(err);
                 req.flash('rddErrMessage', err.InnerMsg);
 
                 res.json({
@@ -173,7 +174,7 @@ module.exports = {
                                     res.end();
                                 })
                                 .catch(err => {
-                                    console.log("WalletMappingAddress err");
+                                    console.log("WalletMappingAddress",err);
                                 });
                         } else {
                             req.flash('errMessage', 'Try to refresh after using this address atleast once');
