@@ -1,4 +1,4 @@
 cd C:\projects\XelsAirDropWebsite
-git pull
+git pull origin master
 call npm install --production
 exit
